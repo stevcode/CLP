@@ -22,6 +22,11 @@ namespace CLP.Entities
 
         #region Properties
 
+        public string Hack
+        {
+            set => RaisePropertyChanged(nameof(LongFormattedValue));
+        }
+
         public string AnalysisCodeLabel
         {
             get => GetValue<string>(AnalysisCodeLabelProperty);
@@ -78,7 +83,7 @@ namespace CLP.Entities
                 var mainName = overridingConstraint == null ? AnalysisCodeShortName : overridingConstraint.ConstraintValue;
 
                 var normalConstraints = Constraints.Where(c => !c.IsOverridingDisplayName).ToList();
-                return $"{mainName}: {string.Join(" - ", normalConstraints)}";
+                return $"{mainName}: {string.Join(" - ", normalConstraints.Select(c => c.ConstraintValue).Where(v => v != Codings.CONSTRAINT_VALUE_ANY))}";
             }
         }
 

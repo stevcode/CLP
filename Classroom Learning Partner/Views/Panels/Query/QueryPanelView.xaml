@@ -5,7 +5,8 @@
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:orc="http://www.wildgums.net.au/orc"
-                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
@@ -47,23 +48,39 @@
                 <views:QuerySelectorView Grid.Column="1" />
 
                 <Button Grid.Column="2"
-                        Width="25" />
+                        Height="32"
+                        Width="35"
+                        Content ="{Binding CurrentCodeQuery.Conditional}"
+                        Command="{Binding ToggleConditionalCommand}" />
 
-                <views:QuerySelectorView Grid.Column="3" />
+                <views:QuerySelectorView Grid.Column="3">
+                    <views:QuerySelectorView.Style>
+                        <Style TargetType="{x:Type views:QuerySelectorView}">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding CurrentCodeQuery.Conditional, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:QueryConditionals.None}}"
+                                    Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </views:QuerySelectorView.Style>
+                </views:QuerySelectorView>
 
             </Grid>
 
             <Button Grid.Column="0"
                         Grid.Row="1" 
                         HorizontalAlignment="Center"
-                        Content="Save Query"
-                        Command="{Binding SelectPageRangeCommand}" />
+                        Content="Save Query" />
 
             <Button Grid.Column="2"
                         Grid.Row="1"
                         HorizontalAlignment="Center"
-                        Content="Run Query"
-                        Command="{Binding RunQueryCommand}" />
+                        Content="Run Query" />
 
             <!--Horizontal Dividing Line-->
             <Rectangle Grid.Column="0"

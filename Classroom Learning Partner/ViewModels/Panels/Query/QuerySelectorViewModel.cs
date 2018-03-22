@@ -35,6 +35,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        public List<string> SavedQueries =>
+            new List<string>
+            {
+                "Q1",
+                "Q2",
+                "Q3"
+            };
+
         public Stages CurrentStage
         {
             get => GetValue<Stages>(CurrentStageProperty);
@@ -61,7 +69,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             AdvanceToConditionStageCommand = new Command(OnAdvanceToConditionStageCommandExecute);
-            SelectConditionOrQueryCommand = new Command<IQueryPart>(OnSelectConditionOrQueryCommandExecute);
+            AdvanceToSavedQueriesStageCommand = new Command(OnAdvanceToSavedQueriesStageCommandExecute);
+            SelectSavedQueryCommand = new Command<string>(OnSelectSavedQueryCommandExecute);
+            SelectConditionCommand = new Command<IQueryPart>(OnSelectConditionCommandExecute);
+            FinalizeConstraintsCommand = new Command(OnFinalizeConstraintsCommandExecute);
 
 
             ClearStageCommand = new Command(OnClearStageCommandExecute);
@@ -74,15 +85,38 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentStage = Stages.Condition1;
         }
 
-        public Command<IQueryPart> SelectConditionOrQueryCommand { get; private set; }
+        public Command AdvanceToSavedQueriesStageCommand { get; private set; }
 
-        private void OnSelectConditionOrQueryCommandExecute(IQueryPart queryPart)
+        private void OnAdvanceToSavedQueriesStageCommandExecute()
         {
-            SelectedIQueryPart = queryPart;
+            CurrentStage = Stages.Query2;
+        }
+
+        public Command<string> SelectSavedQueryCommand { get; private set; }
+
+        private void OnSelectSavedQueryCommandExecute(string queryName)
+        {
+            var temp = new AnalysisCodeQuery();
+            temp.QueryName = queryName;
+            SelectedIQueryPart = temp;
             CurrentStage = Stages.Button3;
         }
 
+        public Command<IQueryPart> SelectConditionCommand { get; private set; }
 
+        private void OnSelectConditionCommandExecute(IQueryPart queryPart)
+        {
+            SelectedIQueryPart = queryPart;
+            CurrentStage = Stages.Constraint2;
+        }
+
+        public Command FinalizeConstraintsCommand { get; private set; }
+
+        private void OnFinalizeConstraintsCommandExecute()
+        {
+            (SelectedIQueryPart as QueryCondition).Hack = "Blah";
+            CurrentStage = Stages.Button3;
+        }
 
         public Command ClearStageCommand { get; private set; }
 

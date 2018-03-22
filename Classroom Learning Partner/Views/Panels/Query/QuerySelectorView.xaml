@@ -107,7 +107,7 @@
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand
-                                                Command="{Binding DataContext.SelectConditionOrQueryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
+                                                Command="{Binding DataContext.SelectConditionCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
                                                 PassEventArgsToCommand="False"
                                                 CommandParameter="{Binding}" />
                                         </i:EventTrigger>
@@ -141,9 +141,193 @@
             </Grid>
 
 
-            <!--Saved Queries Stage (2)-->
+            <!--Saved Queries Stage (2) TODO-->
+            <Grid Background="Transparent">
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility"
+                                Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding CurrentStage, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Stages.Query2}}"
+                                Value="True">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Saved Queries:"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch" />
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding SavedQueries}"
+                         SelectionMode="Single">
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid HorizontalAlignment="Stretch">
+
+                                <TextBlock Text="{Binding}"
+                                           HorizontalAlignment="Stretch"
+                                           VerticalAlignment="Stretch" />
+
+                                <Rectangle
+                                    StrokeThickness="0"
+                                    HorizontalAlignment="Stretch"
+                                    Fill="Transparent">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="MouseUp">
+                                            <catel:EventToCommand
+                                                Command="{Binding DataContext.SelectSavedQueryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Rectangle>
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+
+                <TextBlock Grid.Row="2"
+                           Text="Clear"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch" />
+
+                <Rectangle Grid.Row="2"
+                           StrokeThickness="0"
+                           HorizontalAlignment="Stretch"
+                           Fill="Transparent">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseUp">
+                            <catel:EventToCommand
+                                Command="{Binding ClearStageCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Rectangle>
+
+            </Grid>
 
             <!--Constraint Stage (2)-->
+            <Grid Background="Transparent">
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility"
+                                Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding CurrentStage, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Stages.Constraint2}}"
+                                Value="True">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ItemsControl Grid.Row="0"
+                              Grid.Column="0"
+                              Grid.ColumnSpan="2"
+                              ItemsSource="{Binding SelectedIQueryPart.Constraints}">
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           FontSize="10"
+                                           Text="{Binding ConstraintLabel}" />
+
+                                <ComboBox Name="ConstraintValuePickerBox"
+                                          Grid.Column="1"
+                                          ItemsSource="{Binding PossibleConstraintValues}"
+                                          SelectedItem="{Binding ConstraintValue}"
+                                          IsEditable="False"
+                                          IsReadOnly="True"
+                                          IsSynchronizedWithCurrentItem="True"
+                                          SelectedIndex="0" />
+
+                            </Grid>
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+                
+                <Button Grid.Column="0"
+                        Grid.Row="1"
+                        HorizontalAlignment="Left"
+                        Content="Cancel"
+                        Command="{Binding ClearStageCommand}" />
+
+                <Button Grid.Column="1"
+                        Grid.Row="1"
+                        HorizontalAlignment="Right"
+                        Content="Done"
+                        Command="{Binding FinalizeConstraintsCommand}" />
+            </Grid>
+
+            <!--Button Stage (3)-->
+            <Grid Background="Transparent">
+                <Grid.Style>
+                    <Style TargetType="{x:Type Grid}">
+                        <Setter Property="Visibility"
+                                Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding CurrentStage, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Stages.Button3}}"
+                                Value="True">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+
+                <TextBlock Text="{Binding SelectedIQueryPart.LongFormattedValue}"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch" />
+
+                <Rectangle StrokeThickness="0"
+                           HorizontalAlignment="Stretch"
+                           Fill="Transparent">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseUp">
+                            <catel:EventToCommand
+                                Command="{Binding AdvanceToConditionStageCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Rectangle>
+
+            </Grid>
 
         </Grid>
 

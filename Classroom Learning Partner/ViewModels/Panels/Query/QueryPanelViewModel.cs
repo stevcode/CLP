@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             InitializeCommands();
 
-            Conditions.Add(new QueryConditionViewModel());
+            CurrentCodeQuery = new AnalysisCodeQuery();
         }
 
         #region Events
@@ -52,23 +52,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override double InitialLength => 500.0;
 
-        /// <summary>String to run the query on.</summary>
-        public ObservableCollection<QueryConditionViewModel> Conditions
+        /// <summary></summary>
+        public AnalysisCodeQuery CurrentCodeQuery
         {
-            get => GetValue<ObservableCollection<QueryConditionViewModel>>(ConditionsProperty);
-            set => SetValue(ConditionsProperty, value);
+            get => GetValue<AnalysisCodeQuery>(CurrentCodeQueryProperty);
+            set => SetValue(CurrentCodeQueryProperty, value);
         }
 
-        public static readonly PropertyData ConditionsProperty = RegisterProperty(nameof(Conditions), typeof(ObservableCollection<QueryConditionViewModel>), () => new ObservableCollection<QueryConditionViewModel>());
-
-        /// <summary>String to run the query on.</summary>
-        public string QueryString
-        {
-            get => GetValue<string>(QueryStringProperty);
-            set => SetValue(QueryStringProperty, value);
-        }
-
-        public static readonly PropertyData QueryStringProperty = RegisterProperty(nameof(QueryString), typeof(string), string.Empty);
+        public static readonly PropertyData CurrentCodeQueryProperty = RegisterProperty(nameof(CurrentCodeQuery), typeof(AnalysisCodeQuery), null);
 
         /// <summary>Temp results of query.</summary>
         public ObservableCollection<QueryService.QueryResult> QueryResults
@@ -120,32 +111,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
-            AddANDConditionCommand = new Command(OnAddANDConditionCommandExecute);
+            ToggleConditionalCommand = new Command(OnToggleConditionalCommandExecute);
 
-            SelectCacheCommand = new Command(OnSelectCacheCommandExecute);
             SelectPageRangeCommand = new Command(OnSelectPageRangeCommandExecute);
-            SelectStudentsCommand = new Command(OnSelectStudentsCommandExecute);
 
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
-            ClearQueryCommand = new Command(OnClearQueryCommandExecute);
             ShowReportsCommand = new TaskCommand(OnShowReportsCommandExecuteAsync);
             SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
         }
 
-        /// <summary>Selects which cache to run the query on.</summary>
-        public Command AddANDConditionCommand { get; private set; }
+        public Command ToggleConditionalCommand { get; private set; }
 
-        private void OnAddANDConditionCommandExecute()
+        private void OnToggleConditionalCommandExecute()
         {
-            Conditions.Add(new QueryConditionViewModel());
-        }
-
-        /// <summary>Selects which cache to run the query on.</summary>
-        public Command SelectCacheCommand { get; private set; }
-
-        private void OnSelectCacheCommandExecute()
-        {
-            // TODO
+            switch (CurrentCodeQuery.Conditional)
+            {
+                case QueryConditionals.None:
+                    CurrentCodeQuery.Conditional = QueryConditionals.And;
+                    break;
+                case QueryConditionals.And:
+                    CurrentCodeQuery.Conditional = QueryConditionals.Or;
+                    break;
+                case QueryConditionals.Or:
+                    CurrentCodeQuery.Conditional = QueryConditionals.None;
+                    break;
+            }
         }
 
         /// <summary>Selects which pages to run the query on.</summary>
@@ -179,50 +169,30 @@ namespace Classroom_Learning_Partner.ViewModels
             _queryService.PageNumbersToQuery = pageNumbersToOpen;
         }
 
-        /// <summary>Selects which students to run the query on.</summary>
-        public Command SelectStudentsCommand { get; private set; }
-
-        private void OnSelectStudentsCommandExecute()
-        {
-
-        }
-
         /// <summary>Runs a query using the current QueryString.</summary>
         public Command RunQueryCommand { get; private set; }
 
         private void OnRunQueryCommandExecute()
         {
-            QueryResults.Clear();
+            //QueryResults.Clear();
 
-            List<QueryService.QueryResult> queryResults;
-            if (!string.IsNullOrWhiteSpace(QueryString))
-            {
-                queryResults = _queryService.QueryByString(QueryString);
-            }
-            else
-            {
-                var conditions = Conditions.Select(vm => vm.SelectedAnalysisCode).ToList();
-                queryResults = _queryService.QueryByConditions(conditions);
-            }
+            //List<QueryService.QueryResult> queryResults;
+            //if (!string.IsNullOrWhiteSpace(QueryString))
+            //{
+            //    queryResults = _queryService.QueryByString(QueryString);
+            //}
+            //else
+            //{
+            //    var conditions = Conditions.Select(vm => vm.SelectedAnalysisCode).ToList();
+            //    queryResults = _queryService.QueryByConditions(conditions);
+            //}
 
-            queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
-            if (!queryResults.Any())
-            {
-                MessageBox.Show("No results found.");
-            }
-            QueryResults = queryResults.ToObservableCollection();
-        }
-
-        /// <summary>Clears the current query.</summary>
-        public Command ClearQueryCommand { get; private set; }
-
-        private void OnClearQueryCommandExecute()
-        {
-            QueryResults.Clear();
-
-            Conditions.Clear();
-            Conditions.Add(new QueryConditionViewModel());
-            QueryString = string.Empty;
+            //queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
+            //if (!queryResults.Any())
+            //{
+            //    MessageBox.Show("No results found.");
+            //}
+            //QueryResults = queryResults.ToObservableCollection();
         }
 
         /// <summary>Runs a query using the current QueryString.</summary>
