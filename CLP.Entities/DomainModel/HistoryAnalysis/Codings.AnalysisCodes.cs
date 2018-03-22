@@ -5,7 +5,6 @@ namespace CLP.Entities
 {
     public static partial class Codings
     {
-
         #region Generic
 
         public const string NOT_APPLICABLE = "NA";
@@ -28,7 +27,7 @@ namespace CLP.Entities
 
         #region Analysis Aliases
 
-        public const string ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_1_STEP = "MR";
+        public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP = "MR";
         public const string ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_2_STEP = "MR2STEP";
         public const string ANALYSIS_ALIAS_CHANGED_ANSWER_AFTER_REPRESENTATION = "CAAR";
         public const string ANALYSIS_ALIAS_ANSWER_BEFORE_REPRESENTATION = "ABR";
@@ -36,7 +35,7 @@ namespace CLP.Entities
         public const string ANALYSIS_ALIAS_REPRESENTATIONS_USED = "REPS_USED";
         public const string ANALYSIS_ALIAS_ARRAY_SKIP_COUNTING = "SKIP";
         public const string ANALYSIS_ALIAS_FILL_IN_ANSWER_CORRECTNESS = "ANS";
-        public const string ANALYSIS_ALIAS_PROBLEM_TYPE = "PROBLEM";
+        public const string ANALYSIS_SHORT_NAME_PROBLEM_TYPE = "PROBLEM";
 
         #endregion // Analysis Labels
 
@@ -75,12 +74,12 @@ namespace CLP.Entities
 
         #region Methods
 
-        public static string AnalysisLabelToAlias(string label)
+        public static string AnalysisLabelToShortName(string label)
         {
             switch (label)
             {
                 case ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP:
-                    return ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_1_STEP;
+                    return ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP;
                 case ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP:
                     return ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_2_STEP;
                 case ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION:
@@ -96,7 +95,7 @@ namespace CLP.Entities
                 case ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS:
                     return ANALYSIS_ALIAS_FILL_IN_ANSWER_CORRECTNESS;
                 case ANALYSIS_LABEL_PROBLEM_TYPE:
-                    return ANALYSIS_ALIAS_PROBLEM_TYPE;
+                    return ANALYSIS_SHORT_NAME_PROBLEM_TYPE;
             }
 
             return "No matching Alias";
@@ -106,7 +105,7 @@ namespace CLP.Entities
         {
             switch (alias)
             {
-                case ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_1_STEP:
+                case ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP:
                     return ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP;
                 case ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_2_STEP:
                     return ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP;
@@ -122,7 +121,7 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_ARRAY_SKIP_COUNTING;
                 case ANALYSIS_ALIAS_FILL_IN_ANSWER_CORRECTNESS:
                     return ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS;
-                case ANALYSIS_ALIAS_PROBLEM_TYPE:
+                case ANALYSIS_SHORT_NAME_PROBLEM_TYPE:
                     return ANALYSIS_LABEL_PROBLEM_TYPE;
             }
 
@@ -150,12 +149,11 @@ namespace CLP.Entities
         public static List<string> GetAllAnalysisAliases()
         {
             var labels = GetAllAnalysisLabels();
-            var aliases = labels.Select(AnalysisLabelToAlias).ToList();
+            var aliases = labels.Select(AnalysisLabelToShortName).ToList();
 
             return aliases;
         }
 
         #endregion // Methods
-
     }
 }

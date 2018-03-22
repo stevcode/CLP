@@ -52,7 +52,7 @@ namespace CLP.Entities
         public AnalysisCode(string analysisLabel)
         {
             AnalysisLabel = analysisLabel;
-            Alias = Codings.AnalysisLabelToAlias(analysisLabel);
+            Alias = Codings.AnalysisLabelToShortName(analysisLabel);
         }
 
         #endregion // Constructors

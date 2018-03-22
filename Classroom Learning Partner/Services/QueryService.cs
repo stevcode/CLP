@@ -247,7 +247,7 @@ namespace Classroom_Learning_Partner.Services
             return queryResults;
         }
 
-        public List<QueryResult> QueryByConditions(List<ConditionScaffold> conditions)
+        public List<QueryResult> QueryByConditions(List<QueryCondition> conditions)
         {
             if (NotebookToQuery == null ||
                 !conditions.Any())
@@ -392,7 +392,7 @@ namespace Classroom_Learning_Partner.Services
                 var analysisLabel = (string)queryCodeXElement.Element("AnalysisLabel");
                 var analysisCode = new AnalysisCode(analysisLabel);
 
-                var constraintValueXElements = queryCodeXElement.ElementAnyNS("ConstraintValues").Elements().ToList();
+                var constraintValueXElements = queryCodeXElement.ElementAnyNS("PossibleConstraintValues").Elements().ToList();
                 foreach (var constraintValueXElement in constraintValueXElements)
                 {
                     var constraintLabel = (string)constraintValueXElement.ElementAnyNS("ConstraintLabel");
@@ -439,18 +439,18 @@ namespace Classroom_Learning_Partner.Services
             return query;
         }
 
-        private Query ParseCondition(ConditionScaffold condition)
+        private Query ParseCondition(QueryCondition queryCondition)
         {
-            if (condition == null)
+            if (queryCondition == null)
             {
                 return null;
             }
 
-            var analysisLabel = condition.AnalysisCodeLabel;
+            var analysisLabel = queryCondition.AnalysisCodeLabel;
             var query = GenerateQuery(analysisLabel);
-            foreach (var conditionConstraint in condition.Constraints.Where(c => c.IsQueryable))
+            foreach (var conditionConstraint in queryCondition.Constraints.Where(c => c.IsQueryable))
             {
-                query.ConstraintValues.Add(conditionConstraint.ConstraintName, conditionConstraint.SelectedConstraintValue);
+                query.ConstraintValues.Add(conditionConstraint.ConstraintLabel, conditionConstraint.ConstraintValue);
             }
 
             return query;

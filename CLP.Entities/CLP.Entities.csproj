@@ -92,11 +92,15 @@
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.AnswerRepresentationSequence.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.RepresentationsUsed.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\ConditionScaffold.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\Query\AnalysisCodeQuery.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\Query\QueryCondition.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Codings.AnalysisCodes.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\IAnalysisCode.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\PatternPoint.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\Query\IQueryPart.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\Query\QueryConditionals.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\Query\QueryConstraint.cs" />
     <Compile Include="DomainModel\History\FinalAnswerHistoryActions\FillInAnswerChangedHistoryAction.cs" />
     <Compile Include="DomainModel\History\IStrokesOnPageChangedHistoryAction.cs" />
     <Compile Include="DomainModel\Logging\CLogger.cs" />

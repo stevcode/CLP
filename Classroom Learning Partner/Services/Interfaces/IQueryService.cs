@@ -12,7 +12,7 @@ namespace Classroom_Learning_Partner.Services
 
         void LoadQueryablePages();
         List<QueryService.QueryResult> QueryByString(string queryString);
-        List<QueryService.QueryResult> QueryByConditions(List<ConditionScaffold> conditions);
+        List<QueryService.QueryResult> QueryByConditions(List<QueryCondition> conditions);
         QueryService.Report GatherReports();
     }
 }
