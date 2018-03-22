@@ -2,6 +2,7 @@
 {
     public interface IQueryPart
     {
-        string DisplayText { get; }
+        string LongFormattedValue { get; }
+        string ButtonFormattedValue { get; }
     }
 }

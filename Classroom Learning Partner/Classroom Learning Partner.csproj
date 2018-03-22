@@ -297,6 +297,7 @@
     <Compile Include="ViewModels\Panels\AuthoringPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\Query\QueryConditionViewModel.cs" />
     <Compile Include="ViewModels\Panels\Query\QueryPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\Query\QuerySelectorViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
@@ -377,6 +378,9 @@
     </Compile>
     <Compile Include="Views\Panels\Query\QueryPanelView.xaml.cs">
       <DependentUpon>QueryPanelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\Query\QuerySelectorView.xaml.cs">
+      <DependentUpon>QuerySelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PrimaryReportView.xaml.cs">
       <DependentUpon>PrimaryReportView.xaml</DependentUpon>
@@ -672,6 +676,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\Query\QueryPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\Query\QuerySelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

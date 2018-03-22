@@ -58,18 +58,46 @@ namespace CLP.Entities
 
         #region IQueryPart Implementation
 
-        public string DisplayText
+        public string LongFormattedValue
         {
             get
             {
-                var firstConditionName = "UNSET";
+                var firstConditionName = string.Empty;
                 if (FirstCondition is AnalysisCodeQuery codeQuery)
                 {
                     firstConditionName = codeQuery.QueryName;
                 }
+                else if (FirstCondition is QueryCondition queryCondition)
+                {
+                    firstConditionName = queryCondition.LongFormattedValue;
+                }
 
+                var secondConditionName = string.Empty;
+                if (SecondCondition is AnalysisCodeQuery codeQuery2)
+                {
+                    secondConditionName = codeQuery2.QueryName;
+                }
+                else if (SecondCondition is QueryCondition queryCondition2)
+                {
+                    secondConditionName = queryCondition2.LongFormattedValue;
+                }
 
-                return firstConditionName;
+                var result = firstConditionName;
+                if (Conditional != QueryConditionals.None)
+                {
+                    var conditional = Conditional.ToString();
+                    result = $"{firstConditionName} {conditional} {secondConditionName}";
+                }
+
+                return result;
+            }
+        }
+
+        public string ButtonFormattedValue
+        {
+            get
+            {
+                return QueryName;
             }
         }
 

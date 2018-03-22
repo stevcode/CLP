@@ -392,7 +392,7 @@ namespace Classroom_Learning_Partner.Services
                 var analysisLabel = (string)queryCodeXElement.Element("AnalysisLabel");
                 var analysisCode = new AnalysisCode(analysisLabel);
 
-                var constraintValueXElements = queryCodeXElement.ElementAnyNS("PossibleConstraintValues").Elements().ToList();
+                var constraintValueXElements = queryCodeXElement.ElementAnyNS("ConstraintValues").Elements().ToList();
                 foreach (var constraintValueXElement in constraintValueXElements)
                 {
                     var constraintLabel = (string)constraintValueXElement.ElementAnyNS("ConstraintLabel");

@@ -7,7 +7,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class QueryCondition : ASerializableBase
+    public class QueryCondition : ASerializableBase, IQueryPart
     {
         #region Constructors
 
@@ -61,8 +61,6 @@ namespace CLP.Entities
 
         #region Methods
 
-        #region Methods
-
         public void AddConstraint(string constraintLabel, string constraintValue = Codings.CONSTRAINT_VALUE_ANY)
         {
             Constraints.Add(new QueryConstraint(constraintLabel, constraintValue));
@@ -70,7 +68,33 @@ namespace CLP.Entities
 
         #endregion // Methods
 
-        #endregion // Methods
+        #region IQueryPart Implementation
+
+        public string LongFormattedValue
+        {
+            get
+            {
+                var overridingConstraint = Constraints.FirstOrDefault(c => c.IsOverridingDisplayName);
+                var mainName = overridingConstraint == null ? AnalysisCodeShortName : overridingConstraint.ConstraintValue;
+
+                var normalConstraints = Constraints.Where(c => !c.IsOverridingDisplayName).ToList();
+                return $"{mainName}: {string.Join(" - ", normalConstraints)}";
+            }
+        }
+
+        public string ButtonFormattedValue
+        {
+            get
+            {
+                var overridingConstraint = Constraints.FirstOrDefault(c => c.IsOverridingDisplayName);
+                var mainName = overridingConstraint == null ? AnalysisCodeShortName : overridingConstraint.ConstraintValue;
+
+                var normalConstraints = Constraints.Where(c => !c.IsOverridingDisplayName).ToList();
+                return $"{mainName}\n{string.Join("\n", normalConstraints)}";
+            }
+        }
+
+        #endregion // IQueryPart Implementation
 
         #region Static Methods
 

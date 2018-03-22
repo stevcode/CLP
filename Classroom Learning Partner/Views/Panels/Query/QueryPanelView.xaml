@@ -40,13 +40,16 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Column="0" 
-                           Content="QUERY:" />
+                       VerticalAlignment="Center"
+                       VerticalContentAlignment="Center"
+                       Content="QUERY:" />
 
-                <ComboBox Grid.Column="1" />
+                <views:QuerySelectorView Grid.Column="1" />
 
-                <Button Grid.Column="2" />
+                <Button Grid.Column="2"
+                        Width="25" />
 
-                <ComboBox Grid.Column="3" />
+                <views:QuerySelectorView Grid.Column="3" />
 
             </Grid>
 

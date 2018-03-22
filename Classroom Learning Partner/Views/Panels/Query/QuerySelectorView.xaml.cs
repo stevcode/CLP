@@ -1,8 +1,8 @@
 ﻿namespace Classroom_Learning_Partner.Views
 {
-    public partial class QueryConditionView
+    public partial class QuerySelectorView
     {
-        public QueryConditionView()
+        public QuerySelectorView()
         {
             InitializeComponent();
         }
