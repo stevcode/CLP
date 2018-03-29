@@ -24,6 +24,14 @@ namespace CLP.Entities
         public static readonly PropertyData SavedQueriesProperty =
             RegisterProperty(nameof(SavedQueries), typeof(ObservableCollection<AnalysisCodeQuery>), () => new ObservableCollection<AnalysisCodeQuery>());
 
+        public int AutoQueryCount
+        {
+            get => GetValue<int>(AutoQueryCountProperty);
+            set => SetValue(AutoQueryCountProperty, value);
+        }
+
+        public static readonly PropertyData AutoQueryCountProperty = RegisterProperty(nameof(AutoQueryCount), typeof(int), 1);
+
         #endregion // Properties
 
         #region Storage

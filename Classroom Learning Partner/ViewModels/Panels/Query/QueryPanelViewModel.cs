@@ -202,7 +202,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (string.IsNullOrWhiteSpace(CurrentCodeQuery.QueryName))
             {
-                var numberOfQueries = SavedQueries.SavedQueries.Count + 1;
+                var numberOfQueries = SavedQueries.AutoQueryCount;
+                SavedQueries.AutoQueryCount++;
                 CurrentCodeQuery.QueryName = $"Q{numberOfQueries}";
             }
 
