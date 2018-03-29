@@ -51,7 +51,7 @@
 
                         <ComboBox Name="ConstraintValuePickerBox"
                                   Grid.Column="1"
-                                  ItemsSource="{Binding ConstraintValues}"
+                                  ItemsSource="{Binding Constraints}"
                                   SelectedItem="{Binding SelectedConstraintValue}"
                                   IsEditable="False"
                                   IsReadOnly="True"

@@ -144,6 +144,8 @@ namespace Classroom_Learning_Partner.Services
 
         public List<string> StudentIDsToQuery { get; set; }
 
+        public Queries SavedQueries { get; set; }
+
         public List<QueryablePage> QueryablePages { get; set; }
 
         public List<QueryResult> QueryResults { get; set; }
@@ -214,6 +216,13 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public void LoadSavedQueries()
+        {
+            var cacheFilePath = NotebookToQuery.ContainerZipFilePath;
+            SavedQueries = DataService.LoadQueriesFromCLPContainer(cacheFilePath) ?? new Queries();
+            SavedQueries.ContainerZipFilePath = NotebookToQuery.ContainerZipFilePath;
+        }
+
         public List<QueryResult> QueryByString(string queryString)
         {
             var queryResults = new List<QueryResult>();
@@ -239,7 +248,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var queryResult = new QueryResult(queryablePage);
-                queryResult.MatchingQueryCodes = queryablePage.AllQueryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
+                queryResult.MatchingQueryCodes = queryablePage.AllQueryCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).ToList();
                 queryResults.Add(queryResult);
             }
 
@@ -247,7 +256,7 @@ namespace Classroom_Learning_Partner.Services
             return queryResults;
         }
 
-        public List<QueryResult> QueryByConditions(List<QueryCondition> conditions)
+        public List<QueryResult> QueryByConditions(List<AnalysisCode> conditions)
         {
             if (NotebookToQuery == null ||
                 !conditions.Any())
@@ -267,7 +276,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var queryResult = new QueryResult(queryablePage);
-                queryResult.MatchingQueryCodes = queryablePage.AllQueryCodes.Where(c => queries.Any(q => q.QueryLabel == c.AnalysisLabel)).ToList();
+                queryResult.MatchingQueryCodes = queryablePage.AllQueryCodes.Where(c => queries.Any(q => q.QueryLabel == c.AnalysisCodeLabel)).ToList();
                 queryResults.Add(queryResult);
             }
 
@@ -354,7 +363,7 @@ namespace Classroom_Learning_Partner.Services
                 return false;
             }
 
-            var matchingCodes = queryablePage.AllQueryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).ToList();
+            var matchingCodes = queryablePage.AllQueryCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).ToList();
             if (!query.ConstraintValues.Keys.Any())
             {
                 return matchingCodes.Any();
@@ -362,7 +371,7 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var constraint in query.ConstraintValues.Keys)
             {
-                var constraintValues = queryablePage.AllQueryCodes.Where(c => c.AnalysisLabel == query.QueryLabel).SelectMany(c => c.ConstraintValues).ToList();
+                var constraintValues = queryablePage.AllQueryCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).SelectMany(c => c.Constraints).ToList();
                 var matchingConstraintValues = constraintValues.Where(c => c.ConstraintLabel == constraint).ToList();
                 if (!matchingConstraintValues.Any())
                 {
@@ -439,16 +448,16 @@ namespace Classroom_Learning_Partner.Services
             return query;
         }
 
-        private Query ParseCondition(QueryCondition queryCondition)
+        private Query ParseCondition(AnalysisCode analysisCode)
         {
-            if (queryCondition == null)
+            if (analysisCode == null)
             {
                 return null;
             }
 
-            var analysisLabel = queryCondition.AnalysisCodeLabel;
+            var analysisLabel = analysisCode.AnalysisCodeLabel;
             var query = GenerateQuery(analysisLabel);
-            foreach (var conditionConstraint in queryCondition.Constraints.Where(c => c.IsQueryable))
+            foreach (var conditionConstraint in analysisCode.Constraints.Where(c => c.IsQueryable))
             {
                 query.ConstraintValues.Add(conditionConstraint.ConstraintLabel, conditionConstraint.ConstraintValue);
             }

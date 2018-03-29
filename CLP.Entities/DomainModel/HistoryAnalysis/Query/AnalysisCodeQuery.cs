@@ -68,7 +68,7 @@ namespace CLP.Entities
                 //{
                 //    firstConditionName = codeQuery.QueryName;
                 //}
-                //else if (FirstCondition is QueryCondition queryCondition)
+                //else if (FirstCondition is AnalysisCode queryCondition)
                 //{
                 //    firstConditionName = queryCondition.LongFormattedValue;
                 //}
@@ -78,7 +78,7 @@ namespace CLP.Entities
                 //{
                 //    secondConditionName = codeQuery2.QueryName;
                 //}
-                //else if (SecondCondition is QueryCondition queryCondition2)
+                //else if (SecondCondition is AnalysisCode queryCondition2)
                 //{
                 //    secondConditionName = queryCondition2.LongFormattedValue;
                 //}

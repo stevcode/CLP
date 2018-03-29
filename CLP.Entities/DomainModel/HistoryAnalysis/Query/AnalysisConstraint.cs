@@ -7,15 +7,16 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class QueryConstraint : ASerializableBase
+    public class AnalysisConstraint : ASerializableBase
     {
         #region Constructors
 
-        public QueryConstraint() { }
+        public AnalysisConstraint() { }
 
-        public QueryConstraint(string constraintLabel, string constraintValue = Codings.CONSTRAINT_VALUE_ANY)
+        public AnalysisConstraint(string constraintLabel, string constraintValue = Codings.CONSTRAINT_VALUE_ANY)
         {
             ConstraintLabel = constraintLabel;
+            ConstraintValue = constraintValue;
         }
 
         #endregion // Constructors

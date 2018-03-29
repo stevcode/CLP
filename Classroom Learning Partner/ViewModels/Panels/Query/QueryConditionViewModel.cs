@@ -14,25 +14,26 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         public QueryConditionViewModel()
         {
-            AvailableAnalysisCodes = QueryCondition.GenerateAvailableQueryConditions();
+            AvailableAnalysisCodes = AnalysisCode.GenerateAvailableQueryConditions();
         }
 
         /// <summary>String to run the query on.</summary>
-        public ObservableCollection<QueryCondition> AvailableAnalysisCodes
+        public ObservableCollection<IAnalysisCode> AvailableAnalysisCodes
         {
-            get => GetValue<ObservableCollection<QueryCondition>>(AvailableAnalysisCodesProperty);
+            get => GetValue<ObservableCollection<IAnalysisCode>>(AvailableAnalysisCodesProperty);
             set => SetValue(AvailableAnalysisCodesProperty, value);
         }
 
-        public static readonly PropertyData AvailableAnalysisCodesProperty = RegisterProperty(nameof(AvailableAnalysisCodes), typeof(ObservableCollection<QueryCondition>), () => new ObservableCollection<QueryCondition>());
+        public static readonly PropertyData AvailableAnalysisCodesProperty =
+            RegisterProperty(nameof(AvailableAnalysisCodes), typeof(ObservableCollection<IAnalysisCode>), () => new ObservableCollection<IAnalysisCode>());
 
         /// <summary>String to run the query on.</summary>
-        public QueryCondition SelectedAnalysisCode
+        public IAnalysisCode SelectedAnalysisCode
         {
-            get => GetValue<QueryCondition>(SelectedAnalysisCodeProperty);
+            get => GetValue<IAnalysisCode>(SelectedAnalysisCodeProperty);
             set => SetValue(SelectedAnalysisCodeProperty, value);
         }
 
-        public static readonly PropertyData SelectedAnalysisCodeProperty = RegisterProperty(nameof(SelectedAnalysisCode), typeof(QueryCondition), null);
+        public static readonly PropertyData SelectedAnalysisCodeProperty = RegisterProperty(nameof(SelectedAnalysisCode), typeof(IAnalysisCode), null);
     }
 }

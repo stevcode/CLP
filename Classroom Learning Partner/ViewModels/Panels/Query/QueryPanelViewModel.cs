@@ -52,7 +52,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public override double InitialLength => 500.0;
 
-        /// <summary></summary>
         public AnalysisCodeQuery CurrentCodeQuery
         {
             get => GetValue<AnalysisCodeQuery>(CurrentCodeQueryProperty);
@@ -60,6 +59,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentCodeQueryProperty = RegisterProperty(nameof(CurrentCodeQuery), typeof(AnalysisCodeQuery), null);
+
+        public Queries SavedQueries
+        {
+            get => GetValue<Queries>(SavedQueriesProperty);
+            set => SetValue(SavedQueriesProperty, value);
+        }
+
+        public static readonly PropertyData SavedQueriesProperty = RegisterProperty(nameof(SavedQueries), typeof(Queries), null);
 
         /// <summary>Temp results of query.</summary>
         public ObservableCollection<QueryService.QueryResult> QueryResults
@@ -88,6 +95,9 @@ namespace Classroom_Learning_Partner.ViewModels
             _queryService.LoadQueryablePages();
             SetPageRangeToAllPages();
             _queryService.StudentIDsToQuery = _queryService.RosterToQuery.ListOfStudents.Select(s => s.ID).ToList();
+
+            _queryService.LoadSavedQueries();
+            SavedQueries = _queryService.SavedQueries;
         }
 
         private void SetPageRangeToAllPages()
@@ -115,6 +125,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SelectPageRangeCommand = new Command(OnSelectPageRangeCommandExecute);
 
+
+            SaveQueryCommand = new Command(OnSaveQueryCommandExecute);
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
             ShowReportsCommand = new TaskCommand(OnShowReportsCommandExecuteAsync);
             SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
@@ -167,6 +179,24 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _queryService.PageNumbersToQuery = pageNumbersToOpen;
+        }
+
+        public Command SaveQueryCommand { get; private set; }
+
+        private void OnSaveQueryCommandExecute()
+        {
+            if (string.IsNullOrWhiteSpace(CurrentCodeQuery.QueryName))
+            {
+                var numberOfQueries = SavedQueries.SavedQueries.Count + 1;
+                CurrentCodeQuery.QueryName = $"Q{numberOfQueries}";
+            }
+
+            if (!SavedQueries.SavedQueries.Contains(CurrentCodeQuery))
+            {
+                SavedQueries.SavedQueries.Add(CurrentCodeQuery);
+            }
+
+            DataService.SaveQueries(SavedQueries);
         }
 
         /// <summary>Runs a query using the current QueryString.</summary>

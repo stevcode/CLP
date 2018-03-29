@@ -9,10 +9,12 @@ namespace Classroom_Learning_Partner.Services
         Notebook NotebookToQuery { get; set; }
         List<int> PageNumbersToQuery { get; set; }
         List<string> StudentIDsToQuery { get; set; }
+        Queries SavedQueries { get; set; }
 
         void LoadQueryablePages();
+        void LoadSavedQueries();
         List<QueryService.QueryResult> QueryByString(string queryString);
-        List<QueryService.QueryResult> QueryByConditions(List<QueryCondition> conditions);
+        List<QueryService.QueryResult> QueryByConditions(List<AnalysisCode> conditions);
         QueryService.Report GatherReports();
     }
 }

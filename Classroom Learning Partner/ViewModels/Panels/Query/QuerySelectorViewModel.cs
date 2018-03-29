@@ -20,6 +20,12 @@ namespace Classroom_Learning_Partner.ViewModels
         Button3
     }
 
+    public enum ConditionPlaces
+    {
+        First,
+        Second
+    }
+
     public class QuerySelectorViewModel : ViewModelBase
     {
         private readonly IQueryService _queryService;
@@ -51,7 +57,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentStageProperty = RegisterProperty(nameof(CurrentStage), typeof(Stages), Stages.Prompt0);
 
-        /// <summary></summary>
+        public ConditionPlaces CurrentConditionPlace
+        {
+            get => GetValue<ConditionPlaces>(CurrentConditionPlaceProperty);
+            set => SetValue(CurrentConditionPlaceProperty, value);
+        }
+
+        public static readonly PropertyData CurrentConditionPlaceProperty = RegisterProperty(nameof(CurrentConditionPlace), typeof(ConditionPlaces), ConditionPlaces.First);
+
         public IQueryPart SelectedIQueryPart
         {
             get => GetValue<IQueryPart>(SelectedIQueryPartProperty);
@@ -60,7 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SelectedIQueryPartProperty = RegisterProperty(nameof(SelectedIQueryPart), typeof(IQueryPart), null);
 
-        public List<QueryCondition> AvailableConditions => QueryCondition.GenerateAvailableQueryConditions().ToList();
+        public List<IAnalysisCode> AvailableConditions => AnalysisCode.GenerateAvailableQueryConditions().ToList();
 
         #endregion // Bindings
 
@@ -114,7 +127,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnFinalizeConstraintsCommandExecute()
         {
-            (SelectedIQueryPart as QueryCondition).Hack = "Blah";
+            (SelectedIQueryPart as AnalysisCode).Hack = "Blah";
             CurrentStage = Stages.Button3;
         }
 

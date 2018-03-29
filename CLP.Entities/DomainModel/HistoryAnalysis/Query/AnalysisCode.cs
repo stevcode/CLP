@@ -7,13 +7,13 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class QueryCondition : ASerializableBase, IQueryPart
+    public partial class AnalysisCode : ASerializableBase, IAnalysisCode, IQueryPart
     {
         #region Constructors
 
-        public QueryCondition() { }
+        public AnalysisCode() { }
 
-        public QueryCondition(string analysisCodeLabel)
+        public AnalysisCode(string analysisCodeLabel)
         {
             AnalysisCodeLabel = analysisCodeLabel;
         }
@@ -27,6 +27,10 @@ namespace CLP.Entities
             set => RaisePropertyChanged(nameof(LongFormattedValue));
         }
 
+        #endregion // Properties
+
+        #region IAnalysisCode Implementation
+
         public string AnalysisCodeLabel
         {
             get => GetValue<string>(AnalysisCodeLabelProperty);
@@ -35,15 +39,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData AnalysisCodeLabelProperty = RegisterProperty(nameof(AnalysisCodeLabel), typeof(string), string.Empty);
 
-        public List<QueryConstraint> Constraints
+        public ObservableCollection<AnalysisConstraint> Constraints
         {
-            get => GetValue<List<QueryConstraint>>(ConstraintsProperty);
+            get => GetValue<ObservableCollection<AnalysisConstraint>>(ConstraintsProperty);
             set => SetValue(ConstraintsProperty, value);
         }
 
-        public static readonly PropertyData ConstraintsProperty = RegisterProperty(nameof(Constraints), typeof(List<QueryConstraint>), () => new List<QueryConstraint>());
-
-        #region Calculated Properties
+        public static readonly PropertyData ConstraintsProperty =
+            RegisterProperty(nameof(Constraints), typeof(ObservableCollection<AnalysisConstraint>), () => new ObservableCollection<AnalysisConstraint>());
 
         public string AnalysisCodeName => Codings.AnalysisLabelToShortName(AnalysisCodeLabel);
         public string AnalysisCodeShortName => Codings.AnalysisLabelToShortName(AnalysisCodeLabel);
@@ -60,18 +63,12 @@ namespace CLP.Entities
             }
         }
 
-        #endregion // Calculated Properties
-
-        #endregion // Properties
-
-        #region Methods
-
         public void AddConstraint(string constraintLabel, string constraintValue = Codings.CONSTRAINT_VALUE_ANY)
         {
-            Constraints.Add(new QueryConstraint(constraintLabel, constraintValue));
+            Constraints.Add(new AnalysisConstraint(constraintLabel, constraintValue));
         }
 
-        #endregion // Methods
+        #endregion // IAnalysisCode Implementation
 
         #region IQueryPart Implementation
 
@@ -103,29 +100,29 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static ObservableCollection<QueryCondition> GenerateAvailableQueryConditions()
+        public static ObservableCollection<IAnalysisCode> GenerateAvailableQueryConditions()
         {
-            var conditions = new ObservableCollection<QueryCondition>();
+            var conditions = new ObservableCollection<IAnalysisCode>();
 
-            var repsUsed = new QueryCondition(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
+            var repsUsed = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
             repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME);
             repsUsed.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS);
             repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
             conditions.Add(repsUsed);
 
-            var abr = new QueryCondition(Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION);
-            //abr.Constraints.Add(new QueryConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
+            var abr = new AnalysisCode(Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION);
+            //abr.Constraints.Add(new AnalysisConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
             abr.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);
             abr.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
             conditions.Add(abr);
 
-            var raa = new QueryCondition(Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER);
-            //raa.Constraints.Add(new QueryConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
+            var raa = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER);
+            //raa.Constraints.Add(new AnalysisConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
             raa.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);
             raa.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
             conditions.Add(raa);
 
-            var caar = new QueryCondition(Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION);
+            var caar = new AnalysisCode(Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION);
             caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE);
             conditions.Add(caar);
 
