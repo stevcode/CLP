@@ -151,6 +151,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnToggleConditionalCommandExecute()
         {
+            if (!string.IsNullOrWhiteSpace(CurrentCodeQuery.QueryName))
+            {
+                return;
+            }
+
             switch (CurrentCodeQuery.Conditional)
             {
                 case QueryConditionals.None:
@@ -228,6 +233,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SavedQueries.SavedQueries.Remove(query);
             DataService.SaveQueries(SavedQueries);
+            CurrentCodeQuery = null;
+            CurrentCodeQuery = new AnalysisCodeQuery();
         }
 
         public Command NewQueryCommand { get; private set; }
