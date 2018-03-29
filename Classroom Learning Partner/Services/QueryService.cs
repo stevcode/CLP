@@ -17,20 +17,20 @@ namespace Classroom_Learning_Partner.Services
         {
             public QueryablePage()
             {
-                MatchingQueryCodes = new List<IAnalysisCode>();
-                AllQueryCodes = new List<IAnalysisCode>();
+                MatchingAnalysisCodes = new List<IAnalysisCode>();
+                AllAnalysisCodes = new List<IAnalysisCode>();
             }
 
             public string CacheFilePath { get; set; }
             public string StudentID { get; set; }
             public string StudentName { get; set; }
             public CLPPage.NameComposite PageNameComposite { get; set; }
-            public List<IAnalysisCode> MatchingQueryCodes { get; set; }
-            public List<IAnalysisCode> AllQueryCodes { get; set; }
+            public List<IAnalysisCode> MatchingAnalysisCodes { get; set; }
+            public List<IAnalysisCode> AllAnalysisCodes { get; set; }
 
             public string FormattedValue
             {
-                get { return $"Page {PageNameComposite.PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingQueryCodes.Select(q => q.FormattedValue))}"; }
+                get { return $"Page {PageNameComposite.PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingAnalysisCodes.Select(q => q.FormattedValue))}"; }
             }
         }
 
@@ -209,7 +209,7 @@ namespace Classroom_Learning_Partner.Services
                                         StudentID = studentID,
                                         StudentName = studentName,
                                         PageNameComposite = pageNameComposite,
-                                        AllQueryCodes = queryCodes.ToList()
+                                        AllAnalysisCodes = queryCodes.ToList()
                                     };
 
                 QueryablePages.Add(queryablePage);
@@ -248,7 +248,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var queryResult = new QueryResult(queryablePage);
-                queryResult.MatchingQueryCodes = queryablePage.AllQueryCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).ToList();
+                queryResult.MatchingQueryCodes = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).ToList();
                 queryResults.Add(queryResult);
             }
 
@@ -276,7 +276,7 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 var queryResult = new QueryResult(queryablePage);
-                queryResult.MatchingQueryCodes = queryablePage.AllQueryCodes.Where(c => queries.Any(q => q.QueryLabel == c.AnalysisCodeLabel)).ToList();
+                queryResult.MatchingQueryCodes = queryablePage.AllAnalysisCodes.Where(c => queries.Any(q => q.QueryLabel == c.AnalysisCodeLabel)).ToList();
                 queryResults.Add(queryResult);
             }
 
@@ -363,7 +363,7 @@ namespace Classroom_Learning_Partner.Services
                 return false;
             }
 
-            var matchingCodes = queryablePage.AllQueryCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).ToList();
+            var matchingCodes = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).ToList();
             if (!query.ConstraintValues.Keys.Any())
             {
                 return matchingCodes.Any();
@@ -371,7 +371,7 @@ namespace Classroom_Learning_Partner.Services
 
             foreach (var constraint in query.ConstraintValues.Keys)
             {
-                var constraintValues = queryablePage.AllQueryCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).SelectMany(c => c.Constraints).ToList();
+                var constraintValues = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).SelectMany(c => c.Constraints).ToList();
                 var matchingConstraintValues = constraintValues.Where(c => c.ConstraintLabel == constraint).ToList();
                 if (!matchingConstraintValues.Any())
                 {

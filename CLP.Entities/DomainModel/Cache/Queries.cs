@@ -15,7 +15,7 @@ namespace CLP.Entities
 
         #region Properties
 
-        public ObservableCollection<AnalysisCodeQuery> SavedQueries
+        public ObservableCollection<AnalysisCodeQuery> SavedQueries     // TODO: Swap naming, this should be Queries and the class should be SavedQueries
         {
             get => GetValue<ObservableCollection<AnalysisCodeQuery>>(SavedQueriesProperty);
             set => SetValue(SavedQueriesProperty, value);
