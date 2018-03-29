@@ -67,59 +67,6 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public class Report
-        {
-            public Report(string queryLabel)
-            {
-                QueryLabel = queryLabel;
-            }
-
-            public string QueryLabel { get; set; }
-            public PrimaryReport Primary { get; set; }
-
-        }
-
-        public class PrimaryReport
-        {
-            public PrimaryReport(string constraintValueType)
-            {
-                Rows = new List<PrimaryRow>();
-
-                ConstraintValueType = constraintValueType;
-                MatchedEntriesLabel = "Matched\nEntries";
-                MatchedInstancesLabel = "Matched\nInstances";
-                TotalEntriesLabel = "Total\nEntries";
-            }
-
-            public string PrimaryQueryLabel { get;set; }
-
-            public List<PrimaryRow> Rows { get; set; }
-
-            public string ConstraintValueType { get; set; }
-            public string MatchedEntriesLabel { get; set; }
-            public string MatchedInstancesLabel { get; set; }
-            public string TotalEntriesLabel { get; set; }
-
-            public string PercentageLabel => $"%\n{MatchedInstancesLabel}\nover\n{TotalEntriesLabel}";
-        }
-
-        public class PrimaryRow
-        {
-            public string ConstraintValue { get; set; }
-            public int MatchedEntries { get; set; }
-            public int MatchedInstances { get; set; }
-            public int TotalMatchedEntries { get; set; }
-
-            public string EntriesOverTotalEntriesPercentage
-            {
-                get
-                {
-                    var percentage = Math.Round((100.0 * MatchedEntries) / TotalMatchedEntries, 2, MidpointRounding.AwayFromZero);
-                    return $"{percentage:0.00}%";
-                }
-            }
-        }
-
         #endregion // Nested Classes
 
         #region Constructor
@@ -282,53 +229,6 @@ namespace Classroom_Learning_Partner.Services
 
             QueryResults = queryResults;
             return queryResults;
-        }
-
-        public Report GatherReports()
-        {
-            if (LastQuery == null)
-            {
-                return null;
-            }
-
-            var queryLabel = LastQuery.QueryLabel;
-            var allPagesPrimaryReport = new PrimaryReport("Pages")
-                                        {
-                                            TotalEntriesLabel = "Total\nStudents"
-                                        };
-
-            var totalStudents = 22;
-            var pageNumbers = PageNumbersToQuery.ToList();
-            foreach (var pageNumber in pageNumbers)
-            {
-                var constraintValue = pageNumber.ToString();
-                var queryResultsForPage = QueryResults.Where(r => r.Page.PageNameComposite.PageNumber == pageNumber).ToList();
-                var matchedEntries = queryResultsForPage.Count;
-                var matchedInstances = queryResultsForPage.Sum(r => r.MatchingQueryCodes.Count);
-                var totalMatchedEntries = totalStudents;
-
-                var primaryRow = new PrimaryRow()
-                                 {
-                                     ConstraintValue = constraintValue,
-                                     MatchedEntries = matchedEntries,
-                                     MatchedInstances = matchedInstances,
-                                     TotalMatchedEntries = totalMatchedEntries
-                                 };
-                allPagesPrimaryReport.Rows.Add(primaryRow);
-            }
-
-            var tallyRow = new PrimaryRow()
-                           {
-                               ConstraintValue = "Total\nMatched\nEntries",
-                               MatchedEntries = allPagesPrimaryReport.Rows.Sum(r => r.MatchedEntries),
-                               MatchedInstances = allPagesPrimaryReport.Rows.Sum(r => r.MatchedInstances),
-                               TotalMatchedEntries = allPagesPrimaryReport.Rows.Sum(r => r.TotalMatchedEntries)
-                           };
-            allPagesPrimaryReport.Rows.Add(tallyRow);
-
-            var report = new Report(queryLabel);
-            report.Primary = allPagesPrimaryReport;
-            return report;
         }
 
         #endregion // IQueryService Implementation

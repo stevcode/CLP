@@ -15,6 +15,5 @@ namespace Classroom_Learning_Partner.Services
         void LoadSavedQueries();
         List<QueryService.QueryResult> QueryByString(string queryString);
         List<QueryService.QueryResult> QueryByConditions(List<AnalysisCode> conditions);
-        QueryService.Report GatherReports();
     }
 }

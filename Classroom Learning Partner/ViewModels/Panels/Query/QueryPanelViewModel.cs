@@ -128,7 +128,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SaveQueryCommand = new Command(OnSaveQueryCommandExecute);
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
-            ShowReportsCommand = new TaskCommand(OnShowReportsCommandExecuteAsync);
             SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
         }
 
@@ -223,16 +222,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //    MessageBox.Show("No results found.");
             //}
             //QueryResults = queryResults.ToObservableCollection();
-        }
-
-        /// <summary>Runs a query using the current QueryString.</summary>
-        public TaskCommand ShowReportsCommand { get; private set; }
-
-        private async Task OnShowReportsCommandExecuteAsync()
-        {
-            var report = _queryService.GatherReports();
-            var viewModel = new ReportsViewModel(report);
-            await viewModel.ShowWindowAsDialogAsync();
         }
 
         public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
