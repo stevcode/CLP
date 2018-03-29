@@ -62,45 +62,38 @@ namespace CLP.Entities
         {
             get
             {
-                return QueryName;
-                //var firstConditionName = string.Empty;
-                //if (FirstCondition is AnalysisCodeQuery codeQuery)
-                //{
-                //    firstConditionName = codeQuery.QueryName;
-                //}
-                //else if (FirstCondition is AnalysisCode queryCondition)
-                //{
-                //    firstConditionName = queryCondition.LongFormattedValue;
-                //}
+                var firstConditionName = string.Empty;
+                if (FirstCondition is AnalysisCodeQuery codeQuery)
+                {
+                    firstConditionName = codeQuery.QueryName;
+                }
+                else if (FirstCondition is AnalysisCode queryCondition)
+                {
+                    firstConditionName = queryCondition.LongFormattedValue;
+                }
 
-                //var secondConditionName = string.Empty;
-                //if (SecondCondition is AnalysisCodeQuery codeQuery2)
-                //{
-                //    secondConditionName = codeQuery2.QueryName;
-                //}
-                //else if (SecondCondition is AnalysisCode queryCondition2)
-                //{
-                //    secondConditionName = queryCondition2.LongFormattedValue;
-                //}
+                var secondConditionName = string.Empty;
+                if (SecondCondition is AnalysisCodeQuery codeQuery2)
+                {
+                    secondConditionName = codeQuery2.QueryName;
+                }
+                else if (SecondCondition is AnalysisCode queryCondition2)
+                {
+                    secondConditionName = queryCondition2.LongFormattedValue;
+                }
 
-                //var result = firstConditionName;
-                //if (Conditional != QueryConditionals.None)
-                //{
-                //    var conditional = Conditional.ToString();
-                //    result = $"{firstConditionName} {conditional} {secondConditionName}";
-                //}
+                var result = firstConditionName;
+                if (Conditional != QueryConditionals.None)
+                {
+                    var conditional = Conditional.ToString();
+                    result = $"{firstConditionName} {conditional} {secondConditionName}";
+                }
 
-                //return result;
+                return $"{QueryName}: {result}";
             }
         }
 
-        public string ButtonFormattedValue
-        {
-            get
-            {
-                return QueryName;
-            }
-        }
+        public string ButtonFormattedValue => QueryName;
 
         #endregion // IQueryPart Implementation
     }

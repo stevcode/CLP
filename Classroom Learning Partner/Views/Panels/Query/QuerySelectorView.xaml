@@ -15,7 +15,9 @@
         <Grid MinHeight="32">
 
             <!--Prompt Stage (0)-->
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
                 <Grid.Style>
                     <Style TargetType="{x:Type Grid}">
                         <Setter Property="Visibility"
@@ -31,7 +33,8 @@
                     </Style>
                 </Grid.Style>
 
-                <TextBlock Text="Choose Condition"
+                <TextBlock Text="Search For..."
+                           FontSize="20"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />
 
@@ -141,7 +144,7 @@
             </Grid>
 
 
-            <!--Saved Queries Stage (2) TODO-->
+            <!--Saved Queries Stage (2)-->
             <Grid Background="Transparent">
                 <Grid.Style>
                     <Style TargetType="{x:Type Grid}">
@@ -177,7 +180,7 @@
                         <DataTemplate>
                             <Grid HorizontalAlignment="Stretch">
 
-                                <TextBlock Text="{Binding QueryName}"
+                                <TextBlock Text="{Binding LongFormattedValue}"
                                            HorizontalAlignment="Stretch"
                                            VerticalAlignment="Stretch" />
 
@@ -296,7 +299,9 @@
             </Grid>
 
             <!--Button Stage (3)-->
-            <Grid Background="Transparent">
+            <Grid Background="Transparent"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
                 <Grid.Style>
                     <Style TargetType="{x:Type Grid}">
                         <Setter Property="Visibility"
@@ -313,6 +318,7 @@
                 </Grid.Style>
 
                 <TextBlock Text="{Binding SelectedIQueryPart.LongFormattedValue}"
+                           FontSize="16"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />
 

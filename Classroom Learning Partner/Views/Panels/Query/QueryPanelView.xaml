@@ -8,6 +8,14 @@
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
+    <catel:UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/BackStageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </catel:UserControl.Resources>
+
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
             BorderThickness="{Binding Location, Converter={converters:PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
@@ -43,6 +51,7 @@
                 <Label Grid.Column="0" 
                        VerticalAlignment="Center"
                        VerticalContentAlignment="Center"
+                       FontWeight="Bold"
                        Content="QUERY:" />
 
                 <views:QuerySelectorView Grid.Column="1"
@@ -52,7 +61,7 @@
                 <Button Grid.Column="2"
                         Height="32"
                         Width="35"
-                        Content ="{Binding CurrentCodeQuery.Conditional}"
+                        Content ="{Binding Conditional}"
                         Command="{Binding ToggleConditionalCommand}" />
 
                 <views:QuerySelectorView Grid.Column="3"
@@ -64,7 +73,7 @@
                                     Value="Visible" />
                             <Style.Triggers>
                                 <DataTrigger
-                                    Binding="{Binding CurrentCodeQuery.Conditional, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:QueryConditionals.None}}"
+                                    Binding="{Binding Conditional, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:QueryConditionals.None}}"
                                     Value="True">
                                     <Setter Property="Visibility"
                                             Value="Hidden" />
@@ -76,17 +85,38 @@
 
             </Grid>
 
-            <Button Grid.Column="0"
-                    Grid.Row="1" 
-                    HorizontalAlignment="Center"
-                    Content="Save Query"
-                    Command="{Binding SaveQueryCommand}" />
+            <Grid Grid.Column="0"
+                  Grid.ColumnSpan="3"
+                  Grid.Row="1">
 
-            <Button Grid.Column="2"
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    Content="Run Query"
-                    Command="{Binding RunQueryCommand}" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        Height="32"
+                        Width="125"
+                        Content="Save Query"
+                        Command="{Binding SaveQueryCommand}" />
+
+                <Button Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        Height="32"
+                        Width="125"
+                        Content="New Query"
+                        Command="{Binding NewQueryCommand}" />
+
+                <Button Grid.Column="2"
+                        HorizontalAlignment="Center"
+                        Height="32"
+                        Width="125"
+                        Content="Run Query"
+                        Command="{Binding RunQueryCommand}" />
+
+            </Grid>
 
             <!--Horizontal Dividing Line-->
             <Rectangle Grid.Column="0"
@@ -102,6 +132,7 @@
                      ItemsSource="{Binding SavedQueries.SavedQueries}"
                      SelectedItem="{Binding CurrentCodeQuery}"
                      SelectionMode="Single"
+                     ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
                      Margin="5 0"
                      ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback">
 
@@ -109,31 +140,36 @@
                     <DataTemplate>
 
                         <!-- Control Layout -->
-                        <orc:StackGrid HorizontalAlignment="Stretch"
-                                         Height="42"
-                                         Margin="0 0 30 0">
+                        <Grid Name="LayoutGrid"
+                              Height="42">
 
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Background"
+                                            Value="Transparent" />
+                                    <Style.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                            Value="True">
+                                            <Setter Property="Background"
+                                                    Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.5'}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
 
-                            <TextBlock Text="{Binding QueryName}"
-                                       TextAlignment="Left"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Top"
-                                       FontFamily="Segoe UI Light"
-                                       FontSize="40"
-                                       Foreground="#444444"
-                                       TextOptions.TextRenderingMode="Auto"
-                                       TextOptions.TextFormattingMode="Ideal" />
+                            <!-- Button Content -->
+                            <TextBlock Text="{Binding LongFormattedValue}"
+                                       Style="{StaticResource BackStageListItemTextBlock}"
+                                       Margin="5" />
 
                             <Button Height="25"
                                     Width="25"
                                     VerticalAlignment="Center"
-                                    Command="{Binding DataContext.EditPersonCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
-                                    CommandParameter="{Binding}">
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding DataContext.EditQueryNameCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
+                                    CommandParameter="{Binding}"
+                                    Margin="35 0">
                                 <Button.Template>
                                     <ControlTemplate TargetType="{x:Type Button}">
                                         <Grid>
@@ -148,8 +184,10 @@
                             <Button Height="25"
                                     Width="25"
                                     VerticalAlignment="Center"
-                                    Command="{Binding DataContext.DeleteStudentCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
-                                    CommandParameter="{Binding}">
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding DataContext.DeleteSavedQueryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
+                                    CommandParameter="{Binding}"
+                                    Margin="5 0">
                                 <Button.Template>
                                     <ControlTemplate TargetType="{x:Type Button}">
                                         <Grid>
@@ -168,7 +206,7 @@
                                 </Button.Template>
                             </Button>
 
-                        </orc:StackGrid>
+                        </Grid>
 
                     </DataTemplate>
                 </ListBox.ItemTemplate>

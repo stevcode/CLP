@@ -48,17 +48,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion // Events
 
-        #region Bindings
+        #region Model
 
-        public override double InitialLength => 500.0;
-
+        [Model(SupportIEditableObject = false)]
         public AnalysisCodeQuery CurrentCodeQuery
         {
             get => GetValue<AnalysisCodeQuery>(CurrentCodeQueryProperty);
             set => SetValue(CurrentCodeQueryProperty, value);
         }
 
-        public static readonly PropertyData CurrentCodeQueryProperty = RegisterProperty(nameof(CurrentCodeQuery), typeof(AnalysisCodeQuery), null);
+        public static readonly PropertyData CurrentCodeQueryProperty = RegisterProperty(nameof(CurrentCodeQuery), typeof(AnalysisCodeQuery));
+
+        [ViewModelToModel("CurrentCodeQuery")]
+        public QueryConditionals Conditional
+        {
+            get => GetValue<QueryConditionals>(ConditionalProperty);
+            set => SetValue(ConditionalProperty, value);
+        }
+
+        public static readonly PropertyData ConditionalProperty = RegisterProperty(nameof(Conditional), typeof(QueryConditionals));
+
+        #endregion // Model
+
+        #region Bindings
+
+        public override double InitialLength => 500.0;
 
         public Queries SavedQueries
         {
@@ -120,12 +134,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeCommands()
         {
+            SelectPageRangeCommand = new Command(OnSelectPageRangeCommandExecute);
             ToggleConditionalCommand = new Command(OnToggleConditionalCommandExecute);
 
-            SelectPageRangeCommand = new Command(OnSelectPageRangeCommandExecute);
-
-
             SaveQueryCommand = new Command(OnSaveQueryCommandExecute);
+            EditQueryNameCommand = new Command<AnalysisCodeQuery>(OnEditQueryNameCommandExecute);
+            DeleteSavedQueryCommand = new Command<AnalysisCodeQuery>(OnDeleteSavedQueryCommandExecute);
+
+            NewQueryCommand = new Command(OnNewQueryCommandExecute);
+            
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
             SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
         }
@@ -197,7 +214,29 @@ namespace Classroom_Learning_Partner.ViewModels
             DataService.SaveQueries(SavedQueries);
         }
 
-        /// <summary>Runs a query using the current QueryString.</summary>
+        public Command<AnalysisCodeQuery> EditQueryNameCommand { get; private set; }
+
+        private void OnEditQueryNameCommandExecute(AnalysisCodeQuery query)
+        {
+            
+        }
+
+        public Command<AnalysisCodeQuery> DeleteSavedQueryCommand { get; private set; }
+
+        private void OnDeleteSavedQueryCommandExecute(AnalysisCodeQuery query)
+        {
+            SavedQueries.SavedQueries.Remove(query);
+            DataService.SaveQueries(SavedQueries);
+        }
+
+        public Command NewQueryCommand { get; private set; }
+
+        private void OnNewQueryCommandExecute()
+        {
+            CurrentCodeQuery = null;
+            CurrentCodeQuery = new AnalysisCodeQuery();
+        }
+
         public Command RunQueryCommand { get; private set; }
 
         private void OnRunQueryCommandExecute()

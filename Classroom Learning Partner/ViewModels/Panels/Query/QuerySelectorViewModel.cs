@@ -38,8 +38,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Query = query;
             
+            InitializedAsync += QuerySelectorViewModel_InitializedAsync;
+            
             InitializeCommands();
         }
+
+        #region Events
+
+        private async Task QuerySelectorViewModel_InitializedAsync(object sender, EventArgs e)
+        {
+            if (Query.FirstCondition != null)
+            {
+                CurrentStage = Stages.Button3;
+                switch (ConditionPlace)
+                {
+                    case ConditionPlaces.First:
+                        SelectedIQueryPart = Query.FirstCondition;
+                        break;
+                    case ConditionPlaces.Second:
+                        SelectedIQueryPart = Query.SecondCondition;
+                        break;
+                }
+            }
+        }
+
+        #endregion // Events
 
         #region Model
 
@@ -104,6 +127,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAdvanceToConditionStageCommandExecute()
         {
+            if (!string.IsNullOrWhiteSpace(Query.QueryName))
+            {
+                return;
+            }
+
             CurrentStage = Stages.Condition1;
         }
 
