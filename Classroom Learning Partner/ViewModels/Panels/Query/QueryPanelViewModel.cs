@@ -203,25 +203,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRunQueryCommandExecute()
         {
-            //QueryResults.Clear();
+            QueryResults.Clear();
 
-            //List<QueryService.QueryResult> queryResults;
-            //if (!string.IsNullOrWhiteSpace(QueryString))
-            //{
-            //    queryResults = _queryService.QueryByString(QueryString);
-            //}
-            //else
-            //{
-            //    var conditions = Conditions.Select(vm => vm.SelectedAnalysisCode).ToList();
-            //    queryResults = _queryService.QueryByConditions(conditions);
-            //}
-
-            //queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
-            //if (!queryResults.Any())
-            //{
-            //    MessageBox.Show("No results found.");
-            //}
-            //QueryResults = queryResults.ToObservableCollection();
+            var queryResults = _queryService.RunQuery(CurrentCodeQuery);
+            queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
+            if (!queryResults.Any())
+            {
+                MessageBox.Show("No results found.");
+            }
+            QueryResults = queryResults.ToObservableCollection();
         }
 
         public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
