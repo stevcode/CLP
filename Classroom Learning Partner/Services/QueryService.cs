@@ -97,8 +97,6 @@ namespace Classroom_Learning_Partner.Services
 
         public List<QueryResult> QueryResults { get; set; }
 
-        public Query LastQuery { get; set; }
-
         public void LoadQueryablePages()
         {
             QueryablePages.Clear();
@@ -148,7 +146,7 @@ namespace Classroom_Learning_Partner.Services
 
                 #endregion // PageNameComposite
 
-                var queryCodes = GetPageQueryCodes(root);
+                var queryCodes = GetPageAnalysisCodes(root);
 
                 var queryablePage = new QueryablePage
                                     {
@@ -168,39 +166,6 @@ namespace Classroom_Learning_Partner.Services
             var cacheFilePath = NotebookToQuery.ContainerZipFilePath;
             SavedQueries = DataService.LoadQueriesFromCLPContainer(cacheFilePath) ?? new Queries();
             SavedQueries.ContainerZipFilePath = NotebookToQuery.ContainerZipFilePath;
-        }
-
-        public List<QueryResult> QueryByString(string queryString)
-        {
-            var queryResults = new List<QueryResult>();
-            if (NotebookToQuery == null)
-            {
-                return queryResults;
-            }
-
-            var query = ParseQueryString(queryString);
-            LastQuery = query;
-            if (query == null)
-            {
-                return queryResults;
-            }
-
-            foreach (var queryablePage in QueryablePages)
-            {
-
-                var isMatchingResult = IsPageAMatch(queryablePage, query) && PageNumbersToQuery.Contains(queryablePage.PageNameComposite.PageNumber);
-                if (!isMatchingResult)
-                {
-                    continue;
-                }
-
-                var queryResult = new QueryResult(queryablePage);
-                queryResult.MatchingQueryCodes = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).ToList();
-                queryResults.Add(queryResult);
-            }
-
-            QueryResults = queryResults;
-            return queryResults;
         }
 
         public List<QueryResult> QueryByConditions(List<AnalysisCode> conditions)
@@ -255,10 +220,47 @@ namespace Classroom_Learning_Partner.Services
             return xDocs;
         }
 
-        private bool IsPageAMatch(QueryablePage queryablePage, Query query)
+        private bool IsPageAMatch(QueryablePage queryablePage, AnalysisCodeQuery query)
         {
             if (query == null ||
                 queryablePage == null)
+            {
+                return false;
+            }
+
+            var isFirstConditionAMatch = IsPageAMatchForQueryPart(queryablePage, query.FirstCondition);
+            var isSecondConditionAMatch = IsPageAMatchForQueryPart(queryablePage, query.SecondCondition);
+
+            var isAMatch = false;
+            switch (query.Conditional)
+            {
+                case QueryConditionals.None:
+                    isAMatch = isFirstConditionAMatch;
+                    break;
+                case QueryConditionals.And:
+                    isAMatch = isFirstConditionAMatch && isSecondConditionAMatch;
+                    break;
+                case QueryConditionals.Or:
+                    isAMatch = isFirstConditionAMatch || isSecondConditionAMatch;
+                    break;
+            }
+
+            return isAMatch;
+        }
+
+        private bool IsPageAMatchForQueryPart(QueryablePage queryablePage, IQueryPart queryPart)
+        {
+            if (queryPart == null)
+            {
+                return false;
+            }
+
+            if (queryPart is AnalysisCodeQuery query)
+            {
+                return IsPageAMatch(queryablePage, query);
+            }
+
+            if (!(queryPart is AnalysisCode analysisCode))
             {
                 return false;
             }
@@ -291,17 +293,17 @@ namespace Classroom_Learning_Partner.Services
             return true;
         }
 
-        private List<IAnalysisCode> GetPageQueryCodes(XElement root)
+        private List<IAnalysisCode> GetPageAnalysisCodes(XElement root)
         {
-            var queryCodes = new List<IAnalysisCode>();
+            var analysisCodes = new List<IAnalysisCode>();
 
-            var queryCodeXElements = root.Descendants("QueryCodes").Elements().ToList();
+            var queryCodeXElements = root.Descendants("QueryCodes").Elements().ToList();        // TODO: refactor tag contents to only us AnalysisCodes
             foreach (var queryCodeXElement in queryCodeXElements)
             {
-                var analysisLabel = (string)queryCodeXElement.Element("AnalysisLabel");
+                var analysisLabel = (string)queryCodeXElement.Element("AnalysisCodeLabel");
                 var analysisCode = new AnalysisCode(analysisLabel);
 
-                var constraintValueXElements = queryCodeXElement.ElementAnyNS("ConstraintValues").Elements().ToList();
+                var constraintValueXElements = queryCodeXElement.ElementAnyNS("Constraints").Elements().ToList();
                 foreach (var constraintValueXElement in constraintValueXElements)
                 {
                     var constraintLabel = (string)constraintValueXElement.ElementAnyNS("ConstraintLabel");
@@ -309,43 +311,10 @@ namespace Classroom_Learning_Partner.Services
                     analysisCode.AddConstraint(constraintLabel, constraintValue);
                 }
 
-                queryCodes.Add(analysisCode);
+                analysisCodes.Add(analysisCode);
             }
 
-            return queryCodes;
-        }
-
-        private Query ParseQueryString(string queryString)
-        {
-            var allAliases = Codings.GetAllAnalysisAliases();
-            if (!allAliases.Contains(queryString.ToUpper()))
-            {
-                return Specials(queryString);
-            }
-
-            var analysisLabel = Codings.AnalysisAliasToLabel(queryString.ToUpper());
-            var query = GenerateQuery(analysisLabel);
-
-            return query;
-        }
-
-        private Query Specials(string queryString)
-        {
-            var specials = new List<string>
-                           {
-                               "NL",
-                               "ARR",
-                               "STAMP",
-                               "BINS"
-                           };
-            if (!specials.Contains(queryString.ToUpper()))
-            {
-                return null;
-            }
-
-            var query = GenerateQuery(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
-            query.ConstraintValues.Add(Codings.CONSTRAINT_REPRESENTATION_NAME, queryString.ToUpper());
-            return query;
+            return analysisCodes;
         }
 
         private Query ParseCondition(AnalysisCode analysisCode)

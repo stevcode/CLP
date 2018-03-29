@@ -13,7 +13,6 @@ namespace Classroom_Learning_Partner.Services
 
         void LoadQueryablePages();
         void LoadSavedQueries();
-        List<QueryService.QueryResult> QueryByString(string queryString);
-        List<QueryService.QueryResult> QueryByConditions(List<AnalysisCode> conditions);
+        List<QueryService.QueryResult> RunQuery();
     }
 }
