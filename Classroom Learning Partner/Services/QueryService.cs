@@ -34,19 +34,6 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public class Query
-        {
-            public Query()
-            {
-                Constraints = new Dictionary<string, List<string>>();
-                ConstraintValues = new Dictionary<string, string>();
-            }
-
-            public string QueryLabel { get; set; }
-            public Dictionary<string, List<string>> Constraints { get; set; }
-            public Dictionary<string, string> ConstraintValues { get; set; }
-        }
-
         public class QueryResult
         {
             public QueryResult(QueryablePage page)
@@ -76,7 +63,6 @@ namespace Classroom_Learning_Partner.Services
             PageNumbersToQuery = new List<int>();
             StudentIDsToQuery = new List<string>();
             QueryablePages = new List<QueryablePage>();
-            QueryResults = new List<QueryResult>();
         }
 
         #endregion // Constructor
@@ -94,8 +80,6 @@ namespace Classroom_Learning_Partner.Services
         public Queries SavedQueries { get; set; }
 
         public List<QueryablePage> QueryablePages { get; set; }
-
-        public List<QueryResult> QueryResults { get; set; }
 
         public void LoadQueryablePages()
         {
@@ -168,31 +152,29 @@ namespace Classroom_Learning_Partner.Services
             SavedQueries.ContainerZipFilePath = NotebookToQuery.ContainerZipFilePath;
         }
 
-        public List<QueryResult> QueryByConditions(List<AnalysisCode> conditions)
+        public List<QueryResult> RunQuery(AnalysisCodeQuery query)
         {
-            if (NotebookToQuery == null ||
-                !conditions.Any())
+            if (NotebookToQuery == null || 
+                query == null)
             {
                 return new List<QueryResult>();
             }
 
-            var queries = conditions.Select(ParseCondition).ToList();
             var queryResults = new List<QueryResult>();
 
             foreach (var queryablePage in QueryablePages)
             {
-                var isMatchingResult = queries.All(q => IsPageAMatch(queryablePage, q)) && PageNumbersToQuery.Contains(queryablePage.PageNameComposite.PageNumber);
+                var isMatchingResult = PageNumbersToQuery.Contains(queryablePage.PageNameComposite.PageNumber) && IsPageAMatch(queryablePage, query);
                 if (!isMatchingResult)
                 {
                     continue;
                 }
 
                 var queryResult = new QueryResult(queryablePage);
-                queryResult.MatchingQueryCodes = queryablePage.AllAnalysisCodes.Where(c => queries.Any(q => q.QueryLabel == c.AnalysisCodeLabel)).ToList();
+                queryResult.MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList();
                 queryResults.Add(queryResult);
             }
 
-            QueryResults = queryResults;
             return queryResults;
         }
 
@@ -265,24 +247,24 @@ namespace Classroom_Learning_Partner.Services
                 return false;
             }
 
-            var matchingCodes = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).ToList();
-            if (!query.ConstraintValues.Keys.Any())
+            var matchingCodes = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCode.AnalysisCodeLabel).ToList();
+            if (!analysisCode.Constraints.Any(c => c.IsQueryable && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY))
             {
                 return matchingCodes.Any();
             }
 
-            foreach (var constraint in query.ConstraintValues.Keys)
+            foreach (var constraint in analysisCode.Constraints.Where(c => c.IsQueryable))
             {
-                var constraintValues = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == query.QueryLabel).SelectMany(c => c.Constraints).ToList();
-                var matchingConstraintValues = constraintValues.Where(c => c.ConstraintLabel == constraint).ToList();
+                var constraints = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCode.AnalysisCodeLabel).SelectMany(c => c.Constraints).ToList();
+                var matchingConstraintValues = constraints.Where(c => c.ConstraintLabel == constraint.ConstraintLabel).ToList();
                 if (!matchingConstraintValues.Any())
                 {
                     return false;
                 }
 
-                var queryConstraintValue = query.ConstraintValues[constraint];
+                var queryConstraintValue = constraint.ConstraintValue;
                 if (queryConstraintValue == Codings.CONSTRAINT_VALUE_ANY ||
-                    matchingConstraintValues.Any(c => c.ConstraintValue.Contains(queryConstraintValue)))
+                    matchingConstraintValues.Any(c => c.ConstraintValue == queryConstraintValue))
                 {
                     continue;
                 }
@@ -317,119 +299,7 @@ namespace Classroom_Learning_Partner.Services
             return analysisCodes;
         }
 
-        private Query ParseCondition(AnalysisCode analysisCode)
-        {
-            if (analysisCode == null)
-            {
-                return null;
-            }
-
-            var analysisLabel = analysisCode.AnalysisCodeLabel;
-            var query = GenerateQuery(analysisLabel);
-            foreach (var conditionConstraint in analysisCode.Constraints.Where(c => c.IsQueryable))
-            {
-                query.ConstraintValues.Add(conditionConstraint.ConstraintLabel, conditionConstraint.ConstraintValue);
-            }
-
-            return query;
-        }
-
         #endregion // Methods
 
-        #region Static Methods
-
-        public static Query GenerateQuery(string analysisLabel)
-        {
-            var query = new Query
-                        {
-                            QueryLabel = analysisLabel,
-                            Constraints = PopulateQueryWithAllConstraints(analysisLabel)
-                        };
-
-            return query;
-        }
-
-        public static Dictionary<string, List<string>> PopulateQueryWithAllConstraints(string analysisLabel)
-        {
-            var constraints = new Dictionary<string, List<string>>();
-            var codedCorrectnessValues = Enum<Correctness>.GetValues().Select(Codings.CorrectnessToCodedCorrectness).ToList();
-            var correctnessConstraintValues = new List<string>
-                                              {
-                                                  Codings.CONSTRAINT_VALUE_ANY
-                                              };
-            correctnessConstraintValues.AddRange(codedCorrectnessValues.ToList());
-
-            switch (analysisLabel)
-            {
-                case Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP:
-                case Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP:
-                    break;
-                case Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION:
-                    var answerChangedConstraintValues = new List<string>
-                                           {
-                                               Codings.CONSTRAINT_VALUE_ANY
-                                           };
-                    answerChangedConstraintValues.AddRange(from fromCorrectness in codedCorrectnessValues
-                                                           from toCorrectness in codedCorrectnessValues
-                                                           select $"{fromCorrectness}{Codings.CONSTRAINT_VALUE_ANSWER_CHANGE_DELIMITER}{toCorrectness}");
-
-                    constraints.Add(Codings.CONSTRAINT_ANSWER_CHANGE, answerChangedConstraintValues);
-                    break;
-                case Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION:
-                    constraints.Add(Codings.CONSTRAINT_ANSWER_TYPE,
-                                    new List<string>
-                                    {
-                                        Codings.CONSTRAINT_VALUE_ANY,
-                                        Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL,
-                                        Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY
-                                    });
-                    
-                    constraints.Add(Codings.CONSTRAINT_ANSWER_CORRECTNESS, correctnessConstraintValues);
-                    break;
-                case Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER:
-                    constraints.Add(Codings.CONSTRAINT_ANSWER_TYPE,
-                                    new List<string>
-                                    {
-                                        Codings.CONSTRAINT_VALUE_ANY,
-                                        Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL,
-                                        Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY
-                                    });
-
-                    constraints.Add(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, correctnessConstraintValues);
-                    break;
-                case Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED:
-                    constraints.Add(Codings.CONSTRAINT_REPRESENTATION_NAME,
-                                    new List<string>
-                                    {
-                                        Codings.CONSTRAINT_VALUE_ANY,
-                                        Codings.OBJECT_ARRAY,
-                                        Codings.OBJECT_NUMBER_LINE,
-                                        Codings.OBJECT_STAMP,
-                                        Codings.OBJECT_BINS,
-                                        Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY,
-                                        Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE
-                                    });
-
-                    constraints.Add(Codings.CONSTRAINT_HISTORY_STATUS,
-                                    new List<string>
-                                    {
-                                        Codings.CONSTRAINT_VALUE_ANY,
-                                        Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL,
-                                        Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED
-                                    });
-
-                    constraints.Add(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, correctnessConstraintValues);
-                    break;
-                case Codings.ANALYSIS_LABEL_ARRAY_SKIP_COUNTING:
-                case Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS:
-                case Codings.ANALYSIS_LABEL_PROBLEM_TYPE:
-                    break;
-            }
-
-
-            return constraints;
-        }
-
-        #endregion // Static Methods
     }
 }
