@@ -177,7 +177,7 @@
                         <DataTemplate>
                             <Grid HorizontalAlignment="Stretch">
 
-                                <TextBlock Text="{Binding}"
+                                <TextBlock Text="{Binding QueryName}"
                                            HorizontalAlignment="Stretch"
                                            VerticalAlignment="Stretch" />
 

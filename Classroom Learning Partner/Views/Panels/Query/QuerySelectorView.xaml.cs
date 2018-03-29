@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -10,8 +11,14 @@ namespace Classroom_Learning_Partner.Views
             InitializeComponent();
         }
 
+        static QuerySelectorView()
+        {
+            typeof(QuerySelectorView).AutoDetectViewPropertiesToSubscribe();
+        }
+
         #region Dependency Properties
 
+        [ViewToViewModel("ConditionPlace", MappingType = ViewToViewModelMappingType.ViewToViewModel)]
         public ConditionPlaces ConditionPlace
         {
             get => (ConditionPlaces)GetValue(ConditionPlaceProperty);

@@ -68,7 +68,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SavedQueriesProperty = RegisterProperty(nameof(SavedQueries), typeof(Queries), null);
 
-        /// <summary>Temp results of query.</summary>
         public ObservableCollection<QueryService.QueryResult> QueryResults
         {
             get => GetValue<ObservableCollection<QueryService.QueryResult>>(QueryResultsProperty);
