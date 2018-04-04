@@ -33,7 +33,7 @@
                     </Style>
                 </Grid.Style>
 
-                <TextBlock Text="Search For..."
+                <TextBlock Text="Search for..."
                            FontSize="20"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />

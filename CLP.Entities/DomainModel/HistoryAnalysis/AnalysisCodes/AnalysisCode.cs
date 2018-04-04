@@ -80,7 +80,7 @@ namespace CLP.Entities
                 var mainName = overridingConstraint == null ? AnalysisCodeShortName : overridingConstraint.ConstraintValue;
 
                 var normalConstraints = Constraints.Where(c => !c.IsOverridingDisplayName).ToList();
-                var formattedConstraintValues = string.Join(" - ", normalConstraints.Select(c => c.ConstraintValue).Where(v => v != Codings.CONSTRAINT_VALUE_ANY));
+                var formattedConstraintValues = string.Join(" & ", normalConstraints.Select(c => c.ConstraintValue).Where(v => v != Codings.CONSTRAINT_VALUE_ANY));
                 if (!string.IsNullOrWhiteSpace(formattedConstraintValues))
                 {
                     formattedConstraintValues = $": {formattedConstraintValues}";
