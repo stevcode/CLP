@@ -232,6 +232,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDeleteSavedQueryCommandExecute(AnalysisCodeQuery query)
         {
             SavedQueries.SavedQueries.Remove(query);
+            if (!SavedQueries.SavedQueries.Any())
+            {
+                SavedQueries.AutoQueryCount = 1;
+            }
             DataService.SaveQueries(SavedQueries);
             CurrentCodeQuery = null;
             CurrentCodeQuery = new AnalysisCodeQuery();
