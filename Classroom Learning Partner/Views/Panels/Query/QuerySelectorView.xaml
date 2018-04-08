@@ -298,7 +298,7 @@
 
                                 <TextBlock Grid.Column="0"
                                            FontSize="10"
-                                           Text="{Binding ConstraintLabel}" />
+                                           Text="{Binding ConstraintShortName}" />
 
                                 <ComboBox Name="ConstraintValuePickerBox"
                                           Grid.Column="1"

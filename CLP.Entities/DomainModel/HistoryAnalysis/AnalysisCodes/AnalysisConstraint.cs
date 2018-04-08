@@ -43,6 +43,7 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
+        public string ConstraintShortName => Codings.ConstraintLabelToShortName(ConstraintLabel);
         public bool IsQueryable => GenerateIsQueryable(ConstraintLabel);
         public bool IsOverridingDisplayName => GenerateIsOverridingDisplayName(ConstraintLabel);
         public List<string> PossibleConstraintValues => GeneratePossibleConstraintValues(ConstraintLabel);

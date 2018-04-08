@@ -154,6 +154,31 @@ namespace CLP.Entities
             return aliases;
         }
 
+        public static string ConstraintLabelToShortName(string label)
+        {
+            switch (label)
+            {
+                case CONSTRAINT_ANSWER_CHANGE:
+                    return "Answer Change";
+                case CONSTRAINT_ANSWER_TYPE:
+                    return "Answer Type";
+                case CONSTRAINT_ANSWER_CORRECTNESS:
+                    return "Correctness";
+                case CONSTRAINT_ANSWER_OBJECT:
+                    return "Answer Object";
+                case CONSTRAINT_REPRESENTATION_CORRECTNESS:
+                    return "Correctness";
+                case CONSTRAINT_REPRESENTATION_NAME:
+                    return "Type";
+                case CONSTRAINT_REPRESENTATION_CODED_ID:
+                    return "ID";
+                case CONSTRAINT_HISTORY_STATUS:
+                    return "Status";
+            }
+
+            return "No matching Alias";
+        }
+
         #endregion // Methods
     }
 }
