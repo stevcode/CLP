@@ -93,17 +93,7 @@
                     </i:Interaction.Triggers>
                 </Rectangle>
 
-                <TextBlock Grid.Row="1"
-                           Text="Page Numbers"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Stretch" />
-
-                <TextBlock Grid.Row="2"
-                           Text="Student Names"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Stretch" />
-
-                <ListBox Grid.Row="3"
+                <ListBox Grid.Row="1"
                          ItemsSource="{Binding AvailableConditions}"
                          SelectionMode="Single">
 
@@ -136,7 +126,17 @@
 
                 </ListBox>
 
-                <TextBlock Grid.Row="4"
+                <TextBlock Grid.Row="2"
+                           Text="Page Numbers"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch" />
+
+                <TextBlock Grid.Row="3"
+                           Text="Student Names"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch" />
+
+                <!--<TextBlock Grid.Row="4"
                            Text="Cancel"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />
@@ -151,10 +151,15 @@
                                 Command="{Binding ClearStageCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </Rectangle>
+                </Rectangle>-->
+                
+                <Button Grid.Row="4"
+                        Content="Cancel"
+                        HorizontalAlignment="Stretch"
+                        VerticalContentAlignment="Center"
+                        Command="{Binding ClearStageCommand}" />
 
             </Grid>
-
 
             <!--Saved Queries Stage (2)-->
             <Grid Background="Transparent">
@@ -217,7 +222,7 @@
 
                 </ListBox>
 
-                <TextBlock Grid.Row="2"
+                <!--<TextBlock Grid.Row="2"
                            Text="Cancel"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />
@@ -232,7 +237,13 @@
                                 Command="{Binding ClearStageCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </Rectangle>
+                </Rectangle>-->
+
+                <Button Grid.Row="2"
+                        Content="Cancel"
+                        HorizontalAlignment="Stretch"
+                        VerticalContentAlignment="Center"
+                        Command="{Binding ClearStageCommand}" />
 
             </Grid>
 
@@ -259,11 +270,19 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <ItemsControl Grid.Row="0"
+                <TextBlock Grid.Row="0"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="2"
+                           Text="{Binding SelectedIQueryPart.AnalysisCodeShortName}"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch" />
+
+                <ItemsControl Grid.Row="1"
                               Grid.Column="0"
                               Grid.ColumnSpan="2"
                               ItemsSource="{Binding SelectedIQueryPart.Constraints}">
@@ -298,14 +317,14 @@
                 </ItemsControl>
                 
                 <Button Grid.Column="0"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         HorizontalAlignment="Left"
                         Content="Cancel"
                         Width="60"
                         Command="{Binding ClearStageCommand}" />
 
                 <Button Grid.Column="1"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         HorizontalAlignment="Right"
                         Content="OK"
                         Width="60"
