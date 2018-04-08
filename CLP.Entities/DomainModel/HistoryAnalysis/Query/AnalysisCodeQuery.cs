@@ -17,7 +17,11 @@ namespace CLP.Entities
         public string QueryName
         {
             get => GetValue<string>(QueryNameProperty);
-            set => SetValue(QueryNameProperty, value);
+            set
+            {
+                SetValue(QueryNameProperty, value);
+                RaisePropertyChanged(nameof(LongFormattedValue));
+            }
         }
 
         public static readonly PropertyData QueryNameProperty = RegisterProperty(nameof(QueryName), typeof(string), string.Empty);
@@ -33,7 +37,11 @@ namespace CLP.Entities
         public IQueryPart FirstCondition
         {
             get => GetValue<IQueryPart>(FirstConditionProperty);
-            set => SetValue(FirstConditionProperty, value);
+            set
+            {
+                SetValue(FirstConditionProperty, value);
+                RaisePropertyChanged(nameof(LongFormattedValue));
+            }
         }
 
         public static readonly PropertyData FirstConditionProperty = RegisterProperty(nameof(FirstCondition), typeof(IQueryPart), null);
@@ -41,7 +49,11 @@ namespace CLP.Entities
         public IQueryPart SecondCondition
         {
             get => GetValue<IQueryPart>(SecondConditionProperty);
-            set => SetValue(SecondConditionProperty, value);
+            set
+            {
+                SetValue(SecondConditionProperty, value);
+                RaisePropertyChanged(nameof(LongFormattedValue));
+            }
         }
 
         public static readonly PropertyData SecondConditionProperty = RegisterProperty(nameof(SecondCondition), typeof(IQueryPart), null);
@@ -49,7 +61,11 @@ namespace CLP.Entities
         public QueryConditionals Conditional
         {
             get => GetValue<QueryConditionals>(ConditionalProperty);
-            set => SetValue(ConditionalProperty, value);
+            set
+            {
+                SetValue(ConditionalProperty, value);
+                RaisePropertyChanged(nameof(LongFormattedValue));
+            }
         }
 
         public static readonly PropertyData ConditionalProperty = RegisterProperty(nameof(Conditional), typeof(QueryConditionals), QueryConditionals.None);

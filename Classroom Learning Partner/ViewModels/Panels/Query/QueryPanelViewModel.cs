@@ -44,6 +44,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private async Task QueryPanelViewModel_InitializedAsync(object sender, EventArgs e)
         {
             Length = InitialLength;
+            MinLength = 450.0;
         }
 
         #endregion // Events
@@ -71,6 +72,14 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion // Model
 
         #region Bindings
+
+        public bool IsCurrentQuerySaved
+        {
+            get => GetValue<bool>(IsCurrentQuerySavedProperty);
+            set => SetValue(IsCurrentQuerySavedProperty, value);
+        }
+
+        public static readonly PropertyData IsCurrentQuerySavedProperty = RegisterProperty(nameof(IsCurrentQuerySaved), typeof(bool), false);
 
         public override double InitialLength => 500.0;
 
@@ -138,7 +147,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ToggleConditionalCommand = new Command(OnToggleConditionalCommandExecute);
 
             SaveQueryCommand = new Command(OnSaveQueryCommandExecute);
-            EditQueryNameCommand = new Command<AnalysisCodeQuery>(OnEditQueryNameCommandExecute);
+            SelectSavedQueryCommand = new Command<AnalysisCodeQuery>(OnSelectSavedQueryCommandExecute);
+            EditSavedQueryCommand = new Command<AnalysisCodeQuery>(OnEditSavedQueryCommandExecute);
             DeleteSavedQueryCommand = new Command<AnalysisCodeQuery>(OnDeleteSavedQueryCommandExecute);
 
             NewQueryCommand = new Command(OnNewQueryCommandExecute);
@@ -205,26 +215,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveQueryCommandExecute()
         {
-            if (string.IsNullOrWhiteSpace(CurrentCodeQuery.QueryName))
-            {
-                var numberOfQueries = SavedQueries.AutoQueryCount;
-                SavedQueries.AutoQueryCount++;
-                CurrentCodeQuery.QueryName = $"Q{numberOfQueries}";
-            }
-
-            if (!SavedQueries.SavedQueries.Contains(CurrentCodeQuery))
-            {
-                SavedQueries.SavedQueries.Add(CurrentCodeQuery);
-            }
-
+            var numberOfQueries = SavedQueries.AutoQueryCount;
+            SavedQueries.AutoQueryCount++;
+            CurrentCodeQuery.QueryName = $"Q{numberOfQueries}";
+            SavedQueries.SavedQueries.Add(CurrentCodeQuery);
             DataService.SaveQueries(SavedQueries);
+            IsCurrentQuerySaved = true;
         }
 
-        public Command<AnalysisCodeQuery> EditQueryNameCommand { get; private set; }
+        public Command<AnalysisCodeQuery> SelectSavedQueryCommand { get; private set; }
 
-        private void OnEditQueryNameCommandExecute(AnalysisCodeQuery query)
+        private void OnSelectSavedQueryCommandExecute(AnalysisCodeQuery query)
         {
+            CurrentCodeQuery = null;
+            CurrentCodeQuery = query;
+            IsCurrentQuerySaved = true;
+        }
+
+        public Command<AnalysisCodeQuery> EditSavedQueryCommand { get; private set; }
+
+        private void OnEditSavedQueryCommandExecute(AnalysisCodeQuery query)
+        {
+            var analysisCodeCopy = query.DeepCopy();
+            analysisCodeCopy.QueryName = string.Empty;
+            CurrentCodeQuery = null;
+            CurrentCodeQuery = analysisCodeCopy;
             
+            IsCurrentQuerySaved = false;
         }
 
         public Command<AnalysisCodeQuery> DeleteSavedQueryCommand { get; private set; }
@@ -239,6 +256,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DataService.SaveQueries(SavedQueries);
             CurrentCodeQuery = null;
             CurrentCodeQuery = new AnalysisCodeQuery();
+            IsCurrentQuerySaved = false;
         }
 
         public Command NewQueryCommand { get; private set; }
@@ -247,6 +265,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CurrentCodeQuery = null;
             CurrentCodeQuery = new AnalysisCodeQuery();
+            IsCurrentQuerySaved = false;
         }
 
         public Command RunQueryCommand { get; private set; }
