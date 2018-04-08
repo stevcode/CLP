@@ -39,6 +39,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
+                <!-- Viewing Saved Query -->
                 <Grid Grid.Column="0"
                       Grid.ColumnSpan="3"
                       Grid.Row="0"
@@ -67,6 +68,7 @@
 
                 </Grid>
 
+                <!-- Creating/Editing Query -->
                 <Grid Grid.Column="0"
                       Grid.ColumnSpan="3"
                       Grid.Row="0">
@@ -89,6 +91,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="0"
@@ -101,13 +104,130 @@
                                              DataContext="{Binding CurrentCodeQuery}"
                                              ConditionPlace="First" />
 
-                    <Button Grid.Column="2"
-                            Height="32"
-                            Width="35"
-                            Content="{Binding Conditional}"
-                            Command="{Binding ToggleConditionalCommand}" />
+                    <!-- Conditional Manipulation -->
+                    <Grid Grid.Column="2">
+                        <Grid.Style>
+                            <Style TargetType="{x:Type Grid}">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Conditional, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:QueryConditionals.None}}"
+                                        Value="False">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="and.." />
+
+                        <Rectangle Grid.Row="0"
+                                   Height="20"
+                                   Width="50"
+                                   Stroke="Blue"
+                                   StrokeThickness="0.5"
+                                   RadiusX="5"
+                                   RadiusY="5"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Fill="Transparent">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseUp">
+                                    <catel:EventToCommand
+                                        Command="{Binding SetANDConditionalCommand}"
+                                        PassEventArgsToCommand="False"
+                                        CommandParameter="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Rectangle>
+
+                        <TextBlock Grid.Row="1"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="or.." />
+
+                        <Rectangle Grid.Row="1"
+                                   Height="20"
+                                   Width="50"
+                                   Stroke="Blue"
+                                   StrokeThickness="0.5"
+                                   RadiusX="5"
+                                   RadiusY="5"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Fill="Transparent">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseUp">
+                                    <catel:EventToCommand
+                                        Command="{Binding SetORConditionalCommand}"
+                                        PassEventArgsToCommand="False"
+                                        CommandParameter="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Rectangle>
+
+                    </Grid>
+
+                    <Grid Grid.Column="2"
+                          Width="40">
+                        <Grid.Style>
+                            <Style TargetType="{x:Type Grid}">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Conditional, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:QueryConditionals.And}}"
+                                        Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="18"
+                                   Text="and" />
+
+                    </Grid>
+
+                    <Grid Grid.Column="2"
+                          Width="40">
+                        <Grid.Style>
+                            <Style TargetType="{x:Type Grid}">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Conditional, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:QueryConditionals.Or}}"
+                                        Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="18"
+                                   Text="or" />
+
+                    </Grid>
 
                     <views:QuerySelectorView Grid.Column="3"
+                                             HorizontalAlignment="Stretch"
                                              DataContext="{Binding CurrentCodeQuery}"
                                              ConditionPlace="Second">
                         <views:QuerySelectorView.Style>
@@ -124,10 +244,60 @@
                                 </Style.Triggers>
                             </Style>
                         </views:QuerySelectorView.Style>
+
                     </views:QuerySelectorView>
+
+                    <Border Grid.Column="4"
+                            Background="{StaticResource GrayBackgroundColor}"
+                            BorderBrush="Red"
+                            BorderThickness="3"
+                            CornerRadius="5"
+                            Margin="-8 5 5 5">
+                        <Border.Style>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger
+                                        Binding="{Binding Conditional, Converter={converters:EnumToBoolConverter}, ConverterParameter={x:Static entities:QueryConditionals.None}}"
+                                        Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Hidden" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <Grid Background="Transparent"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              MinHeight="32"
+                              Width="20">
+
+                            <TextBlock Text="X"
+                                       Foreground="Red"
+                                       FontSize="20"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+
+                            <Rectangle StrokeThickness="0"
+                                       HorizontalAlignment="Stretch"
+                                       VerticalAlignment="Stretch"
+                                       Fill="Transparent">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseUp">
+                                        <catel:EventToCommand
+                                            Command="{Binding SetNONEConditionalCommand}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Rectangle>
+
+                        </Grid>
+                    </Border>
 
                 </Grid>
 
+                <!-- Save/New/Run Query Buttons -->
                 <Grid Grid.Column="0"
                       Grid.ColumnSpan="3"
                       Grid.Row="1">
@@ -161,7 +331,7 @@
 
                 </Grid>
 
-                <!--Horizontal Dividing Line-->
+                <!-- Horizontal Dividing Line -->
                 <Rectangle Grid.Column="0"
                            Grid.ColumnSpan="3"
                            Grid.Row="2"
@@ -169,7 +339,7 @@
                            Margin="1 5"
                            Stroke="{StaticResource GrayBorderColor}" />
 
-                <!--Saved Queries List-->
+                <!-- Saved Queries List -->
                 <ListBox Grid.Column="0"
                          Grid.Row="3"
                          ItemsSource="{Binding SavedQueries.SavedQueries}"
@@ -273,14 +443,14 @@
 
                 </ListBox>
 
-                <!--Vertical Dividing Line-->
+                <!-- Vertical Dividing Line -->
                 <Rectangle Grid.Column="1"
                            Grid.Row="3"
                            Width="1"
                            Margin="5 1"
                            Stroke="{StaticResource GrayBorderColor}" />
 
-                <!--Query Results List-->
+                <!-- Query Results List -->
                 <ListBox Grid.Column="2"
                          Grid.Row="3"
                          ItemsSource="{Binding QueryResults}"

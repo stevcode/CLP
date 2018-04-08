@@ -76,11 +76,11 @@ namespace CLP.Entities
         {
             get
             {
-                var overridingConstraint = Constraints.FirstOrDefault(c => c.IsOverridingDisplayName);
+                var overridingConstraint = Constraints.FirstOrDefault(c => c.IsOverridingDisplayName && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY);
                 var mainName = overridingConstraint == null ? AnalysisCodeShortName : overridingConstraint.ConstraintValue;
 
-                var normalConstraints = Constraints.Where(c => !c.IsOverridingDisplayName).ToList();
-                var formattedConstraintValues = string.Join(" & ", normalConstraints.Select(c => c.ConstraintValue).Where(v => v != Codings.CONSTRAINT_VALUE_ANY));
+                var normalConstraints = Constraints.Where(c => !(c.IsOverridingDisplayName && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY)).ToList();
+                var formattedConstraintValues = string.Join(" & ", normalConstraints.Where(c => c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY || c.IsOverridingDisplayName).Select(c => c.ConstraintValue));
                 if (!string.IsNullOrWhiteSpace(formattedConstraintValues))
                 {
                     formattedConstraintValues = $": {formattedConstraintValues}";

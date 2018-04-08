@@ -75,6 +75,29 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData QueryProperty = RegisterProperty(nameof(Query), typeof(AnalysisCodeQuery));
 
+        [ViewModelToModel("Query")]
+        public IQueryPart SecondCondition
+        {
+            get => GetValue<IQueryPart>(SecondConditionProperty);
+            set => SetValue(SecondConditionProperty, value);
+        }
+
+        public static readonly PropertyData SecondConditionProperty = RegisterProperty(nameof(SecondCondition), typeof(IQueryPart), null, OnSecondConditionChanged);
+
+        private static void OnSecondConditionChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            if (!(sender is QuerySelectorViewModel querySelectorViewModel))
+            {
+                return;
+            }
+
+            if (advancedPropertyChangedEventArgs.NewValue is null &&
+                querySelectorViewModel.ConditionPlace == ConditionPlaces.Second)
+            {
+                querySelectorViewModel.CurrentStage = Stages.Prompt0;
+            }
+        }
+
         #endregion // Model
 
         #region Bindings

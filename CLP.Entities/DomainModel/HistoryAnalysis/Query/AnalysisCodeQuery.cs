@@ -101,7 +101,17 @@ namespace CLP.Entities
                 var result = firstConditionName;
                 if (Conditional != QueryConditionals.None)
                 {
-                    var conditional = Conditional.ToString();
+                    var conditional = string.Empty;
+                    switch (Conditional)
+                    {
+                        case QueryConditionals.And:
+                            conditional = "and";
+                            break;
+                        case QueryConditionals.Or:
+                            conditional = "or";
+                            break;
+                    }
+
                     result = $"{firstConditionName} {conditional} {secondConditionName}";
                 }
 

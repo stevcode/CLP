@@ -144,7 +144,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             SelectPageRangeCommand = new Command(OnSelectPageRangeCommandExecute);
-            ToggleConditionalCommand = new Command(OnToggleConditionalCommandExecute);
+            SetANDConditionalCommand = new Command(OnSetANDConditionalCommandExecute);
+            SetORConditionalCommand = new Command(OnSetORConditionalCommandExecute);
+            SetNONEConditionalCommand = new Command(OnSetNONEConditionalCommandExecute);
 
             SaveQueryCommand = new Command(OnSaveQueryCommandExecute);
             SelectSavedQueryCommand = new Command<AnalysisCodeQuery>(OnSelectSavedQueryCommandExecute);
@@ -157,27 +159,26 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
         }
 
-        public Command ToggleConditionalCommand { get; private set; }
+        public Command SetANDConditionalCommand { get; private set; }
 
-        private void OnToggleConditionalCommandExecute()
+        private void OnSetANDConditionalCommandExecute()
         {
-            if (!string.IsNullOrWhiteSpace(CurrentCodeQuery.QueryName))
-            {
-                return;
-            }
+            CurrentCodeQuery.Conditional = QueryConditionals.And;
+        }
 
-            switch (CurrentCodeQuery.Conditional)
-            {
-                case QueryConditionals.None:
-                    CurrentCodeQuery.Conditional = QueryConditionals.And;
-                    break;
-                case QueryConditionals.And:
-                    CurrentCodeQuery.Conditional = QueryConditionals.Or;
-                    break;
-                case QueryConditionals.Or:
-                    CurrentCodeQuery.Conditional = QueryConditionals.None;
-                    break;
-            }
+        public Command SetORConditionalCommand { get; private set; }
+
+        private void OnSetORConditionalCommandExecute()
+        {
+            CurrentCodeQuery.Conditional = QueryConditionals.Or;
+        }
+
+        public Command SetNONEConditionalCommand { get; private set; }
+
+        private void OnSetNONEConditionalCommandExecute()
+        {
+            CurrentCodeQuery.Conditional = QueryConditionals.None;
+            CurrentCodeQuery.SecondCondition = null;
         }
 
         /// <summary>Selects which pages to run the query on.</summary>
