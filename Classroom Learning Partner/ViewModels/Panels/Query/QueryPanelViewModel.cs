@@ -216,6 +216,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveQueryCommandExecute()
         {
+            if (SavedQueries.SavedQueries.Contains(CurrentCodeQuery))
+            {
+                return;
+            }
+
             var numberOfQueries = SavedQueries.AutoQueryCount;
             SavedQueries.AutoQueryCount++;
             CurrentCodeQuery.QueryName = $"Q{numberOfQueries}";
@@ -238,6 +243,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnEditSavedQueryCommandExecute(AnalysisCodeQuery query)
         {
             var analysisCodeCopy = query.DeepCopy();
+            // TODO: try something different from DeepCopy
             analysisCodeCopy.QueryName = string.Empty;
             CurrentCodeQuery = null;
             CurrentCodeQuery = analysisCodeCopy;
