@@ -121,11 +121,11 @@ namespace CLP.Entities
             abr.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
             conditions.Add(abr);
 
-            var raa = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER);
-            //raa.Constraints.Add(new AnalysisConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
-            raa.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);
-            raa.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
-            conditions.Add(raa);
+            //var raa = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER);
+            ////raa.Constraints.Add(new AnalysisConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
+            //raa.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);
+            //raa.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
+            //conditions.Add(raa);
 
             var caar = new AnalysisCode(Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION);
             caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE);
