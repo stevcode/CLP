@@ -58,13 +58,12 @@
                         </Style>
                     </Grid.Style>
 
-                    <Label Content="{Binding CurrentCodeQuery.LongFormattedValue}"
-                           VerticalAlignment="Center"
-                           VerticalContentAlignment="Center"
-                           HorizontalAlignment="Center"
-                           FontWeight="Bold"
-                           FontSize="20"
-                           Margin="8" />
+                    <TextBlock Text="{Binding CurrentCodeQuery.LongFormattedValue}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontWeight="Bold"
+                               FontSize="20"
+                               Margin="8" />
 
                 </Grid>
 
