@@ -136,6 +136,12 @@ namespace CLP.Entities
             finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
             conditions.Add(finalAnswer);
 
+            var mr = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP);
+            conditions.Add(mr);
+
+            var mr2step = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP);
+            conditions.Add(mr2step);
+
             return conditions;
         }
 
