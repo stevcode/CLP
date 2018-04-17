@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Xml.Linq;
 using Catel;
+using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
@@ -17,8 +20,22 @@ using Ionic.Zlib;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum GroupTypes
+    {
+        StudentName,
+        PageNumber,
+        RepresentationType,
+        OverallCorrectness
+    }
+
     public class QueryPanelViewModel : APanelBaseViewModel
     {
+        private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
+        private static readonly PropertyGroupDescription StudentNameGroup = new PropertyGroupDescription("StudentName");
+
+        private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
+        private static readonly SortDescription StudentNameAscendingSort = new SortDescription("StudentName", ListSortDirection.Ascending);
+
         private readonly IDataService _dataService;
         private readonly IQueryService _queryService;
 
@@ -36,7 +53,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             InitializeCommands();
 
+            GroupedQueryResults.Source = QueryResults;
             CurrentCodeQuery = new AnalysisCodeQuery();
+            CurrentGroupType = GroupTypes.PageNumber;
         }
 
         #region Events
@@ -73,6 +92,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        public CollectionViewSource GroupedQueryResults
+        {
+            get => GetValue<CollectionViewSource>(GroupedQueryResultsProperty);
+            set => SetValue(GroupedQueryResultsProperty, value);
+        }
+
+        public static readonly PropertyData GroupedQueryResultsProperty =
+            RegisterProperty(nameof(GroupedQueryResults), typeof(CollectionViewSource), () => new CollectionViewSource());
+
+        public GroupTypes CurrentGroupType
+        {
+            get => GetValue<GroupTypes>(CurrentGroupTypeProperty);
+            set
+            {
+                SetValue(CurrentGroupTypeProperty, value);
+                ApplySortAndGroup();
+            }
+        }
+
+        public static readonly PropertyData CurrentGroupTypeProperty = RegisterProperty(nameof(CurrentGroupType), typeof(GroupTypes));
+
         public bool IsCurrentQuerySaved
         {
             get => GetValue<bool>(IsCurrentQuerySavedProperty);
@@ -81,7 +121,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsCurrentQuerySavedProperty = RegisterProperty(nameof(IsCurrentQuerySaved), typeof(bool), false);
 
-        public override double InitialLength => 500.0;
+        public override double InitialLength => 750.0;
 
         public Queries SavedQueries
         {
@@ -99,6 +139,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData QueryResultsProperty =
             RegisterProperty(nameof(QueryResults), typeof(ObservableCollection<QueryService.QueryResult>), () => new ObservableCollection<QueryService.QueryResult>());
+
+        public QueryService.QueryResult SelectedQueryResult
+        {
+            get => GetValue<QueryService.QueryResult>(SelectedQueryResultProperty);
+            set => SetValue(SelectedQueryResultProperty, value);
+        }
+
+        public static readonly PropertyData SelectedQueryResultProperty = RegisterProperty(nameof(SelectedQueryResult), typeof(QueryService.QueryResult), null);
 
         #endregion // Bindings
 
@@ -287,7 +335,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 MessageBox.Show("No results found.");
             }
-            QueryResults = queryResults.ToObservableCollection();
+            QueryResults.AddRange(queryResults);
         }
 
         public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
@@ -304,5 +352,45 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion // Commands
+
+        #region Sorts
+
+        public void ApplySortAndGroup()
+        {
+            switch(CurrentGroupType)
+            {
+                case GroupTypes.StudentName:
+                    ApplySortAndGroupByName();
+                    break;
+                case GroupTypes.PageNumber:
+                    ApplySortAndGroupByPageNumber();
+                    break;
+                default:
+                    ApplySortAndGroupByName();
+                    break;
+            }
+        }
+
+        public void ApplySortAndGroupByName()
+        {
+            GroupedQueryResults.GroupDescriptions.Clear();
+            GroupedQueryResults.SortDescriptions.Clear();
+
+            GroupedQueryResults.GroupDescriptions.Add(StudentNameGroup);
+            GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
+            GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
+        }
+
+        public void ApplySortAndGroupByPageNumber()
+        {
+            GroupedQueryResults.GroupDescriptions.Clear();
+            GroupedQueryResults.SortDescriptions.Clear();
+
+            GroupedQueryResults.GroupDescriptions.Add(PageNumberGroup);
+            GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
+            GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
+        }
+
+        #endregion // Sorts
     }
 }
