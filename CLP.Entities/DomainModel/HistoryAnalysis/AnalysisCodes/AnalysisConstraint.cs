@@ -109,7 +109,8 @@ namespace CLP.Entities
                                                           Codings.OBJECT_STAMP,
                                                           Codings.OBJECT_BINS,
                                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY,
-                                                          Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE
+                                                          Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE,
+                                                          Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE
                                                       });
                     break;
             }

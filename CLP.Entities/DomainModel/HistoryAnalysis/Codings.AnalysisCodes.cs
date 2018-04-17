@@ -62,6 +62,7 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE = "BLANK_PAGE";
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY = "INK_ONLY";
+        public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE = "NONE";
 
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_FINAL = "FINAL";
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_DELETED = "DELETED";

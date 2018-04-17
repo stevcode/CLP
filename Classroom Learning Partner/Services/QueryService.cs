@@ -242,20 +242,20 @@ namespace Classroom_Learning_Partner.Services
                 return IsPageAMatch(queryablePage, query);
             }
 
-            if (!(queryPart is AnalysisCode analysisCode))
+            if (!(queryPart is AnalysisCode queryCode))
             {
                 return false;
             }
 
-            var matchingCodes = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCode.AnalysisCodeLabel).ToList();
-            if (!analysisCode.Constraints.Any(c => c.IsQueryable && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY))
+            var matchingCodes = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == queryCode.AnalysisCodeLabel).ToList();
+            if (!queryCode.Constraints.Any(c => c.IsQueryable && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY))
             {
                 return matchingCodes.Any();
             }
 
-            foreach (var constraint in analysisCode.Constraints.Where(c => c.IsQueryable))
+            foreach (var constraint in queryCode.Constraints.Where(c => c.IsQueryable))
             {
-                var constraints = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCode.AnalysisCodeLabel).SelectMany(c => c.Constraints).ToList();
+                var constraints = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == queryCode.AnalysisCodeLabel).SelectMany(c => c.Constraints).ToList();
                 var matchingConstraintValues = constraints.Where(c => c.ConstraintLabel == constraint.ConstraintLabel).ToList();
                 if (!matchingConstraintValues.Any())
                 {
@@ -265,6 +265,14 @@ namespace Classroom_Learning_Partner.Services
                 var queryConstraintValue = constraint.ConstraintValue;
                 if (queryConstraintValue == Codings.CONSTRAINT_VALUE_ANY ||
                     matchingConstraintValues.Any(c => c.ConstraintValue == queryConstraintValue))
+                {
+                    continue;
+                }
+
+                // HACK: Make this more modular
+                if (queryConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE &&
+                    matchingConstraintValues.Any(c => c.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY ||
+                                                      c.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE))
                 {
                     continue;
                 }
