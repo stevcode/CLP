@@ -128,7 +128,8 @@ namespace CLP.Entities
             //conditions.Add(raa);
 
             var caar = new AnalysisCode(Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION);
-            caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE);
+            caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_FROM);
+            caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_TO);
             conditions.Add(caar);
 
             var finalAnswer = new AnalysisCode(Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS);

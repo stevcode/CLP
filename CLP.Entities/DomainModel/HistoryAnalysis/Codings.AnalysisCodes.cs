@@ -41,7 +41,8 @@ namespace CLP.Entities
 
         #region Analysis Constraint Labels
 
-        public const string CONSTRAINT_ANSWER_CHANGE = "ANSWER_CHANGE";
+        public const string CONSTRAINT_ANSWER_CHANGE_FROM = "ANSWER_CHANGE_FROM";
+        public const string CONSTRAINT_ANSWER_CHANGE_TO = "ANSWER_CHANGE_TO";
         public const string CONSTRAINT_ANSWER_TYPE = "ANSWER_TYPE";
         public const string CONSTRAINT_ANSWER_CORRECTNESS = "ANSWER_CORRECTNESS";
         public const string CONSTRAINT_ANSWER_OBJECT = "ANSWER_OBJECT";
@@ -164,8 +165,10 @@ namespace CLP.Entities
         {
             switch (label)
             {
-                case CONSTRAINT_ANSWER_CHANGE:
-                    return "Answer Change";
+                case CONSTRAINT_ANSWER_CHANGE_FROM:
+                    return "Changed From";
+                case CONSTRAINT_ANSWER_CHANGE_TO:
+                    return "Changed To";
                 case CONSTRAINT_ANSWER_TYPE:
                     return "Answer Type";
                 case CONSTRAINT_ANSWER_CORRECTNESS:

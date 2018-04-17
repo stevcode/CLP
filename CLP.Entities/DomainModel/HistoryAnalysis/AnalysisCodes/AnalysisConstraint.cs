@@ -78,10 +78,11 @@ namespace CLP.Entities
             // TODO: Expand
             switch (constraintLabel)
             {
-                case Codings.CONSTRAINT_ANSWER_CHANGE:
-                    possibleConstraintValues.AddRange(from fromCorrectness in codedCorrectnessValues
-                                                      from toCorrectness in codedCorrectnessValues
-                                                      select $"{fromCorrectness}{Codings.CONSTRAINT_VALUE_ANSWER_CHANGE_DELIMITER}{toCorrectness}");
+                case Codings.CONSTRAINT_ANSWER_CHANGE_FROM:
+                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
+                    break;
+                case Codings.CONSTRAINT_ANSWER_CHANGE_TO:
+                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
                     break;
                 case Codings.CONSTRAINT_ANSWER_CORRECTNESS:
                     possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
