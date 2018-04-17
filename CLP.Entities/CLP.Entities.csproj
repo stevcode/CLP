@@ -90,6 +90,7 @@
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
     <Compile Include="DomainModel\Cache\Queries.cs" />
     <Compile Include="DomainModel\Cache\Session.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.Answer.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.AnswerRepresentationSequence.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.RepresentationsUsed.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Query\AnalysisCodeQuery.cs" />

@@ -56,12 +56,15 @@ namespace CLP.Entities
 
         private bool GenerateIsQueryable(string constraintLabel)
         {
-            return true;
+            return !(constraintLabel == Codings.CONSTRAINT_ANSWER_CORRECT_ANSWER ||
+                     constraintLabel == Codings.CONSTRAINT_ANSWER_STUDENT_ANSWER ||
+                     constraintLabel == Codings.CONSTRAINT_REPRESENTATION_CODED_ID);
         }
 
         private bool GenerateIsOverridingDisplayName(string constraintLabel)
         {
-            return constraintLabel == Codings.CONSTRAINT_REPRESENTATION_NAME;
+            return constraintLabel == Codings.CONSTRAINT_REPRESENTATION_NAME ||
+                   constraintLabel == Codings.CONSTRAINT_ANSWER_OBJECT;
         }
 
         private List<string> GeneratePossibleConstraintValues(string constraintLabel)
@@ -83,7 +86,10 @@ namespace CLP.Entities
                 case Codings.CONSTRAINT_ANSWER_CORRECTNESS:
                     possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
                     break;
-
+                case Codings.CONSTRAINT_ANSWER_OBJECT:
+                    possibleConstraintValues.Add(Codings.FriendlyObjects[Codings.OBJECT_MULTIPLE_CHOICE]);
+                    possibleConstraintValues.Add(Codings.FriendlyObjects[Codings.OBJECT_FILL_IN]);
+                    break;
                 case Codings.CONSTRAINT_ANSWER_TYPE:
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY);                   

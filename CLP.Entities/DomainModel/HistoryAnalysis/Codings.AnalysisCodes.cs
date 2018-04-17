@@ -45,6 +45,8 @@ namespace CLP.Entities
         public const string CONSTRAINT_ANSWER_TYPE = "ANSWER_TYPE";
         public const string CONSTRAINT_ANSWER_CORRECTNESS = "ANSWER_CORRECTNESS";
         public const string CONSTRAINT_ANSWER_OBJECT = "ANSWER_OBJECT";
+        public const string CONSTRAINT_ANSWER_CORRECT_ANSWER = "CORRECT_ANSWER";
+        public const string CONSTRAINT_ANSWER_STUDENT_ANSWER = "STUDENT_ANSWER";
 
         public const string CONSTRAINT_REPRESENTATION_CORRECTNESS = "REPRESENTATION_CORRECTNESS";
         public const string CONSTRAINT_REPRESENTATION_NAME = "REPRESENTATION_NAME";
@@ -67,6 +69,9 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY = "INTERMEDIARY";
         public const string CONSTRAINT_VALUE_ANSWER_TYPE_FINAL = "FINAL";
+
+        public const string CONSTRAINT_VALUE_ANSWER_OBJECT_MULTIPLE_CHOICE = "MULTIPLE_CHOICE";
+        public const string CONSTRAINT_VALUE_ANSWER_OBJECT_FILL_IN = "FILL_IN";
 
         public const string CONSTRAINT_VALUE_ANSWER_CHANGE_DELIMITER = "_TO_";
 
@@ -136,10 +141,10 @@ namespace CLP.Entities
                            ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP,
                            ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION,
                            ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION,
-                           ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER,
+                           //ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER,
                            ANALYSIS_LABEL_REPRESENTATIONS_USED,
                        //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
-                       //ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS,
+                           ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS,
                        //ANALYSIS_LABEL_PROBLEM_TYPE
                        };
 

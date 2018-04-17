@@ -83,9 +83,10 @@ namespace CLP.Entities
                 var correctAnswerDescription = $"{FinalAnswerPageObjectType}: Correct answer is {CorrectAnswer}";
                 var studentAnswerDescription = StudentAnswer == BLANK_STUDENT_ANSWER ? "Student left final answer blank" : $"Student answered {StudentAnswer}";
                 var finalAnswerFriendlyCorrectness = Codings.CorrectnessToFriendlyCorrectness(FinalAnswerCorrectness);
-                var analysisCodesDescription = AnalysisCodes.Any() ? $"\nCodes:\n{AnalysisCodesReport}" : string.Empty;
+                var analysisCodes = string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
+                var codedSection = QueryCodes.Any() ? $"\nCodes:\n{analysisCodes}" : string.Empty;
 
-                var formattedValue = $"{correctAnswerDescription}\n{studentAnswerDescription} ({finalAnswerFriendlyCorrectness}){analysisCodesDescription}";
+                var formattedValue = $"{correctAnswerDescription}\n{studentAnswerDescription} ({finalAnswerFriendlyCorrectness}){codedSection}";
                 return formattedValue;
             }
         }
@@ -115,19 +116,16 @@ namespace CLP.Entities
                     }
                 }
 
-                var multipleChoice = finalAnswerPageObject as MultipleChoice;
-                if (multipleChoice != null)
+                if (finalAnswerPageObject is MultipleChoice multipleChoice)
                 {
                     tag.FinalAnswerPageObjectType = Codings.FriendlyObjects[Codings.OBJECT_MULTIPLE_CHOICE];
                     tag.CorrectAnswer = multipleChoice.CodedID;
                 }
 
-                var interpretationRegion = finalAnswerPageObject as InterpretationRegion;
-                if (interpretationRegion != null)
+                if (finalAnswerPageObject is InterpretationRegion)
                 {
                     tag.FinalAnswerPageObjectType = Codings.FriendlyObjects[Codings.OBJECT_FILL_IN];
-                    var relationDefinitionTag = page.Tags.FirstOrDefault(t => t is IDefinition) as IDefinition;
-                    if (relationDefinitionTag != null)
+                    if (page.Tags.FirstOrDefault(t => t is IDefinition) is IDefinition relationDefinitionTag)
                     {
                         var definitionAnswer = relationDefinitionTag.Answer;
                         var truncatedAnswer = (int)Math.Truncate(definitionAnswer);
@@ -148,9 +146,10 @@ namespace CLP.Entities
                 var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
                 tag.FinalAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
 
-                tag.AnalysisCodes.Add(lastFinalAnswerEvent.CodedValue);
+                //tag.AnalysisCodes.Add(lastFinalAnswerEvent.CodedValue);
             }
-
+            
+            AnalysisCode.AddFinalAnswerCorrectness(tag, tag.FinalAnswerPageObjectType, tag.CorrectAnswer, tag.StudentAnswer, Codings.CorrectnessToCodedCorrectness(tag.FinalAnswerCorrectness));
             page.AddTag(tag);
 
             return tag;

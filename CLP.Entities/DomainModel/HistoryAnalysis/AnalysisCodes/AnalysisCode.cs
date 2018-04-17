@@ -131,6 +131,11 @@ namespace CLP.Entities
             caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE);
             conditions.Add(caar);
 
+            var finalAnswer = new AnalysisCode(Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS);
+            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_OBJECT);
+            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
+            conditions.Add(finalAnswer);
+
             return conditions;
         }
 
