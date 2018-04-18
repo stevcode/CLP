@@ -55,7 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             GroupedQueryResults.Source = QueryResults;
             CurrentCodeQuery = new AnalysisCodeQuery();
-            CurrentGroupType = GroupTypes.PageNumber;
+            CurrentGroupType = GroupTypes.StudentName;
         }
 
         #region Events

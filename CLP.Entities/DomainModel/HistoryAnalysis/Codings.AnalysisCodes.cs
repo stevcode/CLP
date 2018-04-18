@@ -174,7 +174,7 @@ namespace CLP.Entities
                 case CONSTRAINT_ANSWER_CORRECTNESS:
                     return "Correctness";
                 case CONSTRAINT_ANSWER_OBJECT:
-                    return "Answer Object";
+                    return "Type";
                 case CONSTRAINT_REPRESENTATION_CORRECTNESS:
                     return "Correctness";
                 case CONSTRAINT_REPRESENTATION_NAME:
