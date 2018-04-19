@@ -79,7 +79,7 @@
                         </Style>
                     </Grid.Style>
 
-                    <TextBlock Text="{Binding CurrentCodeQuery.LongFormattedValue}"
+                    <TextBlock Text="{Binding CurrentSavedQuery.LongFormattedValue}"
                                VerticalAlignment="Center"
                                HorizontalAlignment="Center"
                                FontWeight="Bold"
@@ -363,7 +363,7 @@
                 <ListBox Grid.Column="0"
                          Grid.Row="3"
                          ItemsSource="{Binding SavedQueries.SavedQueries}"
-                         SelectedItem="{Binding CurrentCodeQuery, Mode=OneWay}"
+                         SelectedItem="{Binding CurrentSavedQuery, Mode=OneWay}"
                          SelectionMode="Single"
                          ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
                          Margin="5 0"

@@ -92,6 +92,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        public AnalysisCodeQuery CurrentSavedQuery
+        {
+            get => GetValue<AnalysisCodeQuery>(CurrentSavedQueryProperty);
+            set => SetValue(CurrentSavedQueryProperty, value);
+        }
+
+        public static readonly PropertyData CurrentSavedQueryProperty = RegisterProperty(nameof(CurrentSavedQuery), typeof(AnalysisCodeQuery));
+
         public CollectionViewSource GroupedQueryResults
         {
             get => GetValue<CollectionViewSource>(GroupedQueryResultsProperty);
@@ -274,6 +282,8 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentCodeQuery.QueryName = $"Q{numberOfQueries}";
             SavedQueries.SavedQueries.Add(CurrentCodeQuery);
             DataService.SaveQueries(SavedQueries);
+            CurrentSavedQuery = CurrentCodeQuery;
+            CurrentCodeQuery = null;
             IsCurrentQuerySaved = true;
         }
 
@@ -282,7 +292,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSelectSavedQueryCommandExecute(AnalysisCodeQuery query)
         {
             CurrentCodeQuery = null;
-            CurrentCodeQuery = query;
+            CurrentSavedQuery = query;
             IsCurrentQuerySaved = true;
         }
 
@@ -297,6 +307,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentCodeQuery = analysisCodeCopy;
             
             IsCurrentQuerySaved = false;
+            CurrentSavedQuery = null;
         }
 
         public Command<AnalysisCodeQuery> DeleteSavedQueryCommand { get; private set; }
@@ -311,7 +322,9 @@ namespace Classroom_Learning_Partner.ViewModels
             DataService.SaveQueries(SavedQueries);
             CurrentCodeQuery = null;
             CurrentCodeQuery = new AnalysisCodeQuery();
+
             IsCurrentQuerySaved = false;
+            CurrentSavedQuery = null;
         }
 
         public Command NewQueryCommand { get; private set; }
@@ -320,7 +333,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CurrentCodeQuery = null;
             CurrentCodeQuery = new AnalysisCodeQuery();
+
             IsCurrentQuerySaved = false;
+            CurrentSavedQuery = null;
         }
 
         public Command RunQueryCommand { get; private set; }
@@ -329,7 +344,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             QueryResults.Clear();
 
-            var queryResults = _queryService.RunQuery(CurrentCodeQuery);
+            var codeToQuery = CurrentCodeQuery ?? CurrentSavedQuery;
+            var queryResults = _queryService.RunQuery(codeToQuery);
             queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
             if (!queryResults.Any())
             {
