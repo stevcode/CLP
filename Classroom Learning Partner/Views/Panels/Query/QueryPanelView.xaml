@@ -547,10 +547,10 @@
                                                             <TextBlock Margin="5 0"
                                                                        FontWeight="Bold"
                                                                        HorizontalAlignment="Left">
-                                                                <Run Text="{Binding DataContext.CurrentGroupType, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}" />
-                                                                <Run Text=": " />
+                                                                <!--<Run Text="{Binding DataContext.CurrentGroupType, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}" />
+                                                                <Run Text=": " />-->
                                                                 <Run Text="{Binding Name, Mode=OneWay}" />
-                                                                <Run Text="  Count: (" />
+                                                                <Run Text=" (" />
                                                                 <Run Text="{Binding ItemCount, Mode=OneWay}" />
                                                                 <Run Text=")" />
                                                             </TextBlock>
