@@ -247,40 +247,42 @@ namespace Classroom_Learning_Partner.Services
                 return false;
             }
 
-            var matchingCodes = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == queryCode.AnalysisCodeLabel).ToList();
-            if (!queryCode.Constraints.Any(c => c.IsQueryable && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY))
+            var matchingCodes = new List<IAnalysisCode>();
+            foreach (var analysisCode in queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == queryCode.AnalysisCodeLabel))
             {
-                return matchingCodes.Any();
+                var isAMatch = true;
+                foreach (var queryConstraint in queryCode.Constraints.Where(c => c.IsQueryable && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY))
+                {
+                    var analysisConstraint = analysisCode.Constraints.FirstOrDefault(c => c.ConstraintLabel == queryConstraint.ConstraintLabel);
+                    if (analysisConstraint == null)
+                    {
+                        isAMatch = false;
+                        break;
+                    }
+
+                    if (queryConstraint.ConstraintValue == analysisConstraint.ConstraintValue)
+                    {
+                        continue;
+                    }
+
+                    if (queryConstraint.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE &&
+                        (analysisConstraint.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY || 
+                         analysisConstraint.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE))
+                    {
+                        continue;
+                    }
+
+                    isAMatch = false;
+                    break;
+                }
+
+                if (isAMatch)
+                {
+                    matchingCodes.Add(analysisCode);
+                }
             }
 
-            foreach (var constraint in queryCode.Constraints.Where(c => c.IsQueryable))
-            {
-                var constraints = queryablePage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == queryCode.AnalysisCodeLabel).SelectMany(c => c.Constraints).ToList();
-                var matchingConstraintValues = constraints.Where(c => c.ConstraintLabel == constraint.ConstraintLabel).ToList();
-                if (!matchingConstraintValues.Any())
-                {
-                    return false;
-                }
-
-                var queryConstraintValue = constraint.ConstraintValue;
-                if (queryConstraintValue == Codings.CONSTRAINT_VALUE_ANY ||
-                    matchingConstraintValues.Any(c => c.ConstraintValue == queryConstraintValue))
-                {
-                    continue;
-                }
-
-                // HACK: Make this more modular
-                if (queryConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE &&
-                    matchingConstraintValues.Any(c => c.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY ||
-                                                      c.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE))
-                {
-                    continue;
-                }
-
-                return false;
-            }
-
-            return true;
+            return matchingCodes.Any();
         }
 
         private List<IAnalysisCode> GetPageAnalysisCodes(XElement root)
