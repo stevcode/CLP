@@ -41,9 +41,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private async Task QuerySelectorViewModel_InitializedAsync(object sender, EventArgs e)
         {
-            if (QueryPart != null)
+            if (QueryPart is AnalysisCodeQuery)
             {
                 CurrentStage = Stages.Button3;
+            }
+            else if (QueryPart is AnalysisCode)
+            {
+                CurrentStage = Stages.Constraint2;
             }
         }
 

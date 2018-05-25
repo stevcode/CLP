@@ -255,11 +255,7 @@
                                 <ComboBox Name="ConstraintValuePickerBox"
                                           Grid.Column="1"
                                           ItemsSource="{Binding PossibleConstraintValues}"
-                                          SelectedItem="{Binding ConstraintValue}"
-                                          IsEditable="False"
-                                          IsReadOnly="True"
-                                          IsSynchronizedWithCurrentItem="True"
-                                          SelectedIndex="0" />
+                                          SelectedItem="{Binding ConstraintValue}" />
 
                             </Grid>
 
