@@ -80,6 +80,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData CurrentCodeQueryProperty = RegisterProperty(nameof(CurrentCodeQuery), typeof(AnalysisCodeQuery));
 
         [ViewModelToModel("CurrentCodeQuery")]
+        public ObservableCollection<QueryCondition> Conditions
+        {
+            get => GetValue<ObservableCollection<QueryCondition>>(ConditionsProperty);
+            set => SetValue(ConditionsProperty, value);
+        }
+
+        public static readonly PropertyData ConditionsProperty = RegisterProperty(nameof(Conditions), typeof(ObservableCollection<QueryCondition>));
+
+
+        [ViewModelToModel("CurrentCodeQuery")]
         public QueryConditionals Conditional
         {
             get => GetValue<QueryConditionals>(ConditionalProperty);
@@ -202,7 +212,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectPageRangeCommand = new Command(OnSelectPageRangeCommandExecute);
             SetANDConditionalCommand = new Command(OnSetANDConditionalCommandExecute);
             SetORConditionalCommand = new Command(OnSetORConditionalCommandExecute);
-            SetNONEConditionalCommand = new Command(OnSetNONEConditionalCommandExecute);
+            RemoveConditionCommand = new Command<QueryCondition>(OnRemoveConditionCommandExecute);
 
             SaveQueryCommand = new Command(OnSaveQueryCommandExecute);
             SelectSavedQueryCommand = new Command<AnalysisCodeQuery>(OnSelectSavedQueryCommandExecute);
@@ -220,6 +230,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetANDConditionalCommandExecute()
         {
             CurrentCodeQuery.Conditional = QueryConditionals.And;
+            CurrentCodeQuery.Conditions.Add(new QueryCondition());
         }
 
         public Command SetORConditionalCommand { get; private set; }
@@ -227,14 +238,23 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetORConditionalCommandExecute()
         {
             CurrentCodeQuery.Conditional = QueryConditionals.Or;
+            CurrentCodeQuery.Conditions.Add(new QueryCondition());
         }
 
-        public Command SetNONEConditionalCommand { get; private set; }
+        public Command<QueryCondition> RemoveConditionCommand { get; private set; }
 
-        private void OnSetNONEConditionalCommandExecute()
+        private void OnRemoveConditionCommandExecute(QueryCondition condition)
         {
-            CurrentCodeQuery.Conditional = QueryConditionals.None;
-            CurrentCodeQuery.SecondCondition = null;
+            var conditionIndex = CurrentCodeQuery.Conditions.IndexOf(condition);
+            if (conditionIndex == 0)
+            {
+                CurrentCodeQuery.Conditions[0] = new QueryCondition();
+            }
+            else if (conditionIndex == 1)
+            {
+                CurrentCodeQuery.Conditional = QueryConditionals.None;
+                CurrentCodeQuery.Conditions.Remove(condition);
+            }
         }
 
         /// <summary>Selects which pages to run the query on.</summary>
@@ -277,6 +297,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            if (CurrentCodeQuery.Conditions.Any(c => c.QueryPart is null))
+            {
+                MessageBox.Show("Query must be fully filled out before saving.");
+                return;
+            }
+
             var numberOfQueries = SavedQueries.AutoQueryCount;
             SavedQueries.AutoQueryCount++;
             CurrentCodeQuery.QueryName = $"Q{numberOfQueries}";
@@ -301,7 +327,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnEditSavedQueryCommandExecute(AnalysisCodeQuery query)
         {
             var analysisCodeCopy = query.DeepCopy();
-            // TODO: try something different from DeepCopy
+            // TODO: try something different from DeepCopy?
             analysisCodeCopy.QueryName = string.Empty;
             CurrentCodeQuery = null;
             CurrentCodeQuery = analysisCodeCopy;
@@ -342,9 +368,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRunQueryCommandExecute()
         {
+            var codeToQuery = CurrentCodeQuery ?? CurrentSavedQuery;
+            if (codeToQuery.Conditions.Any(c => c.QueryPart is null))
+            {
+                MessageBox.Show("Query must be fully filled out first.");
+                return;
+            }
+
             QueryResults.Clear();
 
-            var codeToQuery = CurrentCodeQuery ?? CurrentSavedQuery;
             var queryResults = _queryService.RunQuery(codeToQuery);
             queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
             if (!queryResults.Any())

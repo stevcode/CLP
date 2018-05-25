@@ -20,23 +20,17 @@ namespace Classroom_Learning_Partner.ViewModels
         Button3
     }
 
-    public enum ConditionPlaces
-    {
-        First,
-        Second
-    }
-
     public class QuerySelectorViewModel : ViewModelBase
     {
         private readonly IQueryService _queryService;
 
-        public QuerySelectorViewModel(AnalysisCodeQuery query, IQueryService queryService)
+        public QuerySelectorViewModel(QueryCondition condition, IQueryService queryService)
         {
             Argument.IsNotNull(() => queryService);
 
             _queryService = queryService;
 
-            Query = query;
+            Condition = condition;
             
             InitializedAsync += QuerySelectorViewModel_InitializedAsync;
             
@@ -47,18 +41,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private async Task QuerySelectorViewModel_InitializedAsync(object sender, EventArgs e)
         {
-            if (Query.FirstCondition != null)
+            if (QueryPart != null)
             {
                 CurrentStage = Stages.Button3;
-                switch (ConditionPlace)
-                {
-                    case ConditionPlaces.First:
-                        SelectedIQueryPart = Query.FirstCondition;
-                        break;
-                    case ConditionPlaces.Second:
-                        SelectedIQueryPart = Query.SecondCondition;
-                        break;
-                }
             }
         }
 
@@ -67,32 +52,31 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         [Model(SupportIEditableObject = false)]
-        public AnalysisCodeQuery Query
+        public QueryCondition Condition
         {
-            get => GetValue<AnalysisCodeQuery>(QueryProperty);
-            set => SetValue(QueryProperty, value);
+            get => GetValue<QueryCondition>(ConditionProperty);
+            set => SetValue(ConditionProperty, value);
         }
 
-        public static readonly PropertyData QueryProperty = RegisterProperty(nameof(Query), typeof(AnalysisCodeQuery));
+        public static readonly PropertyData ConditionProperty = RegisterProperty(nameof(Condition), typeof(QueryCondition));
 
-        [ViewModelToModel("Query")]
-        public IQueryPart SecondCondition
+        [ViewModelToModel("Condition")]
+        public IQueryPart QueryPart
         {
-            get => GetValue<IQueryPart>(SecondConditionProperty);
-            set => SetValue(SecondConditionProperty, value);
+            get => GetValue<IQueryPart>(QueryPartProperty);
+            set => SetValue(QueryPartProperty, value);
         }
 
-        public static readonly PropertyData SecondConditionProperty = RegisterProperty(nameof(SecondCondition), typeof(IQueryPart), null, OnSecondConditionChanged);
+        public static readonly PropertyData QueryPartProperty = RegisterProperty(nameof(QueryPart), typeof(IQueryPart), null, OnQueryPartChanged);
 
-        private static void OnSecondConditionChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        private static void OnQueryPartChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             if (!(sender is QuerySelectorViewModel querySelectorViewModel))
             {
                 return;
             }
 
-            if (advancedPropertyChangedEventArgs.NewValue is null &&
-                querySelectorViewModel.ConditionPlace == ConditionPlaces.Second)
+            if (advancedPropertyChangedEventArgs.NewValue is null)
             {
                 querySelectorViewModel.CurrentStage = Stages.Prompt0;
             }
@@ -101,15 +85,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion // Model
 
         #region Bindings
-
-        /// <summary>Mapped from View</summary>
-        public ConditionPlaces ConditionPlace
-        {
-            get => GetValue<ConditionPlaces>(ConditionPlaceProperty);
-            set => SetValue(ConditionPlaceProperty, value);
-        }
-
-        public static readonly PropertyData ConditionPlaceProperty = RegisterProperty(nameof(ConditionPlace), typeof(ConditionPlaces));
 
         public Stages CurrentStage
         {
@@ -120,14 +95,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData CurrentStageProperty = RegisterProperty(nameof(CurrentStage), typeof(Stages), Stages.Prompt0);
 
         public ObservableCollection<AnalysisCodeQuery> SavedQueries => _queryService?.SavedQueries.SavedQueries;
-
-        public IQueryPart SelectedIQueryPart
-        {
-            get => GetValue<IQueryPart>(SelectedIQueryPartProperty);
-            set => SetValue(SelectedIQueryPartProperty, value);
-        }
-
-        public static readonly PropertyData SelectedIQueryPartProperty = RegisterProperty(nameof(SelectedIQueryPart), typeof(IQueryPart), null);
 
         public List<IAnalysisCode> AvailableConditions => AnalysisCode.GenerateAvailableQueryConditions().ToList();
 
@@ -141,20 +108,12 @@ namespace Classroom_Learning_Partner.ViewModels
             AdvanceToSavedQueriesStageCommand = new Command(OnAdvanceToSavedQueriesStageCommandExecute);
             SelectSavedQueryCommand = new Command<AnalysisCodeQuery>(OnSelectSavedQueryCommandExecute);
             SelectConditionCommand = new Command<IQueryPart>(OnSelectConditionCommandExecute);
-            FinalizeConstraintsCommand = new Command(OnFinalizeConstraintsCommandExecute);
-
-            ClearStageCommand = new Command(OnClearStageCommandExecute);
         }
 
         public Command AdvanceToConditionStageCommand { get; private set; }
 
         private void OnAdvanceToConditionStageCommandExecute()
         {
-            if (!string.IsNullOrWhiteSpace(Query.QueryName))
-            {
-                return;
-            }
-
             CurrentStage = Stages.Condition1;
         }
 
@@ -169,17 +128,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSelectSavedQueryCommandExecute(AnalysisCodeQuery query)
         {
-            SelectedIQueryPart = query;
-            switch (ConditionPlace)
-            {
-                case ConditionPlaces.First:
-                    Query.FirstCondition = query;
-                    break;
-                case ConditionPlaces.Second:
-                    Query.SecondCondition = query;
-                    break;
-            }
-
+            QueryPart = query;
             CurrentStage = Stages.Button3;
         }
 
@@ -187,43 +136,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSelectConditionCommandExecute(IQueryPart queryPart)
         {
-            SelectedIQueryPart = queryPart;
-            switch (ConditionPlace)
-            {
-                case ConditionPlaces.First:
-                    Query.FirstCondition = queryPart;
-                    break;
-                case ConditionPlaces.Second:
-                    Query.SecondCondition = queryPart;
-                    break;
-            }
-
+            QueryPart = queryPart;
             CurrentStage = Stages.Constraint2;
-        }
-
-        public Command FinalizeConstraintsCommand { get; private set; }
-
-        private void OnFinalizeConstraintsCommandExecute()
-        {
-            (SelectedIQueryPart as AnalysisCode).Hack = "Blah";
-            CurrentStage = Stages.Button3;
-        }
-
-        public Command ClearStageCommand { get; private set; }
-
-        private void OnClearStageCommandExecute()
-        {
-            SelectedIQueryPart = null;
-            switch (ConditionPlace)
-            {
-                case ConditionPlaces.First:
-                    Query.FirstCondition = null;
-                    break;
-                case ConditionPlaces.Second:
-                    Query.SecondCondition = null;
-                    break;
-            }
-            CurrentStage = Stages.Prompt0;
         }
 
         #endregion // Commands

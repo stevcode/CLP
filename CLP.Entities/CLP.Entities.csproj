@@ -102,6 +102,7 @@
     <Compile Include="DomainModel\HistoryAnalysis\Query\IQueryPart.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Query\Enums\QueryConditionals.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisConstraint.cs" />
+    <Compile Include="DomainModel\HistoryAnalysis\Query\QueryCondition.cs" />
     <Compile Include="DomainModel\History\FinalAnswerHistoryActions\FillInAnswerChangedHistoryAction.cs" />
     <Compile Include="DomainModel\History\IStrokesOnPageChangedHistoryAction.cs" />
     <Compile Include="DomainModel\Logging\CLogger.cs" />

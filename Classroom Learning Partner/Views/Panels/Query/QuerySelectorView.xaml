@@ -73,7 +73,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0"
@@ -136,29 +135,6 @@
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />
 
-                <!--<TextBlock Grid.Row="4"
-                           Text="Cancel"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Stretch" />
-
-                <Rectangle Grid.Row="4"
-                           StrokeThickness="0"
-                           HorizontalAlignment="Stretch"
-                           Fill="Transparent">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseUp">
-                            <catel:EventToCommand
-                                Command="{Binding ClearStageCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Rectangle>-->
-                
-                <Button Grid.Row="4"
-                        Content="Cancel"
-                        HorizontalAlignment="Stretch"
-                        VerticalContentAlignment="Center"
-                        Command="{Binding ClearStageCommand}" />
-
             </Grid>
 
             <!--Saved Queries Stage (2)-->
@@ -181,7 +157,6 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0"
@@ -222,29 +197,6 @@
 
                 </ListBox>
 
-                <!--<TextBlock Grid.Row="2"
-                           Text="Cancel"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Stretch" />
-
-                <Rectangle Grid.Row="2"
-                           StrokeThickness="0"
-                           HorizontalAlignment="Stretch"
-                           Fill="Transparent">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseUp">
-                            <catel:EventToCommand
-                                Command="{Binding ClearStageCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Rectangle>-->
-
-                <Button Grid.Row="2"
-                        Content="Cancel"
-                        HorizontalAlignment="Stretch"
-                        VerticalContentAlignment="Center"
-                        Command="{Binding ClearStageCommand}" />
-
             </Grid>
 
             <!--Constraint Stage (2)-->
@@ -278,14 +230,14 @@
                 <TextBlock Grid.Row="0"
                            Grid.Column="0"
                            Grid.ColumnSpan="2"
-                           Text="{Binding SelectedIQueryPart.AnalysisCodeShortName}"
+                           Text="{Binding QueryPart.AnalysisCodeShortName}"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />
 
                 <ItemsControl Grid.Row="1"
                               Grid.Column="0"
                               Grid.ColumnSpan="2"
-                              ItemsSource="{Binding SelectedIQueryPart.Constraints}">
+                              ItemsSource="{Binding QueryPart.Constraints}">
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -315,20 +267,7 @@
                     </ItemsControl.ItemTemplate>
 
                 </ItemsControl>
-                
-                <Button Grid.Column="0"
-                        Grid.Row="2"
-                        HorizontalAlignment="Left"
-                        Content="Cancel"
-                        Width="60"
-                        Command="{Binding ClearStageCommand}" />
 
-                <Button Grid.Column="1"
-                        Grid.Row="2"
-                        HorizontalAlignment="Right"
-                        Content="OK"
-                        Width="60"
-                        Command="{Binding FinalizeConstraintsCommand}" />
             </Grid>
 
             <!--Button Stage (3)-->
@@ -350,21 +289,10 @@
                     </Style>
                 </Grid.Style>
 
-                <TextBlock Text="{Binding SelectedIQueryPart.LongFormattedValue}"
+                <TextBlock Text="{Binding QueryPart.LongFormattedValue}"
                            FontSize="16"
                            HorizontalAlignment="Stretch"
                            VerticalAlignment="Stretch" />
-
-                <Rectangle StrokeThickness="0"
-                           HorizontalAlignment="Stretch"
-                           Fill="Transparent">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseUp">
-                            <catel:EventToCommand
-                                Command="{Binding AdvanceToConditionStageCommand}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Rectangle>
 
             </Grid>
 

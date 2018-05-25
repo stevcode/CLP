@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -8,7 +10,10 @@ namespace CLP.Entities
     {
         #region Constructor
 
-        public AnalysisCodeQuery() { }
+        public AnalysisCodeQuery()
+        {
+            Conditions.Add(new QueryCondition());
+        }
 
         #endregion // Constructor
 
@@ -34,29 +39,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData QueryDescriptionProperty = RegisterProperty(nameof(QueryDescription), typeof(string), string.Empty);
 
-        public IQueryPart FirstCondition
+        public ObservableCollection<QueryCondition> Conditions
         {
-            get => GetValue<IQueryPart>(FirstConditionProperty);
-            set
-            {
-                SetValue(FirstConditionProperty, value);
-                RaisePropertyChanged(nameof(LongFormattedValue));
-            }
+            get => GetValue<ObservableCollection<QueryCondition>>(ConditionsProperty);
+            set => SetValue(ConditionsProperty, value);
         }
 
-        public static readonly PropertyData FirstConditionProperty = RegisterProperty(nameof(FirstCondition), typeof(IQueryPart), null);
-
-        public IQueryPart SecondCondition
-        {
-            get => GetValue<IQueryPart>(SecondConditionProperty);
-            set
-            {
-                SetValue(SecondConditionProperty, value);
-                RaisePropertyChanged(nameof(LongFormattedValue));
-            }
-        }
-
-        public static readonly PropertyData SecondConditionProperty = RegisterProperty(nameof(SecondCondition), typeof(IQueryPart), null);
+        public static readonly PropertyData ConditionsProperty =
+            RegisterProperty(nameof(Conditions), typeof(ObservableCollection<QueryCondition>), () => new ObservableCollection<QueryCondition>());
 
         public QueryConditionals Conditional
         {
@@ -69,6 +59,14 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData ConditionalProperty = RegisterProperty(nameof(Conditional), typeof(QueryConditionals), QueryConditionals.None);
+
+        #region Calculated Properties
+
+        public IQueryPart FirstCondition => !Conditions.Any() ? null : Conditions.First().QueryPart;
+
+        public IQueryPart SecondCondition => Conditions.Count < 2 ? null : Conditions[1].QueryPart;
+
+        #endregion // Calculated Properties
 
         #endregion // Properties
 
