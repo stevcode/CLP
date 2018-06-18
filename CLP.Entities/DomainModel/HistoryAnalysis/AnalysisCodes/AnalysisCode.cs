@@ -7,104 +7,145 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class AnalysisConstraint : ASerializableBase
-    {
-        #region Constructors
-
-        public AnalysisConstraint() { }
-
-        public AnalysisConstraint(string constraintLabel, string constraintValue)
-        {
-            ConstraintLabel = constraintLabel;
-            ConstraintValue = constraintValue;
-        }
-
-        #endregion // Constructors
-
-        #region Properties
-
-        public string ConstraintLabel
-        {
-            get => GetValue<string>(ConstraintLabelProperty);
-            set => SetValue(ConstraintLabelProperty, value);
-        }
-
-        public static readonly PropertyData ConstraintLabelProperty = RegisterProperty(nameof(ConstraintLabel), typeof(string), string.Empty);
-
-        public string ConstraintValue
-        {
-            get => GetValue<string>(ConstraintValueProperty);
-            set => SetValue(ConstraintValueProperty, value);
-        }
-
-        public static readonly PropertyData ConstraintValueProperty = RegisterProperty(nameof(ConstraintValue), typeof(string), string.Empty);
-
-        #endregion // Properties
-    }
-
-    [Serializable]
-    public partial class AnalysisCode : ASerializableBase, IAnalysisCode
+    public partial class AnalysisCode : ASerializableBase, IAnalysisCode, IQueryPart
     {
         #region Constructors
 
         public AnalysisCode() { }
 
-        public AnalysisCode(string analysisLabel)
+        public AnalysisCode(string analysisCodeLabel)
         {
-            AnalysisLabel = analysisLabel;
-            Alias = Codings.AnalysisLabelToAlias(analysisLabel);
+            AnalysisCodeLabel = analysisCodeLabel;
         }
 
         #endregion // Constructors
 
         #region Properties
 
-        public string AnalysisLabel
+        public string Hack
         {
-            get => GetValue<string>(AnalysisLabelProperty);
-            set => SetValue(AnalysisLabelProperty, value);
+            set => RaisePropertyChanged(nameof(LongFormattedValue));
         }
 
-        public static readonly PropertyData AnalysisLabelProperty = RegisterProperty(nameof(AnalysisLabel), typeof(string), string.Empty);
+        #endregion // Properties
 
-        /// <summary>Short-form alias of the analysis code.</summary>
-        public string Alias
+        #region IAnalysisCode Implementation
+
+        public string AnalysisCodeLabel
         {
-            get => GetValue<string>(AliasProperty);
-            set => SetValue(AliasProperty, value);
+            get => GetValue<string>(AnalysisCodeLabelProperty);
+            set => SetValue(AnalysisCodeLabelProperty, value);
         }
 
-        public static readonly PropertyData AliasProperty = RegisterProperty(nameof(Alias), typeof(string), string.Empty);
+        public static readonly PropertyData AnalysisCodeLabelProperty = RegisterProperty(nameof(AnalysisCodeLabel), typeof(string), string.Empty);
 
-        public ObservableCollection<AnalysisConstraint> ConstraintValues
+        public ObservableCollection<AnalysisConstraint> Constraints
         {
-            get => GetValue<ObservableCollection<AnalysisConstraint>>(ConstraintValuesProperty);
-            set => SetValue(ConstraintValuesProperty, value);
+            get => GetValue<ObservableCollection<AnalysisConstraint>>(ConstraintsProperty);
+            set => SetValue(ConstraintsProperty, value);
         }
 
-        public static readonly PropertyData ConstraintValuesProperty =
-            RegisterProperty(nameof(ConstraintValues), typeof(ObservableCollection<AnalysisConstraint>), () => new ObservableCollection<AnalysisConstraint>());
+        public static readonly PropertyData ConstraintsProperty =
+            RegisterProperty(nameof(Constraints), typeof(ObservableCollection<AnalysisConstraint>), () => new ObservableCollection<AnalysisConstraint>());
+
+        public string AnalysisCodeName => Codings.AnalysisLabelToShortName(AnalysisCodeLabel);
+        public string AnalysisCodeShortName => Codings.AnalysisLabelToShortName(AnalysisCodeLabel);
+        public List<string> ConstraintLabels => Constraints.Select(c => c.ConstraintLabel).ToList();
 
         public string FormattedValue
         {
             get
             {
-                var constraintValues = string.Join(" - ", ConstraintValues.Select(c => c.ConstraintValue).ToList());
-                var bracesString = ConstraintValues.Any() ? $" {{{constraintValues}}}" : string.Empty;
+                var constraintValues = string.Join(" - ", Constraints.Select(c => c.ConstraintValue).ToList());
+                var bracesString = Constraints.Any() ? $" {{{constraintValues}}}" : string.Empty;
 
-                return $"{Alias}{bracesString}";
+                return $"{AnalysisCodeShortName}{bracesString}";
             }
         }
 
-        #endregion // Properties
-
-        #region Methods
-
-        public void AddConstraint(string constraintLabel, string constraintValue)
+        public void AddConstraint(string constraintLabel, string constraintValue = Codings.CONSTRAINT_VALUE_ANY)
         {
-            ConstraintValues.Add(new AnalysisConstraint(constraintLabel, constraintValue));
+            Constraints.Add(new AnalysisConstraint(constraintLabel, constraintValue));
         }
 
-        #endregion // Methods
+        #endregion // IAnalysisCode Implementation
+
+        #region IQueryPart Implementation
+
+        public string LongFormattedValue
+        {
+            get
+            {
+                var overridingConstraint = Constraints.FirstOrDefault(c => c.IsOverridingDisplayName && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY);
+                var mainName = overridingConstraint == null ? AnalysisCodeShortName : overridingConstraint.ConstraintValue;
+
+                var normalConstraints = Constraints.Where(c => !(c.IsOverridingDisplayName && c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY)).ToList();
+                var formattedConstraintValues = string.Join(" & ", normalConstraints.Where(c => c.ConstraintValue != Codings.CONSTRAINT_VALUE_ANY || c.IsOverridingDisplayName).Select(c => c.ConstraintValue));
+                if (!string.IsNullOrWhiteSpace(formattedConstraintValues))
+                {
+                    formattedConstraintValues = $": {formattedConstraintValues}";
+                }
+                return $"{mainName}{formattedConstraintValues}";
+            }
+        }
+
+        public string ButtonFormattedValue
+        {
+            get
+            {
+                var overridingConstraint = Constraints.FirstOrDefault(c => c.IsOverridingDisplayName);
+                var mainName = overridingConstraint == null ? AnalysisCodeShortName : overridingConstraint.ConstraintValue;
+
+                var normalConstraints = Constraints.Where(c => !c.IsOverridingDisplayName).ToList();
+                return $"{mainName}\n{string.Join("\n", normalConstraints)}";
+            }
+        }
+
+        #endregion // IQueryPart Implementation
+
+        #region Static Methods
+
+        public static ObservableCollection<IAnalysisCode> GenerateAvailableQueryConditions()
+        {
+            var conditions = new ObservableCollection<IAnalysisCode>();
+
+            var repsUsed = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
+            repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME);
+            repsUsed.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS);
+            repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
+            conditions.Add(repsUsed);
+
+            var abr = new AnalysisCode(Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION);
+            //abr.Constraints.Add(new AnalysisConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
+            abr.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);
+            abr.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
+            conditions.Add(abr);
+
+            //var raa = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER);
+            ////raa.Constraints.Add(new AnalysisConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
+            //raa.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);
+            //raa.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
+            //conditions.Add(raa);
+
+            var caar = new AnalysisCode(Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION);
+            caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_FROM);
+            caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_TO);
+            conditions.Add(caar);
+
+            var finalAnswer = new AnalysisCode(Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS);
+            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_OBJECT);
+            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
+            conditions.Add(finalAnswer);
+
+            var mr = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP);
+            conditions.Add(mr);
+
+            var mr2step = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP);
+            conditions.Add(mr2step);
+
+            return conditions;
+        }
+
+        #endregion // Static Methods
     }
 }

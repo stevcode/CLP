@@ -205,53 +205,53 @@ namespace CLP.Entities
             }
 
             // RAA
-            var firstCorrectFinalAnswerIndex = sequence.IndexOf("FA-COR");
-            var firstIncorrectFinalAnswerIndex = sequence.IndexOf("FA-INC");
-            var firstIllegibleFinalAnswerIndex = sequence.IndexOf("FA-ILL");
-            var finalAnswerIndexes = new List<int>();
-            if (firstCorrectFinalAnswerIndex != -1)
-            {
-                finalAnswerIndexes.Add(firstCorrectFinalAnswerIndex);
-            }
-            if (firstIncorrectFinalAnswerIndex != -1)
-            {
-                finalAnswerIndexes.Add(firstIncorrectFinalAnswerIndex);
-            }
-            if (firstIllegibleFinalAnswerIndex != -1)
-            {
-                finalAnswerIndexes.Add(firstIllegibleFinalAnswerIndex);
-            }
-            var firstFinalAnswerIndex = !finalAnswerIndexes.Any() ? -1 : finalAnswerIndexes.Min();
-            var sequenceAfterFirstFinalAnswer = sequence.Skip(firstFinalAnswerIndex + 1).ToList();
-            if (firstFinalAnswerIndex != -1 &&
-                sequenceAfterFirstFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
-            {
-                AnalysisCode.AddRepresentationAfterFinalAnswer(tag, Correctness.Unknown);
-            }
+            //var firstCorrectFinalAnswerIndex = sequence.IndexOf("FA-COR");
+            //var firstIncorrectFinalAnswerIndex = sequence.IndexOf("FA-INC");
+            //var firstIllegibleFinalAnswerIndex = sequence.IndexOf("FA-ILL");
+            //var finalAnswerIndexes = new List<int>();
+            //if (firstCorrectFinalAnswerIndex != -1)
+            //{
+            //    finalAnswerIndexes.Add(firstCorrectFinalAnswerIndex);
+            //}
+            //if (firstIncorrectFinalAnswerIndex != -1)
+            //{
+            //    finalAnswerIndexes.Add(firstIncorrectFinalAnswerIndex);
+            //}
+            //if (firstIllegibleFinalAnswerIndex != -1)
+            //{
+            //    finalAnswerIndexes.Add(firstIllegibleFinalAnswerIndex);
+            //}
+            //var firstFinalAnswerIndex = !finalAnswerIndexes.Any() ? -1 : finalAnswerIndexes.Min();
+            //var sequenceAfterFirstFinalAnswer = sequence.Skip(firstFinalAnswerIndex + 1).ToList();
+            //if (firstFinalAnswerIndex != -1 &&
+            //    sequenceAfterFirstFinalAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
+            //{
+            //    AnalysisCode.AddRepresentationAfterFinalAnswer(tag, Correctness.Unknown);
+            //}
 
-            var firstCorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-COR");
-            var firstIncorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-INC");
-            var firstIllegibleIntermediaryAnswerIndex = sequence.IndexOf("IA-ILL");
-            var intermediaryAnswerIndexes = new List<int>();
-            if (firstCorrectIntermediaryAnswerIndex != -1)
-            {
-                intermediaryAnswerIndexes.Add(firstCorrectIntermediaryAnswerIndex);
-            }
-            if (firstIncorrectIntermediaryAnswerIndex != -1)
-            {
-                intermediaryAnswerIndexes.Add(firstIncorrectIntermediaryAnswerIndex);
-            }
-            if (firstIllegibleIntermediaryAnswerIndex != -1)
-            {
-                intermediaryAnswerIndexes.Add(firstIllegibleIntermediaryAnswerIndex);
-            }
-            var firstIntermediaryAnswerIndex = !intermediaryAnswerIndexes.Any() ? -1 : intermediaryAnswerIndexes.Min();
-            var sequenceAfterFirstIntermediaryAnswer = sequence.Skip(firstIntermediaryAnswerIndex + 1).ToList();
-            if (firstIntermediaryAnswerIndex != -1 &&
-                sequenceAfterFirstIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
-            {
-                AnalysisCode.AddRepresentationAfterIntermediaryAnswer(tag, Correctness.Unknown);
-            }
+            //var firstCorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-COR");
+            //var firstIncorrectIntermediaryAnswerIndex = sequence.IndexOf("IA-INC");
+            //var firstIllegibleIntermediaryAnswerIndex = sequence.IndexOf("IA-ILL");
+            //var intermediaryAnswerIndexes = new List<int>();
+            //if (firstCorrectIntermediaryAnswerIndex != -1)
+            //{
+            //    intermediaryAnswerIndexes.Add(firstCorrectIntermediaryAnswerIndex);
+            //}
+            //if (firstIncorrectIntermediaryAnswerIndex != -1)
+            //{
+            //    intermediaryAnswerIndexes.Add(firstIncorrectIntermediaryAnswerIndex);
+            //}
+            //if (firstIllegibleIntermediaryAnswerIndex != -1)
+            //{
+            //    intermediaryAnswerIndexes.Add(firstIllegibleIntermediaryAnswerIndex);
+            //}
+            //var firstIntermediaryAnswerIndex = !intermediaryAnswerIndexes.Any() ? -1 : intermediaryAnswerIndexes.Min();
+            //var sequenceAfterFirstIntermediaryAnswer = sequence.Skip(firstIntermediaryAnswerIndex + 1).ToList();
+            //if (firstIntermediaryAnswerIndex != -1 &&
+            //    sequenceAfterFirstIntermediaryAnswer.Any(i => i == REPRESENTATION_SEQUENCE_IDENTIFIER))
+            //{
+            //    AnalysisCode.AddRepresentationAfterIntermediaryAnswer(tag, Correctness.Unknown);
+            //}
 
             // ARA
             var startItem = string.Empty;

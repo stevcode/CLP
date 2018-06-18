@@ -1930,6 +1930,39 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion // Page
 
+        #region Queries
+
+        public static Queries LoadQueriesFromCLPContainer(string fullFilePath)
+        {
+            var fileInfo = new FileInfo(fullFilePath);
+            return LoaQueriesFromCLPContainer(fileInfo);
+        }
+
+        public static Queries LoaQueriesFromCLPContainer(FileInfo fileInfo)
+        {
+            if (fileInfo == null)
+            {
+                return null;
+            }
+
+            if (!fileInfo.Exists ||
+                fileInfo.Extension != ".clp")
+            {
+                return null;
+            }
+
+            var entryPath = $"{Queries.DEFAULT_INTERNAL_FILE_NAME}.xml";
+
+            return LoadXmlEntry<Queries>(fileInfo.FullName, entryPath);
+        }
+
+        public static void SaveQueries(Queries queries)
+        {
+            SaveAInternalZipEntryFile(queries);
+        }
+
+        #endregion // Queries
+
         #endregion // Static Methods
 
         #region Tests

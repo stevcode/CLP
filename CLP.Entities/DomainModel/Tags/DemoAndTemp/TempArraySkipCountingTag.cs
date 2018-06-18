@@ -51,7 +51,7 @@ namespace CLP.Entities
 
         public override Category Category => Category.Array;
 
-        public override string FormattedName => "Array Skip Counting";
+        public override string FormattedName => "Array Skip Counting (Static Analysis)";
 
         public override string FormattedValue => $"ARR skip [{CodedID}: {RowInterpretations}]\n\t{HeuristicsResults}";
 

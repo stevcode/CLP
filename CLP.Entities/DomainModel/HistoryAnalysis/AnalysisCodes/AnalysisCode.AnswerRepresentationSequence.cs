@@ -42,10 +42,10 @@
         {
             var initialCodedCorrectness = Codings.CorrectnessToCodedCorrectness(initialCorrectness);
             var finalCodedCorrectness = Codings.CorrectnessToCodedCorrectness(finalCorrectness);
-            var constraintValue = $"{initialCodedCorrectness}{Codings.CONSTRAINT_VALUE_ANSWER_CHANGE_DELIMITER}{finalCodedCorrectness}";
 
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION);
-            analysisCode.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE, constraintValue);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_FROM, initialCodedCorrectness);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_TO, finalCodedCorrectness);
 
             tag.QueryCodes.Add(analysisCode);
         }

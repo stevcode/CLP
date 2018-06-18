@@ -5,9 +5,11 @@ namespace CLP.Entities
 {
     public interface IAnalysisCode
     {
-        string Alias { get; set; }
-        string AnalysisLabel { get; set; }
-        ObservableCollection<AnalysisConstraint> ConstraintValues { get; set; }
+        string AnalysisCodeLabel { get; }
+        ObservableCollection<AnalysisConstraint> Constraints { get; }
+        string AnalysisCodeName { get; }
+        string AnalysisCodeShortName { get; }
+        List<string> ConstraintLabels { get; }
         string FormattedValue { get; }
 
         void AddConstraint(string constraintLabel, string constraintValue);

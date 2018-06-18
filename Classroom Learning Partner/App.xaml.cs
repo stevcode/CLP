@@ -7,6 +7,7 @@ using Catel.IO;
 using Catel.IoC;
 using Catel.Logging;
 using Catel.MVVM;
+using Catel.MVVM.Views;
 using Catel.Reflection;
 using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Services;
