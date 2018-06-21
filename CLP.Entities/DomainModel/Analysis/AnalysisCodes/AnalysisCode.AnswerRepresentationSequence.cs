@@ -2,6 +2,15 @@
 {
     public partial class AnalysisCode
     {
+        public static void AddRepresentationOrder(IAnalysis tag, string firstRepresentation, string lastRepresentation)
+        {
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_ORDER);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_FIRST, firstRepresentation);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_LAST, lastRepresentation);
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
         public static void AddFinalAnswerBeforeRepresentation(IAnalysis tag, Correctness correctness)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION);

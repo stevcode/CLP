@@ -190,7 +190,7 @@ namespace CLP.Entities
                 lastRepresentationEvent != null &&
                 firstRepresentationEvent.ID != lastRepresentationEvent.ID)
             {
-                //tag.RepresentationOrder = $"{firstRepresentationEvent.CodedObject} - {lastRepresentationEvent.CodedObject}";
+                AnalysisCode.AddRepresentationOrder(tag, firstRepresentationEvent.CodedObject, lastRepresentationEvent.CodedObject);
             }
 
             // ABR
@@ -268,7 +268,7 @@ namespace CLP.Entities
             //    AnalysisCode.AddRepresentationAfterIntermediaryAnswer(tag, Correctness.Unknown);
             //}
 
-            // ARA
+            // CAAR
             var startItem = string.Empty;
             var isRepresentationUsedAfterAnswer = false;
             foreach (var item in sequence)

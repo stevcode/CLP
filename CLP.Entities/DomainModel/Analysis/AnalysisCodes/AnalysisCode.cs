@@ -110,22 +110,20 @@ namespace CLP.Entities
             var conditions = new ObservableCollection<IAnalysisCode>();
 
             var repsUsed = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
-            repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME);
+            repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME_LAX);
             repsUsed.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS);
             repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
             conditions.Add(repsUsed);
 
+            var repOrder = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_ORDER);
+            repOrder.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_FIRST);
+            repOrder.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_LAST);
+            conditions.Add(repOrder);
+
             var abr = new AnalysisCode(Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION);
-            //abr.Constraints.Add(new AnalysisConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
-            abr.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);
+            //abr.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);    // Only useful for large cache
             abr.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
             conditions.Add(abr);
-
-            //var raa = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER);
-            ////raa.Constraints.Add(new AnalysisConstraint(Codings.CONSTRAINT_ANSWER_CHANGE));
-            //raa.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);
-            //raa.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
-            //conditions.Add(raa);
 
             var caar = new AnalysisCode(Codings.ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION);
             caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_FROM);

@@ -63,7 +63,7 @@ namespace CLP.Entities
 
         private bool GenerateIsOverridingDisplayName(string constraintLabel)
         {
-            return constraintLabel == Codings.CONSTRAINT_REPRESENTATION_NAME ||
+            return constraintLabel == Codings.CONSTRAINT_REPRESENTATION_NAME_LAX ||
                    constraintLabel == Codings.CONSTRAINT_ANSWER_OBJECT;
         }
 
@@ -78,31 +78,7 @@ namespace CLP.Entities
             // TODO: Expand
             switch (constraintLabel)
             {
-                case Codings.CONSTRAINT_ANSWER_CHANGE_FROM:
-                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
-                    break;
-                case Codings.CONSTRAINT_ANSWER_CHANGE_TO:
-                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
-                    break;
-                case Codings.CONSTRAINT_ANSWER_CORRECTNESS:
-                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
-                    break;
-                case Codings.CONSTRAINT_ANSWER_OBJECT:
-                    possibleConstraintValues.Add(Codings.FriendlyObjects[Codings.OBJECT_MULTIPLE_CHOICE]);
-                    possibleConstraintValues.Add(Codings.FriendlyObjects[Codings.OBJECT_FILL_IN]);
-                    break;
-                case Codings.CONSTRAINT_ANSWER_TYPE:
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL);
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY);                   
-                    break;
-                case Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS:
-                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
-                    break;
-                case Codings.CONSTRAINT_HISTORY_STATUS:
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL);
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED);
-                    break;
-                case Codings.CONSTRAINT_REPRESENTATION_NAME:
+                case Codings.CONSTRAINT_REPRESENTATION_NAME_LAX:
                     possibleConstraintValues.AddRange(new List<string>
                                                       {
                                                           Codings.OBJECT_ARRAY,
@@ -113,6 +89,50 @@ namespace CLP.Entities
                                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE,
                                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE
                                                       });
+                    break;
+                case Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS:
+                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
+                    break;
+                case Codings.CONSTRAINT_REPRESENTATION_FIRST:
+                    possibleConstraintValues.AddRange(new List<string>
+                                                      {
+                                                          Codings.OBJECT_ARRAY,
+                                                          Codings.OBJECT_NUMBER_LINE,
+                                                          Codings.OBJECT_STAMP,
+                                                          Codings.OBJECT_BINS
+                                                      });
+                    break;
+                case Codings.CONSTRAINT_REPRESENTATION_LAST:
+                    possibleConstraintValues.AddRange(new List<string>
+                                                      {
+                                                          Codings.OBJECT_ARRAY,
+                                                          Codings.OBJECT_NUMBER_LINE,
+                                                          Codings.OBJECT_STAMP,
+                                                          Codings.OBJECT_BINS
+                                                      });
+                    break;
+
+                case Codings.CONSTRAINT_HISTORY_STATUS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED);
+                    break;
+
+                case Codings.CONSTRAINT_ANSWER_TYPE:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY);
+                    break;
+                case Codings.CONSTRAINT_ANSWER_CORRECTNESS:
+                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
+                    break;
+                case Codings.CONSTRAINT_ANSWER_CHANGE_FROM:
+                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
+                    break;
+                case Codings.CONSTRAINT_ANSWER_CHANGE_TO:
+                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
+                    break;
+                case Codings.CONSTRAINT_ANSWER_OBJECT:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_OBJECT_MULTIPLE_CHOICE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_OBJECT_FILL_IN);
                     break;
             }
 

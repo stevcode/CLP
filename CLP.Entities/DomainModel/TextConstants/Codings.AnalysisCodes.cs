@@ -7,49 +7,53 @@ namespace CLP.Entities
     {
         #region Analysis Labels
 
+        public const string ANALYSIS_LABEL_REPRESENTATIONS_USED = "REPRESENTATIONS USED";
+        public const string ANALYSIS_LABEL_REPRESENTATION_ORDER = "REPRESENTATION ORDER";
+        public const string ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION = "ANSWER BEFORE REPRESENTATION";
+        public const string ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION = "CHANGED ANSWER AFTER REPRESENTATION";
+        public const string ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS = "FILL IN ANSWER CORRECTNESS";
         public const string ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP = "MULTIPLE REPRESENTATIONS - 1-STEP";
         public const string ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP = "MULTIPLE REPRESENTATIONS - 2-STEP";
-        public const string ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION = "CHANGED ANSWER AFTER REPRESENTATION";
-        public const string ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION = "ANSWER BEFORE REPRESENTATION";
+        
         public const string ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER = "REPRESENTATION AFTER ANSWER";
-        public const string ANALYSIS_LABEL_REPRESENTATIONS_USED = "REPRESENTATIONS USED";
         public const string ANALYSIS_LABEL_ARRAY_SKIP_COUNTING = "ARRAY SKIP COUNTING";
-        public const string ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS = "FILL IN ANSWER CORRECTNESS";
         public const string ANALYSIS_LABEL_PROBLEM_TYPE = "PROBLEM TYPE";
-        public const string ANALYSIS_LABEL_REPRESENTATION_ORDER = "REPRESENTATION ORDER";
 
         #endregion // Analysis Labels
 
         #region Analysis Short Names
 
+        public const string ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED = "REPS_USED";
+        public const string ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER = "REP_ORDER";
+        public const string ANALYSIS_SHORT_NAME_ANSWER_BEFORE_REPRESENTATION = "ABR";
+        public const string ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION = "CAAR";
+        public const string ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS = "ANS";
         public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP = "MR";
         public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP = "MR2STEP";
-        public const string ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION = "CAAR";
-        public const string ANALYSIS_SHORT_NAME_ANSWER_BEFORE_REPRESENTATION = "ABR";
+        
         public const string ANALYSIS_SHORT_NAME_REPRESENTATION_AFTER_ANSWER = "RAA";
-        public const string ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED = "REPS_USED";
         public const string ANALYSIS_SHORT_NAME_ARRAY_SKIP_COUNTING = "SKIP";
-        public const string ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS = "ANS";
         public const string ANALYSIS_SHORT_NAME_PROBLEM_TYPE = "PROBLEM";
-        public const string ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER = "REP_ORDER";
 
         #endregion // Analysis Short Names
 
         #region Analysis Constraint Labels
 
-        public const string CONSTRAINT_ANSWER_CHANGE_FROM = "ANSWER_CHANGE_FROM";
-        public const string CONSTRAINT_ANSWER_CHANGE_TO = "ANSWER_CHANGE_TO";
+        public const string CONSTRAINT_REPRESENTATION_NAME_LAX = "REPRESENTATION_NAME_LAX";
+        public const string CONSTRAINT_REPRESENTATION_CORRECTNESS = "REPRESENTATION_CORRECTNESS";
+        public const string CONSTRAINT_REPRESENTATION_CODED_ID = "CODED_ID";
+        public const string CONSTRAINT_REPRESENTATION_FIRST = "REPRESENTATION_NAME_FIRST";
+        public const string CONSTRAINT_REPRESENTATION_LAST = "REPRESENTATION_NAME_LAST";
+
+        public const string CONSTRAINT_HISTORY_STATUS = "HISTORY_STATUS";
+
         public const string CONSTRAINT_ANSWER_TYPE = "ANSWER_TYPE";
         public const string CONSTRAINT_ANSWER_CORRECTNESS = "ANSWER_CORRECTNESS";
+        public const string CONSTRAINT_ANSWER_CHANGE_FROM = "ANSWER_CHANGE_FROM";
+        public const string CONSTRAINT_ANSWER_CHANGE_TO = "ANSWER_CHANGE_TO";
         public const string CONSTRAINT_ANSWER_OBJECT = "ANSWER_OBJECT";
         public const string CONSTRAINT_ANSWER_CORRECT_ANSWER = "CORRECT_ANSWER";
         public const string CONSTRAINT_ANSWER_STUDENT_ANSWER = "STUDENT_ANSWER";
-
-        public const string CONSTRAINT_REPRESENTATION_CORRECTNESS = "REPRESENTATION_CORRECTNESS";
-        public const string CONSTRAINT_REPRESENTATION_NAME = "REPRESENTATION_NAME";
-        public const string CONSTRAINT_REPRESENTATION_CODED_ID = "CODED_ID";
-
-        public const string CONSTRAINT_HISTORY_STATUS = "HISTORY_STATUS";
 
         #endregion // Analysis Constraint Labels
 
@@ -70,8 +74,6 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_VALUE_ANSWER_OBJECT_MULTIPLE_CHOICE = "MULTIPLE_CHOICE";
         public const string CONSTRAINT_VALUE_ANSWER_OBJECT_FILL_IN = "FILL_IN";
-
-        public const string CONSTRAINT_VALUE_ANSWER_CHANGE_DELIMITER = "_TO_";
 
         #endregion // Analysis Constraint Values
 
@@ -223,24 +225,30 @@ namespace CLP.Entities
         {
             switch (label)
             {
-                case CONSTRAINT_ANSWER_CHANGE_FROM:
-                    return "Changed From";
-                case CONSTRAINT_ANSWER_CHANGE_TO:
-                    return "Changed To";
+                case CONSTRAINT_REPRESENTATION_NAME_LAX:
+                    return "Type";
+                case CONSTRAINT_REPRESENTATION_CORRECTNESS:
+                    return "Correctness";
+                case CONSTRAINT_REPRESENTATION_CODED_ID:
+                    return "ID";
+                case CONSTRAINT_REPRESENTATION_FIRST:
+                    return "First";
+                case CONSTRAINT_REPRESENTATION_LAST:
+                    return "Last";
+
+                case CONSTRAINT_HISTORY_STATUS:
+                    return "Status";
+
                 case CONSTRAINT_ANSWER_TYPE:
                     return "Answer Type";
                 case CONSTRAINT_ANSWER_CORRECTNESS:
                     return "Correctness";
+                case CONSTRAINT_ANSWER_CHANGE_FROM:
+                    return "Changed From";
+                case CONSTRAINT_ANSWER_CHANGE_TO:
+                    return "Changed To";
                 case CONSTRAINT_ANSWER_OBJECT:
                     return "Type";
-                case CONSTRAINT_REPRESENTATION_CORRECTNESS:
-                    return "Correctness";
-                case CONSTRAINT_REPRESENTATION_NAME:
-                    return "Type";
-                case CONSTRAINT_REPRESENTATION_CODED_ID:
-                    return "ID";
-                case CONSTRAINT_HISTORY_STATUS:
-                    return "Status";
             }
 
             return "No matching Alias";
