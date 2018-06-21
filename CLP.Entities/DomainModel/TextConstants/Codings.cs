@@ -4,6 +4,12 @@ namespace CLP.Entities
 {
     public static partial class Codings
     {
+        #region Generic
+
+        public const string NOT_APPLICABLE = "NA";
+
+        #endregion // Generic
+
         #region Errors
 
         public const string OBJECT_ERROR = "ERROR";

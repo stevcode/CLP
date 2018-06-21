@@ -5,12 +5,6 @@ namespace CLP.Entities
 {
     public static partial class Codings
     {
-        #region Generic
-
-        public const string NOT_APPLICABLE = "NA";
-
-        #endregion // Generic
-
         #region Analysis Labels
 
         public const string ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP = "MULTIPLE REPRESENTATIONS - 1-STEP";
@@ -22,22 +16,24 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_ARRAY_SKIP_COUNTING = "ARRAY SKIP COUNTING";
         public const string ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS = "FILL IN ANSWER CORRECTNESS";
         public const string ANALYSIS_LABEL_PROBLEM_TYPE = "PROBLEM TYPE";
+        public const string ANALYSIS_LABEL_REPRESENTATION_ORDER = "REPRESENTATION ORDER";
 
         #endregion // Analysis Labels
 
-        #region Analysis Aliases
+        #region Analysis Short Names
 
         public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP = "MR";
-        public const string ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_2_STEP = "MR2STEP";
-        public const string ANALYSIS_ALIAS_CHANGED_ANSWER_AFTER_REPRESENTATION = "CAAR";
-        public const string ANALYSIS_ALIAS_ANSWER_BEFORE_REPRESENTATION = "ABR";
-        public const string ANALYSIS_ALIAS_REPRESENTATION_AFTER_ANSWER = "RAA";
-        public const string ANALYSIS_ALIAS_REPRESENTATIONS_USED = "REPS_USED";
-        public const string ANALYSIS_ALIAS_ARRAY_SKIP_COUNTING = "SKIP";
-        public const string ANALYSIS_ALIAS_FILL_IN_ANSWER_CORRECTNESS = "ANS";
+        public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP = "MR2STEP";
+        public const string ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION = "CAAR";
+        public const string ANALYSIS_SHORT_NAME_ANSWER_BEFORE_REPRESENTATION = "ABR";
+        public const string ANALYSIS_SHORT_NAME_REPRESENTATION_AFTER_ANSWER = "RAA";
+        public const string ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED = "REPS_USED";
+        public const string ANALYSIS_SHORT_NAME_ARRAY_SKIP_COUNTING = "SKIP";
+        public const string ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS = "ANS";
         public const string ANALYSIS_SHORT_NAME_PROBLEM_TYPE = "PROBLEM";
+        public const string ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER = "REP_ORDER";
 
-        #endregion // Analysis Labels
+        #endregion // Analysis Short Names
 
         #region Analysis Constraint Labels
 
@@ -145,48 +141,52 @@ namespace CLP.Entities
                 case ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP:
                     return ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP;
                 case ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP:
-                    return ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_2_STEP;
+                    return ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP;
                 case ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION:
-                    return ANALYSIS_ALIAS_CHANGED_ANSWER_AFTER_REPRESENTATION;
+                    return ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION;
                 case ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION:
-                    return ANALYSIS_ALIAS_ANSWER_BEFORE_REPRESENTATION;
+                    return ANALYSIS_SHORT_NAME_ANSWER_BEFORE_REPRESENTATION;
                 case ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER:
-                    return ANALYSIS_ALIAS_REPRESENTATION_AFTER_ANSWER;
+                    return ANALYSIS_SHORT_NAME_REPRESENTATION_AFTER_ANSWER;
                 case ANALYSIS_LABEL_REPRESENTATIONS_USED:
-                    return ANALYSIS_ALIAS_REPRESENTATIONS_USED;
+                    return ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED;
                 case ANALYSIS_LABEL_ARRAY_SKIP_COUNTING:
-                    return ANALYSIS_ALIAS_ARRAY_SKIP_COUNTING;
+                    return ANALYSIS_SHORT_NAME_ARRAY_SKIP_COUNTING;
                 case ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS:
-                    return ANALYSIS_ALIAS_FILL_IN_ANSWER_CORRECTNESS;
+                    return ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS;
                 case ANALYSIS_LABEL_PROBLEM_TYPE:
                     return ANALYSIS_SHORT_NAME_PROBLEM_TYPE;
+                case ANALYSIS_LABEL_REPRESENTATION_ORDER:
+                    return ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER;
             }
 
-            return "No matching Alias";
+            return "No matching Short Name";
         }
 
-        public static string AnalysisAliasToLabel(string alias)
+        public static string AnalysisShortNameToLabel(string alias)
         {
             switch (alias)
             {
                 case ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP:
                     return ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP;
-                case ANALYSIS_ALIAS_MULTIPLE_REPRESENTATIONS_2_STEP:
+                case ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP:
                     return ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP;
-                case ANALYSIS_ALIAS_CHANGED_ANSWER_AFTER_REPRESENTATION:
+                case ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION:
                     return ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION;
-                case ANALYSIS_ALIAS_ANSWER_BEFORE_REPRESENTATION:
+                case ANALYSIS_SHORT_NAME_ANSWER_BEFORE_REPRESENTATION:
                     return ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION;
-                case ANALYSIS_ALIAS_REPRESENTATION_AFTER_ANSWER:
+                case ANALYSIS_SHORT_NAME_REPRESENTATION_AFTER_ANSWER:
                     return ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER;
-                case ANALYSIS_ALIAS_REPRESENTATIONS_USED:
+                case ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED:
                     return ANALYSIS_LABEL_REPRESENTATIONS_USED;
-                case ANALYSIS_ALIAS_ARRAY_SKIP_COUNTING:
+                case ANALYSIS_SHORT_NAME_ARRAY_SKIP_COUNTING:
                     return ANALYSIS_LABEL_ARRAY_SKIP_COUNTING;
-                case ANALYSIS_ALIAS_FILL_IN_ANSWER_CORRECTNESS:
+                case ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS:
                     return ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS;
                 case ANALYSIS_SHORT_NAME_PROBLEM_TYPE:
                     return ANALYSIS_LABEL_PROBLEM_TYPE;
+                case ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER:
+                    return ANALYSIS_LABEL_REPRESENTATION_ORDER;
             }
 
             return "No matching Label";
@@ -204,13 +204,14 @@ namespace CLP.Entities
                            ANALYSIS_LABEL_REPRESENTATIONS_USED,
                            //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
                            ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS,
-                           //ANALYSIS_LABEL_PROBLEM_TYPE
+                           //ANALYSIS_LABEL_PROBLEM_TYPE,
+                           ANALYSIS_LABEL_REPRESENTATION_ORDER
                        };
 
             return list;
         }
 
-        public static List<string> GetAllAnalysisAliases()
+        public static List<string> GetAllAnalysisShortNames()
         {
             var labels = GetAllAnalysisLabels();
             var aliases = labels.Select(AnalysisLabelToShortName).ToList();

@@ -15,5 +15,11 @@
         public const string TAG_PROPERTY_NAME_OVERALL_CORRECTNESS = "Overall Correctness";
 
         #endregion // Tag Property Names
+
+        #region Tag Property Values
+
+        
+
+        #endregion // Tag Property Values
     }
 }
