@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -17,15 +18,18 @@ namespace CLP.Entities
     public enum Category
     {
         Array,
+        [Description("Division Template")]
         DivisionTemplate,
         Stamp,
         Strategy,
-        NumberLine,
+        //NumberLine,
         Definition,
-        CurriculumInformation,
+        //CurriculumInformation,
+        [Description("Other Page Information")]
         OtherPageInformation,
         Representation,
         Answer,
+        [Description("Meta Data")]
         MetaData
     }
 

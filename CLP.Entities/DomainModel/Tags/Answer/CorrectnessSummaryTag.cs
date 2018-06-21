@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -55,9 +57,9 @@ namespace CLP.Entities
 
         public override bool IsSingleValueTag => true;
 
-        public override Category Category => Category.Answer;
+        public override Category Category => TagCategory;
 
-        public override string FormattedName => "Correctness";
+        public override string FormattedName => TagName;
 
         public override string FormattedValue => $"{Correctness}, {(IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set Automatically" : string.Empty)}";
 
@@ -118,5 +120,53 @@ namespace CLP.Entities
         }
 
         #endregion // Static Methods
+
+        #region Documentation Generation
+
+        public static string TagName => Codings.TAG_NAME_CORRECTNESS_SUMMARY;
+
+        public static Category TagCategory => Category.Answer;
+
+        public static List<string> PropertyNames => new List<string>();
+
+        public static Dictionary<string,List<string>> PropertiesAndPossibleValues => new Dictionary<string, List<string>>();
+
+        public static void PopulatePropertyNames()
+        {
+            #region Base
+
+            PropertyNames.Add(Codings.TAG_PROPERTY_NAME_BASE_CATEGORY);
+            PropertiesAndPossibleValues.Add(Codings.TAG_PROPERTY_NAME_BASE_CATEGORY, new List<string>());
+
+            #endregion // Base
+        }
+
+        public static void PopulatePossiblyPropertyValues()
+        {
+            #region Base
+
+            PropertiesAndPossibleValues[Codings.TAG_PROPERTY_NAME_BASE_CATEGORY].Add(TagCategory.ToDescription());
+
+            #endregion // Base
+        }
+
+        public static string GenerateTagDocumentation()
+        {
+            var properties = string.Empty;
+            foreach (var propertyName in PropertyNames)
+            {
+                var values = string.Join("\n*\t - ", PropertiesAndPossibleValues[propertyName]);
+                properties += $"\n* {propertyName}\n" + 
+                              $"*\t - {values}\n";
+            }
+
+            return $"*****\n" + 
+                   $"* Tag Name: {TagName}\n\n" + 
+                   $"* Properties:\n" +
+                   $"{properties}" +
+                   $"*****\n\n";
+        }
+
+        #endregion // Documentation Generation
     }
 }
