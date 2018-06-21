@@ -22,10 +22,10 @@ namespace CLP.Entities
 
         #region Properties
 
-        public string Hack
-        {
-            set => RaisePropertyChanged(nameof(LongFormattedValue));
-        }
+        //public string Hack
+        //{
+        //    set => RaisePropertyChanged(nameof(LongFormattedValue));
+        //}
 
         #endregion // Properties
 
