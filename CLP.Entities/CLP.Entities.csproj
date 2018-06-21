@@ -96,7 +96,7 @@
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.RepresentationsUsed.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Query\AnalysisCodeQuery.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
+    <Compile Include="DomainModel\SemanticEvents\Generation\StampSemanticEvents.cs" />
     <Compile Include="DomainModel\Tags\Attributes\TagProperty.cs" />
     <Compile Include="DomainModel\TextConstants\Codings.AnalysisCodes.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\IAnalysisCode.cs" />
@@ -117,12 +117,12 @@
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
     <Compile Include="DomainModel\TextConstants\Codings.Correctness.cs" />
     <Compile Include="DomainModel\TextConstants\Codings.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\SemanticEvent.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArraySemanticEvents.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ObjectSemanticEvents.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\ISemanticEvent.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\InkSemanticEvents.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\CodedActions\NumberLineSemanticEvents.cs" />
+    <Compile Include="DomainModel\SemanticEvents\SemanticEvent.cs" />
+    <Compile Include="DomainModel\SemanticEvents\Generation\ArraySemanticEvents.cs" />
+    <Compile Include="DomainModel\SemanticEvents\Generation\ObjectSemanticEvents.cs" />
+    <Compile Include="DomainModel\SemanticEvents\ISemanticEvent.cs" />
+    <Compile Include="DomainModel\SemanticEvents\Generation\InkSemanticEvents.cs" />
+    <Compile Include="DomainModel\SemanticEvents\Generation\NumberLineSemanticEvents.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\HistoryAnalysis.cs" />
     <Compile Include="DomainModel\History\AHistoryActionBase.cs" />
     <Compile Include="DomainModel\History\AnimationIndicatorHistoryAction.cs" />
