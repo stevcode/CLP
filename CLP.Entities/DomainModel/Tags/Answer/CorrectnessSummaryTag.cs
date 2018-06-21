@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -36,8 +35,8 @@ namespace CLP.Entities
         /// <summary>Type of correctness.</summary>
         public Correctness Correctness
         {
-            get { return GetValue<Correctness>(CorrectnessProperty); }
-            set { SetValue(CorrectnessProperty, value); }
+            get => GetValue<Correctness>(CorrectnessProperty);
+            set => SetValue(CorrectnessProperty, value);
         }
 
         public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness), Correctness.Unknown);
@@ -45,8 +44,8 @@ namespace CLP.Entities
         /// <summary>Signifies the Correctness Tag was set by an analysis routine.</summary>
         public bool IsCorrectnessAutomaticallySet
         {
-            get { return GetValue<bool>(IsCorrectnessAutomaticallySetProperty); }
-            set { SetValue(IsCorrectnessAutomaticallySetProperty, value); }
+            get => GetValue<bool>(IsCorrectnessAutomaticallySetProperty);
+            set => SetValue(IsCorrectnessAutomaticallySetProperty, value);
         }
 
         public static readonly PropertyData IsCorrectnessAutomaticallySetProperty = RegisterProperty("IsCorrectnessAutomaticallySet", typeof(bool), false);
@@ -61,7 +60,8 @@ namespace CLP.Entities
 
         public override string FormattedName => TagName;
 
-        public override string FormattedValue => $"{Correctness}, {(IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set Automatically" : string.Empty)}";
+        public override string FormattedValue =>
+            $"{Correctness}, {(IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set Automatically" : string.Empty)}";
 
         #endregion //ATagBase Overrides
 
@@ -103,7 +103,7 @@ namespace CLP.Entities
                 correctness = Correctness.Correct;
             }
             else if (finalAnswerCorrectness == Correctness.Incorrect &&
-                representationCorrectness == Correctness.Incorrect)
+                     representationCorrectness == Correctness.Incorrect)
             {
                 correctness = Correctness.Incorrect;
             }
@@ -129,7 +129,7 @@ namespace CLP.Entities
 
         public static List<string> PropertyNames => new List<string>();
 
-        public static Dictionary<string,List<string>> PropertiesAndPossibleValues => new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> PropertiesAndPossibleValues => new Dictionary<string, List<string>>();
 
         public static void PopulatePropertyNames()
         {
@@ -156,15 +156,10 @@ namespace CLP.Entities
             foreach (var propertyName in PropertyNames)
             {
                 var values = string.Join("\n*\t - ", PropertiesAndPossibleValues[propertyName]);
-                properties += $"\n* {propertyName}\n" + 
-                              $"*\t - {values}\n";
+                properties += $"\n* {propertyName}\n" + $"*\t - {values}\n";
             }
 
-            return $"*****\n" + 
-                   $"* Tag Name: {TagName}\n\n" + 
-                   $"* Properties:\n" +
-                   $"{properties}" +
-                   $"*****\n\n";
+            return $"*****\n" + $"* Tag Name: {TagName}\n\n" + $"* Properties:\n" + $"{properties}" + $"*****\n\n";
         }
 
         #endregion // Documentation Generation
