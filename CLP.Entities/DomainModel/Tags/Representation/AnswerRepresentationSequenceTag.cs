@@ -17,15 +17,18 @@ namespace CLP.Entities
 
         #endregion //Constructors
 
-        /// <summary>Sequence of Final Answers and Representations.</summary>
-        // TODO: Rename to CondensedSequence
-        public List<string> Sequence
+        #region Properties
+
+        /// <summary>Sequence of Answers and Representations where sequential useage of the same type are collapsed into a single entry.</summary>
+        public List<string> CondensedSequence
         {
             get => GetValue<List<string>>(SequenceProperty);
             set => SetValue(SequenceProperty, value);
         }
 
-        public static readonly PropertyData SequenceProperty = RegisterProperty("Sequence", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData SequenceProperty = RegisterProperty(nameof(CondensedSequence), typeof(List<string>), () => new List<string>());
+
+        #endregion // Properties
 
         #region ATagBase Overrides
 
@@ -39,7 +42,7 @@ namespace CLP.Entities
         {
             get
             {
-                var sequence = string.Join(", ", Sequence);
+                var sequence = string.Join(", ", CondensedSequence);
                 var analysisCodes = string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
                 var codedSection = QueryCodes.Any() ? $"\nCodes:\n{analysisCodes}" : string.Empty;
 
@@ -118,6 +121,7 @@ namespace CLP.Entities
                 }
                 else if (Codings.IsRepresentationEvent(semanticEvent) &&
                          semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
+                    // BUG: Only deals with ADD, but could realistically need to track an R when snapping/cutting occurs
                 {
                     if (mostRecentSequenceItem == null ||
                         Codings.IsRepresentationEvent(mostRecentSequenceItem))
@@ -176,8 +180,18 @@ namespace CLP.Entities
 
             var tag = new AnswerRepresentationSequenceTag(page, Origin.StudentPageGenerated)
                       {
-                          Sequence = sequence
+                          CondensedSequence = sequence
                       };
+
+            // REP_ORDER
+            var firstRepresentationEvent = semanticEvents.FirstOrDefault(e => Codings.IsRepresentationEvent(e) && e.EventType == Codings.EVENT_OBJECT_ADD);
+            var lastRepresentationEvent = semanticEvents.LastOrDefault(e => Codings.IsRepresentationEvent(e) && e.EventType == Codings.EVENT_OBJECT_ADD);
+            if (firstRepresentationEvent != null &&
+                lastRepresentationEvent != null &&
+                firstRepresentationEvent.ID != lastRepresentationEvent.ID)
+            {
+                //tag.RepresentationOrder = $"{firstRepresentationEvent.CodedObject} - {lastRepresentationEvent.CodedObject}";
+            }
 
             // ABR
             var firstRepresentationIndex = sequence.IndexOf(REPRESENTATION_SEQUENCE_IDENTIFIER);
