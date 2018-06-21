@@ -18,6 +18,7 @@ namespace CLP.Entities
         #endregion //Constructors
 
         /// <summary>Sequence of Final Answers and Representations.</summary>
+        // TODO: Rename to CondensedSequence
         public List<string> Sequence
         {
             get => GetValue<List<string>>(SequenceProperty);

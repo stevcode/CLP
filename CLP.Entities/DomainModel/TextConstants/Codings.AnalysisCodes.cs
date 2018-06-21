@@ -145,9 +145,9 @@ namespace CLP.Entities
                            ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION,
                            //ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER,
                            ANALYSIS_LABEL_REPRESENTATIONS_USED,
-                       //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
+                           //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
                            ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS,
-                       //ANALYSIS_LABEL_PROBLEM_TYPE
+                           //ANALYSIS_LABEL_PROBLEM_TYPE
                        };
 
             return list;

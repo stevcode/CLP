@@ -15,10 +15,6 @@ namespace CLP.Entities
     [Serializable]
     public class UsedRepresentation : ASerializableBase
     {
-        #region Constructors
-
-        #endregion // Constructors
-
         #region Properties
 
         /// <summary>Coded value of the Representation.</summary>
@@ -66,7 +62,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CorrectnessReasonProperty = RegisterProperty("CorrectnessReason", typeof(string), Codings.PARTIAL_REASON_UNKNOWN);
 
-        /// <summary>The part/side of the page definition the Representation matchec correctness against.</summary>
+        /// <summary>The part/side of the page definition the Representation matches correctness against.</summary>
         public string MatchedRelationSide
         {
             get => GetValue<string>(MatchedRelationSideProperty);
@@ -133,7 +129,7 @@ namespace CLP.Entities
         {
             get
             {
-                // OJBJECT [ID] RepresentationInfo
+                // OBJECT [ID] RepresentationInfo
                 //      - Unused/No Interaction
                 //      - Correct, LS
                 //      - additional info
