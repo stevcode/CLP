@@ -1087,14 +1087,14 @@ namespace CLP.Entities
                 }
             }
 
-            var correctness = answer == Codings.ANSWER_UNDEFINED ? Codings.CORRECTNESS_UNKNOWN : answer == interpretationOnPage ? Codings.CORRECTNESS_CORRECT : Codings.CORRECTNESS_INCORRECT;
-            if (correctness == Codings.CORRECTNESS_INCORRECT &&
+            var correctness = answer == Codings.ANSWER_UNDEFINED ? Codings.CORRECTNESS_CODED_UNKNOWN : answer == interpretationOnPage ? Codings.CORRECTNESS_CODED_CORRECT : Codings.CORRECTNESS_CODED_INCORRECT;
+            if (correctness == Codings.CORRECTNESS_CODED_INCORRECT &&
                 !string.IsNullOrWhiteSpace(interpretationOnPage))
             {
                 int numericalValue;
                 if (!int.TryParse(interpretationOnPage, out numericalValue))
                 {
-                    correctness = Codings.CORRECTNESS_ILLEGIBLE;
+                    correctness = Codings.CORRECTNESS_CODED_ILLEGIBLE;
                 }
             }
 

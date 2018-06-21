@@ -90,6 +90,7 @@
     <Compile Include="DomainModel\Cache\NotebookSet.cs" />
     <Compile Include="DomainModel\Cache\Queries.cs" />
     <Compile Include="DomainModel\Cache\Session.cs" />
+    <Compile Include="DomainModel\Enums\Correctness.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.Answer.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.AnswerRepresentationSequence.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.RepresentationsUsed.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="DomainModel\Displays\ColumnDisplay.cs" />
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
+    <Compile Include="DomainModel\TextConstants\Codings.Correctness.cs" />
     <Compile Include="DomainModel\TextConstants\Codings.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\SemanticEvent.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArraySemanticEvents.cs" />
@@ -230,6 +232,7 @@
     <Compile Include="DomainModel\Tags\Strategy\BinsStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\Strategy\CodedRepresentationStrategy.cs" />
     <Compile Include="DomainModel\Tags\Strategy\NumberLineStrategyTag.cs" />
+    <Compile Include="DomainModel\TextConstants\Codings.SemanticEvents.cs" />
     <Compile Include="DomainModel\TextConstants\Codings.Tags.cs" />
     <Compile Include="DomainModel\Utility\EditDistance.cs" />
     <Compile Include="DomainModel\Utility\Extentions\DirectoryInfoExtensions.cs" />

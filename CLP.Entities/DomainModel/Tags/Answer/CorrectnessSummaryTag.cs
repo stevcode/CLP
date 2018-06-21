@@ -4,16 +4,6 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public enum Correctness
-    {
-        Correct,
-        PartiallyCorrect,
-        Incorrect,
-        Illegible,
-        Unanswered,
-        Unknown
-    }
-
     [Serializable]
     public class CorrectnessSummaryTag : ATagBase
     {

@@ -79,6 +79,63 @@ namespace CLP.Entities
 
         #endregion // Analysis Constraint Values
 
+        #region (OBSOLETE?) Analysis Codes
+
+        #region Representation Sequence
+
+        public const string ANALYSIS_FINAL_ANS_COR_BEFORE_REP = "FABR-C";
+        public const string ANALYSIS_FINAL_ANS_INC_BEFORE_REP = "FABR-I";
+        public const string ANALYSIS_INTERMEDIARY_ANS_COR_BEFORE_REP = "IABR-C";
+        public const string ANALYSIS_INTERMEDIARY_ANS_INC_BEFORE_REP = "IABR-I";
+        public const string ANALYSIS_INC_TO_COR_AFTER_REP = "ARIC";
+        public const string ANALYSIS_COR_TO_INC_AFTER_REP = "ARCI";
+        public const string ANALYSIS_COR_TO_COR_AFTER_REP = "ARCC";
+        public const string ANALYSIS_INC_TO_INC_AFTER_REP = "ARII";
+        public const string ANALYSIS_REP_AFTER_FINAL_ANSWER = "RAFA";
+        public const string ANALYSIS_REP_AFTER_INTERMEDIARY_ANSWER = "RAIA";
+
+        #endregion // Representation Sequence
+
+        #region Strategies
+
+        public const string STRATEGY_NAME_ARRAY_COUNT_BY_ONE = "COUNT-BY-ONE";
+        public const string STRATEGY_NAME_ARRAY_PARTIAL_PRODUCT = "PART";
+        public const string STRATEGY_NAME_ARRAY_SKIP = "SKIP";
+
+        public const string STRATEGY_NAME_NUMBER_LINE_JUMP = "JUMP";
+        public const string STRATEGY_NAME_NUMBER_LINE_REPEAT_ADDITION = "REPEAT ADD";
+
+        public const string STRATEGY_NAME_BINS_DEAL = "DEAL";
+
+        #endregion // Strategies
+
+        #region Strategy Specifics
+
+        public const string STRATEGY_SPECIFICS_ARRAY_CUT = "cut";
+        public const string STRATEGY_SPECIFICS_ARRAY_SNAP = "snap";
+        public const string STRATEGY_SPECIFICS_ARRAY_CUT_SNAP = "cut and snap";
+        public const string STRATEGY_SPECIFICS_ARRAY_DIVIDE = "divide";
+        public const string STRATEGY_SPECIFICS_ARRAY_DIVIDE_INK = "ink divide";
+        public const string STRATEGY_SPECIFICS_ARRAY_ARITH = "+arith";
+        public const string STRATEGY_SPECIFICS_ARRAY_DOTS = "dots";
+
+        public const string STRATEGY_SPECIFICS_NUMBER_LINE_ARITH = "+arith";
+
+        #endregion // Strategy Specifics
+
+        #region Misc
+
+        public const string NUMBER_LINE_NLJE = "NLJE";
+
+        public const string NUMBER_LINE_BLANK_PARTIAL_MATCH = "NLBP";
+
+        public const string REPRESENTATIONS_MR = "MR";
+        public const string REPRESENTATIONS_MR2STEP = "MR2STEP";
+
+        #endregion // Misc
+
+        #endregion // (OBSOLETE?) Analysis Codes
+
         #region Methods
 
         public static string AnalysisLabelToShortName(string label)

@@ -184,22 +184,22 @@ namespace CLP.Entities
             if (firstRepresentationIndex > 0)
             {
                 var previousSequenceItems = sequence.Take(firstRepresentationIndex).ToList();
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_CORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
                     AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Correct);
                 }
 
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_INCORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_INCORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
                     AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Incorrect);
                 }
 
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_CORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
                     AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Correct);
                 }
 
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_INCORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_INCORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
                     AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Incorrect);
                 }

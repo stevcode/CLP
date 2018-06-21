@@ -508,7 +508,7 @@ namespace CLP.Entities
                 var codedID = multipleChoice.CodedID;
 
                 var bubble = statusChangedHistoryActions.First().Bubble;
-                var correctness = bubble.IsACorrectValue ? Codings.CORRECTNESS_CORRECT : Codings.CORRECTNESS_INCORRECT;
+                var correctness = bubble.IsACorrectValue ? Codings.CORRECTNESS_CODED_CORRECT : Codings.CORRECTNESS_CODED_INCORRECT;
                 var eventInfo = $"{bubble.BubbleCodedID}, {correctness}";
 
                 _currentCompressedStatus = null;
