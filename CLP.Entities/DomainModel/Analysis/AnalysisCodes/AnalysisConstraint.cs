@@ -134,6 +134,27 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_OBJECT_MULTIPLE_CHOICE);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ANSWER_OBJECT_FILL_IN);
                     break;
+
+                case Codings.CONSTRAINT_ARITH_STATUS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH);
+                    break;
+
+                case Codings.CONSTRAINT_LOCATION:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_LOCATION_SIDE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_LOCATION_BOTTOM);
+                    break;
+
+                case Codings.CONSTRAINT_STRATEGY_CORRECTNESS:
+                    possibleConstraintValues.Add(Codings.CORRECTNESS_CODED_CORRECT);
+                    possibleConstraintValues.Add(Codings.CORRECTNESS_CODED_PARTIAL);
+                    possibleConstraintValues.Add(Codings.CORRECTNESS_CODED_INCORRECT);
+                    break;
+                case Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_WRONG_DIMENSION);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_LIKELY_ARITH_ERROR);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_UNKNOWN);
+                    break;
             }
 
             return possibleConstraintValues;

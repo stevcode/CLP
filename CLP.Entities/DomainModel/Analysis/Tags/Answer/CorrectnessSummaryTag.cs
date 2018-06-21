@@ -11,16 +11,42 @@ namespace CLP.Entities
 
         public CorrectnessSummaryTag() { }
 
-        public CorrectnessSummaryTag(CLPPage parentPage, Origin origin, Correctness correctness, bool isAutomaticallySet)
+        public CorrectnessSummaryTag(CLPPage parentPage, Origin origin, bool isAutomaticallySet)
             : base(parentPage, origin)
         {
-            Correctness = correctness;
             IsCorrectnessAutomaticallySet = isAutomaticallySet;
         }
 
         #endregion //Constructors
 
         #region Properties
+
+        /// <summary>Correctness of the final Representations on the page.</summary>
+        public Correctness FinalRepresentationCorrectness
+        {
+            get => GetValue<Correctness>(FinalRepresentationCorrectnessProperty);
+            set => SetValue(FinalRepresentationCorrectnessProperty, value);
+        }
+
+        public static readonly PropertyData FinalRepresentationCorrectnessProperty = RegisterProperty(nameof(FinalRepresentationCorrectness), typeof(Correctness), Correctness.Unknown);
+
+        /// <summary>Correctness of the final Strategies on the page.</summary>
+        public Correctness FinalStrategyCorrectness
+        {
+            get => GetValue<Correctness>(FinalStrategyCorrectnessProperty);
+            set => SetValue(FinalStrategyCorrectnessProperty, value);
+        }
+
+        public static readonly PropertyData FinalStrategyCorrectnessProperty = RegisterProperty(nameof(FinalStrategyCorrectness), typeof(Correctness), Correctness.Unknown);
+
+        /// <summary>Correctness of the final fill-in/multiple choice answer on the page.</summary>
+        public Correctness FinalAnswerCorrectness
+        {
+            get => GetValue<Correctness>(FinalAnswerCorrectnessProperty);
+            set => SetValue(FinalAnswerCorrectnessProperty, value);
+        }
+
+        public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty(nameof(FinalAnswerCorrectness), typeof(Correctness), Correctness.Unknown);
 
         /// <summary>Type of correctness.</summary>
         public Correctness Correctness
@@ -42,6 +68,8 @@ namespace CLP.Entities
 
         public bool IsCorrectnessManuallySet => Origin == Origin.Teacher;
 
+        #endregion //Properties
+
         #region ATagBase Overrides
 
         public override bool IsSingleValueTag => true;
@@ -55,57 +83,46 @@ namespace CLP.Entities
 
         #endregion //ATagBase Overrides
 
-        #endregion //Properties
-
         #region Static Methods
 
-        public static void AttemptTagGeneration(CLPPage page, RepresentationCorrectnessTag representationCorrectnessTag, FinalAnswerCorrectnessTag finalAnswerCorrectnessTag)
+        public static void AttemptTagGeneration(CLPPage page, FinalRepresentationCorrectnessTag finalRepresentationCorrectnessTag, FinalAnswerCorrectnessTag finalAnswerCorrectnessTag)
         {
-            if (representationCorrectnessTag == null &&
+            if (finalRepresentationCorrectnessTag == null &&
                 finalAnswerCorrectnessTag == null)
             {
                 return;
             }
 
-            CorrectnessSummaryTag tag = null;
-            if (representationCorrectnessTag == null)
-            {
-                tag = new CorrectnessSummaryTag(page, Origin.StudentPageGenerated, finalAnswerCorrectnessTag.FinalAnswerCorrectness, true);
-            }
-            else if (finalAnswerCorrectnessTag == null)
-            {
-                tag = new CorrectnessSummaryTag(page, Origin.StudentPageGenerated, representationCorrectnessTag.RepresentationCorrectness, true);
-            }
+            var tag = new CorrectnessSummaryTag(page, Origin.StudentPageGenerated, true)
+                      {
+                          FinalRepresentationCorrectness =
+                              finalRepresentationCorrectnessTag?.RepresentationCorrectness ??
+                              Correctness.Unknown,
+                          FinalAnswerCorrectness =
+                              finalAnswerCorrectnessTag?.FinalAnswerCorrectness ?? Correctness.Unknown
+                      };
 
-            if (tag != null)
-            {
-                page.AddTag(tag);
-                return;
-            }
+            //var correctnesses = new List<Correctness> {Final}
 
-            var representationCorrectness = representationCorrectnessTag.RepresentationCorrectness;
-            var finalAnswerCorrectness = finalAnswerCorrectnessTag.FinalAnswerCorrectness;
+            //var correctness = Correctness.Unknown;
+            //if (tag.FinalAnswerCorrectness == Correctness.Correct &&
+            //    tag.FinalRepresentationCorrectness == Correctness.Correct)
+            //{
+            //    correctness = Correctness.Correct;
+            //}
+            //else if (finalAnswerCorrectness == Correctness.Incorrect &&
+            //         representationCorrectness == Correctness.Incorrect)
+            //{
+            //    correctness = Correctness.Incorrect;
+            //}
+            //else if (finalAnswerCorrectness == Correctness.PartiallyCorrect ||
+            //         representationCorrectness == Correctness.PartiallyCorrect ||
+            //         finalAnswerCorrectness == Correctness.Correct ||
+            //         representationCorrectness == Correctness.Correct)
+            //{
+            //    correctness = Correctness.PartiallyCorrect;
+            //}
 
-            var correctness = Correctness.Unknown;
-            if (finalAnswerCorrectness == Correctness.Correct &&
-                representationCorrectness == Correctness.Correct)
-            {
-                correctness = Correctness.Correct;
-            }
-            else if (finalAnswerCorrectness == Correctness.Incorrect &&
-                     representationCorrectness == Correctness.Incorrect)
-            {
-                correctness = Correctness.Incorrect;
-            }
-            else if (finalAnswerCorrectness == Correctness.PartiallyCorrect ||
-                     representationCorrectness == Correctness.PartiallyCorrect ||
-                     finalAnswerCorrectness == Correctness.Correct ||
-                     representationCorrectness == Correctness.Correct)
-            {
-                correctness = Correctness.PartiallyCorrect;
-            }
-
-            tag = new CorrectnessSummaryTag(page, Origin.StudentPageGenerated, correctness, true);
             page.AddTag(tag);
         }
 

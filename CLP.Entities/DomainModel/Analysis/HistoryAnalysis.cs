@@ -831,13 +831,16 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            IntermediaryAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
-            var finalAnswerCorrectness = FinalAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
-            var representationsUsedTag = RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
-            var representationCorrectness = RepresentationCorrectnessTag.AttemptTagGeneration(page, representationsUsedTag);
-            CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);
             AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
+
+            var representationsUsedTag = RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
+            var finalAnswerCorrectness = FinalAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
+            var representationCorrectness = FinalRepresentationCorrectnessTag.AttemptTagGeneration(page, representationsUsedTag);
+            CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);
+            IntermediaryAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
+            
             ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
+
             NumberLineStrategyTag.IdentifyNumberLineStrategies(page, semanticEvents);
         }
 

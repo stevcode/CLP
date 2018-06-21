@@ -471,7 +471,7 @@ namespace CLP.Entities
             {
                 try
                 {
-                    var representationCorrectnessTag = Tags.FirstOrDefault(x => x is RepresentationCorrectnessTag) as RepresentationCorrectnessTag;
+                    var representationCorrectnessTag = Tags.FirstOrDefault(x => x is FinalRepresentationCorrectnessTag) as FinalRepresentationCorrectnessTag;
                     if (representationCorrectnessTag == null)
                     {
                         return "None";

@@ -16,16 +16,18 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class RepresentationCorrectnessTag : AAnalysisTagBase
+    public class FinalRepresentationCorrectnessTag : AAnalysisTagBase
     {
         #region Constructors
 
-        public RepresentationCorrectnessTag() { }
+        public FinalRepresentationCorrectnessTag() { }
 
-        public RepresentationCorrectnessTag(CLPPage parentPage, Origin origin)
+        public FinalRepresentationCorrectnessTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
         #endregion //Constructors
+
+        #region Properties
 
         /// <summary>Overall correctness of the final Representations on the page.</summary>
         public Correctness RepresentationCorrectness
@@ -34,8 +36,10 @@ namespace CLP.Entities
             set => SetValue(RepresentationCorrectnessProperty, value);
         }
 
-        public static readonly PropertyData RepresentationCorrectnessProperty = RegisterProperty("RepresentationCorrectness", typeof(Correctness), Correctness.Unknown);
+        public static readonly PropertyData RepresentationCorrectnessProperty = RegisterProperty(nameof(RepresentationCorrectness), typeof(Correctness), Correctness.Unknown);
 
+        #endregion // Properties
+        
         #region ATagBase Overrides
 
         public override bool IsSingleValueTag => true;
@@ -59,7 +63,7 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static RepresentationCorrectnessTag AttemptTagGeneration(CLPPage page, RepresentationsUsedTag representationsUsedTag)
+        public static FinalRepresentationCorrectnessTag AttemptTagGeneration(CLPPage page, RepresentationsUsedTag representationsUsedTag)
         {
             var isAnswerDefinitionOnPage = page.Tags.OfType<IDefinition>().Any();
             if (!isAnswerDefinitionOnPage)
@@ -67,7 +71,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var tag = new RepresentationCorrectnessTag(page, Origin.StudentPageGenerated);
+            var tag = new FinalRepresentationCorrectnessTag(page, Origin.StudentPageGenerated);
 
             var finalRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.IsFinalRepresentation).ToList();
             if (finalRepresentations.Any() &&
@@ -92,6 +96,8 @@ namespace CLP.Entities
 
             return tag;
         }
+
+        // TODO: All the below static methods are only used for RepsUsed Tag now. Refactor to better location.
 
         #region Page Answer Definition Relation Generation
 

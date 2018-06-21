@@ -141,6 +141,13 @@ namespace CLP.Entities
             var mr2step = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP);
             conditions.Add(mr2step);
 
+            var arrSkip = new AnalysisCode(Codings.ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP);
+            arrSkip.AddConstraint(Codings.CONSTRAINT_ARITH_STATUS);
+            arrSkip.AddConstraint(Codings.CONSTRAINT_LOCATION);
+            arrSkip.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS);
+            arrSkip.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON);
+            conditions.Add(arrSkip);
+
             return conditions;
         }
 

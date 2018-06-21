@@ -276,9 +276,9 @@ namespace CLP.Entities
         {
             var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated);
 
-            var leftRelation = RepresentationCorrectnessTag.GenerateLeftRelationFromPageAnswerDefinition(page);
-            var rightRelation = RepresentationCorrectnessTag.GenerateRightRelationFromPageAnswerDefinition(page);
-            var alternativeRelation = RepresentationCorrectnessTag.GenerateAlternativeRelationFromPageAnswerDefinition(page);
+            var leftRelation = FinalRepresentationCorrectnessTag.GenerateLeftRelationFromPageAnswerDefinition(page);
+            var rightRelation = FinalRepresentationCorrectnessTag.GenerateRightRelationFromPageAnswerDefinition(page);
+            var alternativeRelation = FinalRepresentationCorrectnessTag.GenerateAlternativeRelationFromPageAnswerDefinition(page);
 
             GenerateArraysUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
             GenerateNumberLinesUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
@@ -306,6 +306,10 @@ namespace CLP.Entities
                 {
                     // TODO: Add in order
                     AnalysisCode.AddRepresentationUsed(tag, usedRepresentation);
+                    if (usedRepresentation.CodedObject == Codings.OBJECT_ARRAY)
+                    {
+                        AnalysisCode.AddStrategies(tag, usedRepresentation);
+                    }
                 }
             }
 
@@ -1072,7 +1076,7 @@ namespace CLP.Entities
 
                 // TODO: One-to-one comparison of each array at pattern points. Could take pattern point created by cut and consider those cut arrays as one?
 
-                var representationRelation = RepresentationCorrectnessTag.GenerateArrayRelation(array, patternPoint.EndHistoryActionIndex);
+                var representationRelation = FinalRepresentationCorrectnessTag.GenerateArrayRelation(array, patternPoint.EndHistoryActionIndex);
                 SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation);
 
                 #endregion // Representation Correctness
@@ -1450,7 +1454,7 @@ namespace CLP.Entities
                 #region Representation Correctness
 
                 var jumpSizes = jumps;
-                var representationRelation = RepresentationCorrectnessTag.GenerateNumberLineRelation(jumpSizes);
+                var representationRelation = FinalRepresentationCorrectnessTag.GenerateNumberLineRelation(jumpSizes);
                 SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation, hasGapsAndOverlaps);
 
                 if (!usedRepresentation.IsUsed)
@@ -1698,7 +1702,7 @@ namespace CLP.Entities
 
             #region Representation Correctness
 
-            var representationRelation = RepresentationCorrectnessTag.GenerateStampedObjectsRelation(parts, numberOfStampedObjects);
+            var representationRelation = FinalRepresentationCorrectnessTag.GenerateStampedObjectsRelation(parts, numberOfStampedObjects);
             SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation);
 
             #endregion // Representation Correctness
@@ -1797,9 +1801,9 @@ namespace CLP.Entities
                     alternativeRelation.IsSwapped = false;
                 }
 
-                var leftCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
-                var rightCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
-                var alternativeCorrectness = RepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
+                var leftCorrectness = FinalRepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, leftRelation);
+                var rightCorrectness = FinalRepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, rightRelation);
+                var alternativeCorrectness = FinalRepresentationCorrectnessTag.CompareSimplifiedRelations(representationRelation, alternativeRelation);
 
                 if (leftCorrectness == Correctness.Correct)
                 {

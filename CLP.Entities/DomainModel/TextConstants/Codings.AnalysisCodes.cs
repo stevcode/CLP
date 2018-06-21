@@ -16,8 +16,10 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP = "MULTIPLE REPRESENTATIONS - 2-STEP";
         
         public const string ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER = "REPRESENTATION AFTER ANSWER";
-        public const string ANALYSIS_LABEL_ARRAY_SKIP_COUNTING = "ARRAY SKIP COUNTING";
         public const string ANALYSIS_LABEL_PROBLEM_TYPE = "PROBLEM TYPE";
+
+        public const string ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP = "ARRAY SKIP";
+        public const string ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT = "ARRAY PARTIAL PRODUCT";
 
         #endregion // Analysis Labels
 
@@ -32,8 +34,10 @@ namespace CLP.Entities
         public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP = "MR2STEP";
         
         public const string ANALYSIS_SHORT_NAME_REPRESENTATION_AFTER_ANSWER = "RAA";
-        public const string ANALYSIS_SHORT_NAME_ARRAY_SKIP_COUNTING = "SKIP";
         public const string ANALYSIS_SHORT_NAME_PROBLEM_TYPE = "PROBLEM";
+
+        public const string ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_SKIP = "ARR_SKIP";
+        public const string ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_PARTIAL_PRODUCT = "ARR_PARTIAL_PRODUCT";
 
         #endregion // Analysis Short Names
 
@@ -49,11 +53,19 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_ANSWER_TYPE = "ANSWER_TYPE";
         public const string CONSTRAINT_ANSWER_CORRECTNESS = "ANSWER_CORRECTNESS";
+        
         public const string CONSTRAINT_ANSWER_CHANGE_FROM = "ANSWER_CHANGE_FROM";
         public const string CONSTRAINT_ANSWER_CHANGE_TO = "ANSWER_CHANGE_TO";
         public const string CONSTRAINT_ANSWER_OBJECT = "ANSWER_OBJECT";
         public const string CONSTRAINT_ANSWER_CORRECT_ANSWER = "CORRECT_ANSWER";
         public const string CONSTRAINT_ANSWER_STUDENT_ANSWER = "STUDENT_ANSWER";
+
+        public const string CONSTRAINT_ARITH_STATUS = "ARITH_STATUS";
+
+        public const string CONSTRAINT_LOCATION = "LOCATION";
+
+        public const string CONSTRAINT_STRATEGY_CORRECTNESS = "STRATEGY_CORRECTNESS";
+        public const string CONSTRAINT_STRATEGY_CORRECTNESS_REASON = "STRATEGY_CORRECTNESS_REASON";
 
         #endregion // Analysis Constraint Labels
 
@@ -74,6 +86,16 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_VALUE_ANSWER_OBJECT_MULTIPLE_CHOICE = "MULTIPLE_CHOICE";
         public const string CONSTRAINT_VALUE_ANSWER_OBJECT_FILL_IN = "FILL_IN";
+
+        public const string CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH = "NO_ARITH";
+        public const string CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH = "PLUS_ARITH";
+
+        public const string CONSTRAINT_VALUE_LOCATION_SIDE = "SIDE";
+        public const string CONSTRAINT_VALUE_LOCATION_BOTTOM = "BOTTOM";
+
+        public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_WRONG_DIMENSION = "WRONG_DIMENSION";
+        public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_LIKELY_ARITH_ERROR = "LIKELY_ARITH_ERROR";
+        public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_UNKNOWN = "UNKNOWN";
 
         #endregion // Analysis Constraint Values
 
@@ -152,14 +174,16 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_REPRESENTATION_AFTER_ANSWER;
                 case ANALYSIS_LABEL_REPRESENTATIONS_USED:
                     return ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED;
-                case ANALYSIS_LABEL_ARRAY_SKIP_COUNTING:
-                    return ANALYSIS_SHORT_NAME_ARRAY_SKIP_COUNTING;
                 case ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS:
                     return ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS;
                 case ANALYSIS_LABEL_PROBLEM_TYPE:
                     return ANALYSIS_SHORT_NAME_PROBLEM_TYPE;
                 case ANALYSIS_LABEL_REPRESENTATION_ORDER:
                     return ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER;
+                case ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP:
+                    return ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_SKIP;
+                case ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT:
+                    return ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_PARTIAL_PRODUCT;
             }
 
             return "No matching Short Name";
@@ -181,14 +205,16 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER;
                 case ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED:
                     return ANALYSIS_LABEL_REPRESENTATIONS_USED;
-                case ANALYSIS_SHORT_NAME_ARRAY_SKIP_COUNTING:
-                    return ANALYSIS_LABEL_ARRAY_SKIP_COUNTING;
                 case ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS:
                     return ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS;
                 case ANALYSIS_SHORT_NAME_PROBLEM_TYPE:
                     return ANALYSIS_LABEL_PROBLEM_TYPE;
                 case ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER:
                     return ANALYSIS_LABEL_REPRESENTATION_ORDER;
+                case ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_SKIP:
+                    return ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP;
+                case ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_PARTIAL_PRODUCT:
+                    return ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT;
             }
 
             return "No matching Label";
@@ -207,7 +233,9 @@ namespace CLP.Entities
                            //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
                            ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS,
                            //ANALYSIS_LABEL_PROBLEM_TYPE,
-                           ANALYSIS_LABEL_REPRESENTATION_ORDER
+                           ANALYSIS_LABEL_REPRESENTATION_ORDER,
+                           ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP,
+                           ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT
                        };
 
             return list;
@@ -249,6 +277,17 @@ namespace CLP.Entities
                     return "Changed To";
                 case CONSTRAINT_ANSWER_OBJECT:
                     return "Type";
+
+                case CONSTRAINT_ARITH_STATUS:
+                    return "Arith Status";
+
+                case CONSTRAINT_LOCATION:
+                    return "Location";
+
+                case CONSTRAINT_STRATEGY_CORRECTNESS:
+                    return "Correctness";
+                case CONSTRAINT_STRATEGY_CORRECTNESS_REASON:
+                    return "Reason";
             }
 
             return "No matching Alias";

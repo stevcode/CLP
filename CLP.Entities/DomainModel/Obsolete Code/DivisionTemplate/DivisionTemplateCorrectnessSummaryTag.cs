@@ -73,9 +73,9 @@ namespace CLP.Entities
             {
                 return string.Format("Overall Correctness: {0}{1}{2}{3}",
                                      Correctness,
-                                     CorrectCount == 0 ? string.Empty : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Correct.", CorrectCount),
-                                     PartiallyCorrectCount == 0 ? string.Empty : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Partially Correct.", PartiallyCorrectCount),
-                                     IncorrectCount == 0 ? string.Empty : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Incorrect.", IncorrectCount));
+                                     CorrectCount == 0 ? string.Empty : string.Format("\n{0} FinalRepresentationCorrectnessTag(s) set to Correct.", CorrectCount),
+                                     PartiallyCorrectCount == 0 ? string.Empty : string.Format("\n{0} FinalRepresentationCorrectnessTag(s) set to Partially Correct.", PartiallyCorrectCount),
+                                     IncorrectCount == 0 ? string.Empty : string.Format("\n{0} FinalRepresentationCorrectnessTag(s) set to Incorrect.", IncorrectCount));
             }
         }
 

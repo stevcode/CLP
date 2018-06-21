@@ -247,7 +247,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             set
             {
-                Page.AddTag(new CorrectnessSummaryTag(Page, Origin.Teacher, value, false));
+                // BUG: manually setting correctness just sets it to Unknown
+                Page.AddTag(new CorrectnessSummaryTag(Page, Origin.Teacher, false));
                 RaisePropertyChanged(nameof(Correctness));
             }
         }
