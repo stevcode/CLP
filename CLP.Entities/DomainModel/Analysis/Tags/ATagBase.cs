@@ -18,19 +18,19 @@ namespace CLP.Entities
     public enum Category
     {
         Array,
-        [Description("Division Template")]
-        DivisionTemplate,
+        [Description("Division Template")] DivisionTemplate,
         Stamp,
         Strategy,
+
         //NumberLine,
         Definition,
+
         //CurriculumInformation,
         [Description("Other Page Information")]
         OtherPageInformation,
         Representation,
         Answer,
-        [Description("Meta Data")]
-        MetaData
+        [Description("Meta Data")] MetaData
     }
 
     [Serializable]
@@ -60,8 +60,8 @@ namespace CLP.Entities
         /// <summary>Unique Identifier for the <see cref="ATagBase" />.</summary>
         public string ID
         {
-            get { return GetValue<string>(IDProperty); }
-            set { SetValue(IDProperty, value); }
+            get => GetValue<string>(IDProperty);
+            set => SetValue(IDProperty, value);
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
@@ -69,8 +69,8 @@ namespace CLP.Entities
         /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="ATagBase" />.</summary>
         public string OwnerID
         {
-            get { return GetValue<string>(OwnerIDProperty); }
-            set { SetValue(OwnerIDProperty, value); }
+            get => GetValue<string>(OwnerIDProperty);
+            set => SetValue(OwnerIDProperty, value);
         }
 
         public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
@@ -78,8 +78,8 @@ namespace CLP.Entities
         /// <summary>Date and Time the <see cref="ATagBase" /> was created.</summary>
         public DateTime CreationDate
         {
-            get { return GetValue<DateTime>(CreationDateProperty); }
-            set { SetValue(CreationDateProperty, value); }
+            get => GetValue<DateTime>(CreationDateProperty);
+            set => SetValue(CreationDateProperty, value);
         }
 
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
@@ -87,8 +87,8 @@ namespace CLP.Entities
         /// <summary>Designates the <see cref="ITag" /> as invisible in the PageInfoPanel.</summary>
         public bool IsHiddenTag
         {
-            get { return GetValue<bool>(IsHiddenTagProperty); }
-            set { SetValue(IsHiddenTagProperty, value); }
+            get => GetValue<bool>(IsHiddenTagProperty);
+            set => SetValue(IsHiddenTagProperty, value);
         }
 
         public static readonly PropertyData IsHiddenTagProperty = RegisterProperty("IsHiddenTag", typeof(bool), false);
@@ -96,8 +96,8 @@ namespace CLP.Entities
         /// <summary> From where the <see cref="ATagBase" /> originates. </summary>
         public Origin Origin
         {
-            get { return GetValue<Origin>(OriginProperty); }
-            set { SetValue(OriginProperty, value); }
+            get => GetValue<Origin>(OriginProperty);
+            set => SetValue(OriginProperty, value);
         }
 
         public static readonly PropertyData OriginProperty = RegisterProperty("Origin", typeof(Origin), Origin.Author);
@@ -105,8 +105,8 @@ namespace CLP.Entities
         /// <summary>The <see cref="ATagBase" />'s parent <see cref="CLPPage" />.</summary>
         public CLPPage ParentPage
         {
-            get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
+            get => GetValue<CLPPage>(ParentPageProperty);
+            set => SetValue(ParentPageProperty, value);
         }
 
         public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage));

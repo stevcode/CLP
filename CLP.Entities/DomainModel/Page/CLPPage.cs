@@ -477,7 +477,7 @@ namespace CLP.Entities
                         return "None";
                     }
 
-                    var codes = representationCorrectnessTag.AnalysisCodes;
+                    var codes = representationCorrectnessTag.SpreadSheetCodes;
                     if (codes.All(c => c.Contains("COR")))
                     {
                         return "Correct";
@@ -544,7 +544,7 @@ namespace CLP.Entities
                         return "None";
                     }
 
-                    var code = abrTag.AnalysisCodes;
+                    var code = abrTag.SpreadSheetCodes;
                     if (code.Contains("ABR-I"))
                     {
                         return "ABR-I";

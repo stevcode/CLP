@@ -64,13 +64,15 @@ namespace CLP.Entities
         {
             get
             {
-                var correctAnswerDescription = $"Correct answer is {CorrectAnswer}";
-                var studentAnswerDescription = StudentAnswer == BLANK_STUDENT_ANSWER ? "Student left answer blank" : $"Student answered {StudentAnswer}";
-                var finalAnswerFriendlyCorrectness = Codings.CorrectnessToFriendlyCorrectness(IntermediaryAnswerCorrectness);
-                var analysisCodesDescription = AnalysisCodes.Any() ? $"\nCodes:\n{AnalysisCodesReport}" : string.Empty;
+                //var correctAnswerDescription = $"Correct answer is {CorrectAnswer}";
+                //var studentAnswerDescription = StudentAnswer == BLANK_STUDENT_ANSWER ? "Student left answer blank" : $"Student answered {StudentAnswer}";
+                //var finalAnswerFriendlyCorrectness = Codings.CorrectnessToFriendlyCorrectness(IntermediaryAnswerCorrectness);
+                //var analysisCodesDescription = SpreadSheetCodes.Any() ? $"\nCodes:\n{AnalysisCodesReport}" : string.Empty;
 
-                var formattedValue = $"{correctAnswerDescription}\n{studentAnswerDescription} ({finalAnswerFriendlyCorrectness}){analysisCodesDescription}";
-                return formattedValue;
+                //var formattedValue = $"{correctAnswerDescription}\n{studentAnswerDescription} ({finalAnswerFriendlyCorrectness}){analysisCodesDescription}";
+                //return formattedValue;
+
+                return string.Empty;
             }
         }
 
@@ -104,7 +106,7 @@ namespace CLP.Entities
                 var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastIntermediaryAnswerEvent);
                 tag.IntermediaryAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
 
-                tag.AnalysisCodes.Add(lastIntermediaryAnswerEvent.CodedValue);
+                tag.SpreadSheetCodes.Add(lastIntermediaryAnswerEvent.CodedValue);
             }
 
             page.AddTag(tag);

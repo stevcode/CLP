@@ -145,8 +145,6 @@ namespace CLP.Entities
                 tag.StudentAnswer = Codings.GetFinalAnswerEventContent(lastFinalAnswerEvent);
                 var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
                 tag.FinalAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
-
-                //tag.AnalysisCodes.Add(lastFinalAnswerEvent.CodedValue);
             }
             
             AnalysisCode.AddFinalAnswerCorrectness(tag, tag.FinalAnswerPageObjectType, tag.CorrectAnswer, tag.StudentAnswer, Codings.CorrectnessToCodedCorrectness(tag.FinalAnswerCorrectness));

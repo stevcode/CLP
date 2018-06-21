@@ -20,13 +20,13 @@ namespace CLP.Entities
         #region IAnalysis Implementation
 
         /// <summary>List of all the Analysis Codes the Tag generates.</summary>
-        public List<string> AnalysisCodes
+        public List<string> SpreadSheetCodes
         {
             get => GetValue<List<string>>(AnalysisCodesProperty);
             set => SetValue(AnalysisCodesProperty, value);
         }
 
-        public static readonly PropertyData AnalysisCodesProperty = RegisterProperty("AnalysisCodes", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData AnalysisCodesProperty = RegisterProperty(nameof(SpreadSheetCodes), typeof(List<string>), () => new List<string>());
 
         public List<IAnalysisCode> QueryCodes
         {
@@ -36,10 +36,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData QueryCodesProperty = RegisterProperty(nameof(QueryCodes), typeof(List<IAnalysisCode>), () => new List<IAnalysisCode>());
 
-        public string QueryCodesReport => string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
-
-        public string AnalysisCodesReport => string.Join("\n", AnalysisCodes);
-
         /// <summary>List of <see cref="ISemanticEvent" /> IDs used to generate this Tag.</summary>
         public List<string> SemanticEventIDs
         {
@@ -47,7 +43,7 @@ namespace CLP.Entities
             set => SetValue(SemanticEventIDsProperty, value);
         }
 
-        public static readonly PropertyData SemanticEventIDsProperty = RegisterProperty("SemanticEventIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData SemanticEventIDsProperty = RegisterProperty(nameof(SemanticEventIDs), typeof(List<string>), () => new List<string>());
 
         #region Calculated Properties
 

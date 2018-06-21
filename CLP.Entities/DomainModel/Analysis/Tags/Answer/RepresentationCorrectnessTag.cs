@@ -30,8 +30,8 @@ namespace CLP.Entities
         /// <summary>Overall correctness of the final Representations on the page.</summary>
         public Correctness RepresentationCorrectness
         {
-            get { return GetValue<Correctness>(RepresentationCorrectnessProperty); }
-            set { SetValue(RepresentationCorrectnessProperty, value); }
+            get => GetValue<Correctness>(RepresentationCorrectnessProperty);
+            set => SetValue(RepresentationCorrectnessProperty, value);
         }
 
         public static readonly PropertyData RepresentationCorrectnessProperty = RegisterProperty("RepresentationCorrectness", typeof(Correctness), Correctness.Unknown);
@@ -42,15 +42,15 @@ namespace CLP.Entities
 
         public override Category Category => Category.Answer;
 
-        public override string FormattedName => "Representation Correctness";
+        public override string FormattedName => "Final Representation Correctness";
 
         public override string FormattedValue
         {
             get
             {
                 var overallCorrectness = Codings.CorrectnessToFriendlyCorrectness(RepresentationCorrectness);
-                var analysisCodes = string.Join("  - ", AnalysisCodes);
-                var representations = AnalysisCodes.Any() ? $"Representations:\n  - {analysisCodes}" : "No Representations";
+                var analysisCodes = string.Join("  - ", SpreadSheetCodes);
+                var representations = SpreadSheetCodes.Any() ? $"Representations:\n  - {analysisCodes}" : "No Representations";
                 return $"Overall Correctness: {overallCorrectness}\n{representations}";
             }
         }
@@ -86,8 +86,9 @@ namespace CLP.Entities
                 tag.RepresentationCorrectness = Correctness.PartiallyCorrect;
             }
 
-            tag.AnalysisCodes =
-                finalRepresentations.Select(r => $"{r.CodedObject} [{r.CodedID}] {r.RepresentationInformation}, {Codings.CorrectnessToCodedCorrectness(tag.RepresentationCorrectness)}").ToList();
+            tag.SpreadSheetCodes = finalRepresentations
+                                .Select(r => $"{r.CodedObject} [{r.CodedID}] {r.RepresentationInformation}, {Codings.CorrectnessToCodedCorrectness(tag.RepresentationCorrectness)}")
+                                .ToList();
 
             return tag;
         }
@@ -308,7 +309,8 @@ namespace CLP.Entities
                                               GroupSize = partTwoDefinition.Factors.Last().RelationPartAnswerValue,
                                               NumberOfGroups = partTwoDefinition.Factors.First().RelationPartAnswerValue,
                                               Product = partTwoDefinition.Product,
-                                              IsOrderedGroup = partTwoDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
+                                              IsOrderedGroup = partTwoDefinition.RelationType ==
+                                                               MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups
                                           };
 
             var groupSize = -1.0;
@@ -389,6 +391,7 @@ namespace CLP.Entities
             {
                 firstGroupSize = firstJump.JumpSize;
             }
+
             var isEqualGroups = numberLine.JumpSizes.All(j => j.JumpSize == firstGroupSize);
 
             var product = -1;
@@ -419,6 +422,7 @@ namespace CLP.Entities
             {
                 firstGroupSize = firstJump.JumpSize;
             }
+
             var isEqualGroups = jumpSizes.All(j => j.JumpSize == firstGroupSize);
 
             var product = -1;
