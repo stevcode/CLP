@@ -96,7 +96,7 @@
     <Compile Include="DomainModel\HistoryAnalysis\Query\AnalysisCodeQuery.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\AnalysisCode.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\StampSemanticEvents.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\Codings.AnalysisCodes.cs" />
+    <Compile Include="DomainModel\TextConstants\Codings.AnalysisCodes.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\AnalysisCodes\IAnalysisCode.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\PatternPoint.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\Query\IQueryPart.cs" />
@@ -113,7 +113,7 @@
     <Compile Include="DomainModel\Displays\ColumnDisplay.cs" />
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
-    <Compile Include="DomainModel\HistoryAnalysis\Codings.cs" />
+    <Compile Include="DomainModel\TextConstants\Codings.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\SemanticEvent.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ArraySemanticEvents.cs" />
     <Compile Include="DomainModel\HistoryAnalysis\CodedActions\ObjectSemanticEvents.cs" />
