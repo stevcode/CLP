@@ -12,6 +12,8 @@
 
         public const string TAG_PROPERTY_NAME_BASE_CATEGORY = "Category";
 
+        public const string TAG_PROPERTY_NAME_OVERALL_CORRECTNESS = "Overall Correctness";
+
         #endregion // Tag Property Names
     }
 }

@@ -137,14 +137,6 @@ namespace CLP.Entities
 
             PropertyNames.Add(Codings.TAG_PROPERTY_NAME_BASE_CATEGORY);
             PropertiesAndPossibleValues.Add(Codings.TAG_PROPERTY_NAME_BASE_CATEGORY, new List<string>());
-
-            #endregion // Base
-        }
-
-        public static void PopulatePossiblyPropertyValues()
-        {
-            #region Base
-
             PropertiesAndPossibleValues[Codings.TAG_PROPERTY_NAME_BASE_CATEGORY].Add(TagCategory.ToDescription());
 
             #endregion // Base
