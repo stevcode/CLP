@@ -149,6 +149,11 @@ namespace CLP.Entities
             arrSkip.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON);
             conditions.Add(arrSkip);
 
+            var partialProduct = new AnalysisCode(Codings.ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT);
+            partialProduct.AddConstraint(Codings.CONSTRAINT_STRATEGY_TECHNIQUE);
+            partialProduct.AddConstraint(Codings.CONSTRAINT_STRATEGY_FRIENDLY_NUMBERS);
+            conditions.Add(partialProduct);
+
             var wordProblem = new AnalysisCode(Codings.ANALYSIS_LABEL_WORD_PROBLEM);
             wordProblem.AddConstraint(Codings.CONSTRAINT_IS_WORD_PROBLEM);
             conditions.Add(wordProblem);

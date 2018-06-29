@@ -73,20 +73,93 @@ namespace CLP.Entities
             tag.QueryCodes.Add(analysisCode);
         }
 
-        public static void AddStrategies(IAnalysis tag, UsedRepresentation usedRepresentation)
+        public static void AddArraySkipStrategies(IAnalysis tag, UsedRepresentation usedRepresentation)
         {
             foreach (var additionalInfo in usedRepresentation.AdditionalInformation.Where(i => i.Contains("skip")))
             {
                 var location = additionalInfo.Contains("bottom") ? Codings.CONSTRAINT_VALUE_LOCATION_BOTTOM : Codings.CONSTRAINT_VALUE_LOCATION_SIDE;
 
                 var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP);
-                analysisCode.AddConstraint(Codings.CONSTRAINT_ARITH_STATUS, Codings.NOT_APPLICABLE);
+
+                if (additionalInfo.Contains("+arith"))
+                {
+                    analysisCode.AddConstraint(Codings.CONSTRAINT_ARITH_STATUS, Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH);
+                }
+                else
+                {
+                    analysisCode.AddConstraint(Codings.CONSTRAINT_ARITH_STATUS, Codings.CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH);
+                }
+                
                 analysisCode.AddConstraint(Codings.CONSTRAINT_LOCATION, location);
-                analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS, Codings.NOT_APPLICABLE);
-                analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
+
+                if (additionalInfo.Contains("bottom"))
+                {
+                    if (additionalInfo.Contains("correct"))
+                    {
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS, Codings.CORRECTNESS_CODED_CORRECT);
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
+                    }
+                    else
+                    {
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS, Codings.CORRECTNESS_CODED_PARTIAL);
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_WRONG_DIMENSION);
+                    }
+                }
+                else
+                {
+                    if (additionalInfo.Contains("No Heuristic Adjustment Possible") ||
+                        additionalInfo.Contains("Heuristic Adjustment Error"))
+                    {
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS, Codings.CORRECTNESS_CODED_INCORRECT);
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_UNKNOWN);
+                    }
+                    else if (additionalInfo.Contains("Skip Counted by Wrong Dimension"))
+                    {
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS, Codings.CORRECTNESS_CODED_PARTIAL);
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_WRONG_DIMENSION);
+                    }
+                    else if (additionalInfo.Contains("Likely arithmetic error"))
+                    {
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS, Codings.CORRECTNESS_CODED_PARTIAL);
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_LIKELY_ARITH_ERROR);
+                    }
+                    else
+                    {
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS, Codings.CORRECTNESS_CODED_CORRECT);
+                        analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
+                    }
+                }
 
                 tag.QueryCodes.Add(analysisCode);
             }
+        }
+
+        public static void AddArrayPartialProductStrategies(IAnalysis tag, UsedRepresentation usedRepresentation)
+        {
+            if (string.IsNullOrWhiteSpace(usedRepresentation.RepresentationInformation) &&
+                !usedRepresentation.AdditionalInformation.Any(a => a.Contains("Created by Snap")))
+            {
+                return;
+            }
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT);
+
+            if (usedRepresentation.AdditionalInformation.Any(a => a.Contains("Total Ink Divides")))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_TECHNIQUE, Codings.CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_INK_DIVIDE);
+            }
+            else if (usedRepresentation.AdditionalInformation.Any(a => a.Contains("Created by Snap")))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_TECHNIQUE, Codings.CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_CUT_AND_SNAP);
+            }
+            else
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_TECHNIQUE, Codings.CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_DIVIDE);
+            }
+
+            analysisCode.AddConstraint(Codings.CONSTRAINT_STRATEGY_FRIENDLY_NUMBERS, Codings.NOT_APPLICABLE);
+
+            tag.QueryCodes.Add(analysisCode);
         }
     }
 }

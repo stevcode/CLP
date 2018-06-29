@@ -74,6 +74,9 @@ namespace CLP.Entities
         public const string CONSTRAINT_STRATEGY_CORRECTNESS = "STRATEGY_CORRECTNESS";
         public const string CONSTRAINT_STRATEGY_CORRECTNESS_REASON = "STRATEGY_CORRECTNESS_REASON";
 
+        public const string CONSTRAINT_STRATEGY_TECHNIQUE = "STRATEGY_TECHNIQUE";
+        public const string CONSTRAINT_STRATEGY_FRIENDLY_NUMBERS = "STRATEGY_FRIENDLY_NUMBERS";
+
         public const string CONSTRAINT_IS_WORD_PROBLEM = "IS_WORD_PROBLEM";
         public const string CONSTRAINT_PROBLEM_TYPE = "PROBLEM_TYPE";
 
@@ -112,6 +115,16 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_WRONG_DIMENSION = "WRONG_DIMENSION";
         public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_LIKELY_ARITH_ERROR = "LIKELY_ARITH_ERROR";
         public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_UNKNOWN = "UNKNOWN";
+
+        public const string CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_DIVIDE = "DIVIDE";
+        public const string CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_INK_DIVIDE = "INK_DIVIDE";
+        public const string CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_CUT_AND_SNAP = "CUT_AND_SNAP";
+
+        public const string CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_TWO = "TWO";
+        public const string CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_FIVE = "FIVE";
+        public const string CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_TEN = "TEN";
+        public const string CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_HALF = "HALF";
+        public const string CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_NONE = "NONE";
 
         public const string CONSTRAINT_VALUE_PROBLEM_TYPE_MULTIPLICATION = "MULTIPLICATION";
         public const string CONSTRAINT_VALUE_PROBLEM_TYPE_DIVISION = "DIVISION";
@@ -322,6 +335,11 @@ namespace CLP.Entities
                     return "Correctness";
                 case CONSTRAINT_STRATEGY_CORRECTNESS_REASON:
                     return "Reason";
+
+                case CONSTRAINT_STRATEGY_TECHNIQUE:
+                    return "Technique";
+                case CONSTRAINT_STRATEGY_FRIENDLY_NUMBERS:
+                    return "Friendly Numbers";
 
                 case CONSTRAINT_IS_WORD_PROBLEM:
                     return "Value";

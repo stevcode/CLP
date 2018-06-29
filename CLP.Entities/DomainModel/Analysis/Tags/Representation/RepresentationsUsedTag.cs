@@ -308,7 +308,8 @@ namespace CLP.Entities
                     AnalysisCode.AddRepresentationUsed(tag, usedRepresentation);
                     if (usedRepresentation.CodedObject == Codings.OBJECT_ARRAY)
                     {
-                        AnalysisCode.AddStrategies(tag, usedRepresentation);
+                        AnalysisCode.AddArraySkipStrategies(tag, usedRepresentation);
+                        AnalysisCode.AddArrayPartialProductStrategies(tag, usedRepresentation);
                     }
                 }
             }
@@ -965,6 +966,8 @@ namespace CLP.Entities
                                                            (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) &&
                                                            !e.EventInformation.Contains("bottom"));
 
+                var isSkipPlusArith = IsSkipPlusArith(arrayID, semanticEvents);
+
                 var skipEventGroupings = new List<List<ISemanticEvent>>();
                 var currentSkipGrouping = new List<ISemanticEvent>();
                 foreach (var skipCountingEvent in skipEvents)
@@ -1052,7 +1055,7 @@ namespace CLP.Entities
                     }
 
                     var bestSideSkipEvent = bestChoice.SemanticEvent as ISemanticEvent;
-                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent);
+                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent, isSkipPlusArith);
                     if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
                     {
                         usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
@@ -1064,7 +1067,7 @@ namespace CLP.Entities
                                                                                   (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) &&
                                                                                   e.EventInformation.Contains("bottom"));
 
-                var bottomSkipCodedValue = BottomSkipCountingCorrectness(array, mostRecentBottomSkipEvent);
+                var bottomSkipCodedValue = BottomSkipCountingCorrectness(array, mostRecentBottomSkipEvent, isSkipPlusArith);
                 if (!string.IsNullOrWhiteSpace(bottomSkipCodedValue))
                 {
                     usedRepresentation.AdditionalInformation.Add(bottomSkipCodedValue);
@@ -1085,7 +1088,50 @@ namespace CLP.Entities
             }
         }
 
-        private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
+        private static bool IsSkipPlusArith(string currentArrayID, List<ISemanticEvent> semanticEvents)
+        {
+            var skipArithCount = 0;
+            var patternStartPoints = new Dictionary<string, string>();
+
+            for (var i = 0; i < semanticEvents.Count; i++)
+            {
+                var currentSemanticEvent = semanticEvents[i];
+
+                if (currentSemanticEvent.CodedObject == Codings.OBJECT_ARITH &&
+                    currentSemanticEvent.EventType == Codings.EVENT_ARITH_ADD)
+                {
+                    var arrayIDs = patternStartPoints.Keys.ToList();
+                    foreach (var arrayID in arrayIDs)
+                    {
+                        patternStartPoints[arrayID] = Codings.EVENT_ARITH_ADD;
+                    }
+                }
+
+                if (currentSemanticEvent.CodedObject == Codings.OBJECT_ARRAY &&
+                    currentSemanticEvent.EventType == Codings.EVENT_ARRAY_SKIP &&
+                    currentSemanticEvent.ReferencePageObjectID == currentArrayID)
+                {
+                    var arrayID = currentSemanticEvent.ReferencePageObjectID;
+                    if (patternStartPoints.Keys.Contains(arrayID))
+                    {
+                        if (patternStartPoints[arrayID] == Codings.EVENT_ARITH_ADD)
+                        {
+                            skipArithCount++;
+                        }
+
+                        patternStartPoints[arrayID] = Codings.EVENT_ARRAY_SKIP;
+                    }
+                    else
+                    {
+                        patternStartPoints.Add(arrayID, Codings.EVENT_ARRAY_SKIP);
+                    }
+                }
+            }
+
+            return skipArithCount > 0;
+        }
+
+        private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, bool isSkipPlusArith)
         {
             if (array == null)
             {
@@ -1110,11 +1156,12 @@ namespace CLP.Entities
             
             var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, rows, columns);
 
-            var skipCodedValue = $"skip [{formattedSkips}]\n\t{heuristicsResults}";
+            var plusArithText = isSkipPlusArith ? "+arith" : string.Empty;
+            var skipCodedValue = $"skip{plusArithText} [{formattedSkips}]\n\t{heuristicsResults}";
             return skipCodedValue;
         }
 
-        private static string BottomSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent)
+        private static string BottomSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, bool isSkipPlusArith)
         {
             if (array == null)
             {
@@ -1132,7 +1179,8 @@ namespace CLP.Entities
                                    ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips, historyIndex);
             var correctnessText = isWrongDimension ? "wrong dimension" : "correct";
 
-            var skipCodedValue = $"bottom skip [{formattedSkips}], {correctnessText}";
+            var plusArithText = isSkipPlusArith ? "+arith" : string.Empty;
+            var skipCodedValue = $"bottom skip{plusArithText} [{formattedSkips}], {correctnessText}";
             return skipCodedValue;
         }
 

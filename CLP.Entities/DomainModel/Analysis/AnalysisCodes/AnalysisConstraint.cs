@@ -162,6 +162,19 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_UNKNOWN);
                     break;
 
+                case Codings.CONSTRAINT_STRATEGY_TECHNIQUE:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_DIVIDE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_INK_DIVIDE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_TECHNIQUE_CUT_AND_SNAP);
+                    break;
+                case Codings.CONSTRAINT_STRATEGY_FRIENDLY_NUMBERS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_TWO);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_FIVE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_TEN);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_HALF);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_FRIENDLY_NUMBERS_NONE);
+                    break;
+
                 case Codings.CONSTRAINT_IS_WORD_PROBLEM:
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
