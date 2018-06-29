@@ -343,7 +343,7 @@ namespace Classroom_Learning_Partner.Services
             //        HistoryAnalysis.GenerateSemanticEvents(lastSubmission);
             //        CLogger.AppendToLog("Finished generating Representations Used Tag.\n");
 
-            //        var tag = lastSubmission.Tags.FirstOrDefault(t => t is RepresentationsTag) as RepresentationsTag;
+            //        var tag = lastSubmission.Tags.FirstOrDefault(t => t is RepresentationsUsedTag) as RepresentationsUsedTag;
             //        if (tag == null)
             //        {
             //            continue;

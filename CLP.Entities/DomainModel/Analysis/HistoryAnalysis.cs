@@ -834,7 +834,7 @@ namespace CLP.Entities
             ProblemInformationTag.AttemptTagGeneration(page);
             AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
 
-            var representationsUsedTag = RepresentationsTag.AttemptTagGeneration(page, semanticEvents);
+            var representationsUsedTag = RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);
             var finalAnswerCorrectness = FinalAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             var representationCorrectness = FinalRepresentationCorrectnessTag.AttemptTagGeneration(page, representationsUsedTag);
             CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);

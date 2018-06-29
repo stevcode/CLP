@@ -63,7 +63,7 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static FinalRepresentationCorrectnessTag AttemptTagGeneration(CLPPage page, RepresentationsTag representationsTag)
+        public static FinalRepresentationCorrectnessTag AttemptTagGeneration(CLPPage page, RepresentationsUsedTag representationsUsedTag)
         {
             var isAnswerDefinitionOnPage = page.Tags.OfType<IDefinition>().Any();
             if (!isAnswerDefinitionOnPage)
@@ -73,7 +73,7 @@ namespace CLP.Entities
 
             var tag = new FinalRepresentationCorrectnessTag(page, Origin.StudentPageGenerated);
 
-            var finalRepresentations = representationsTag.RepresentationsUsed.Where(r => r.IsFinalRepresentation).ToList();
+            var finalRepresentations = representationsUsedTag.RepresentationsUsed.Where(r => r.IsFinalRepresentation).ToList();
             if (finalRepresentations.Any() &&
                 finalRepresentations.All(r => r.Correctness == Correctness.Correct))
             {

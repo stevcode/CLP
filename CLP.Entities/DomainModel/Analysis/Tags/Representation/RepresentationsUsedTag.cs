@@ -192,13 +192,13 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class RepresentationsTag : AAnalysisTagBase
+    public class RepresentationsUsedTag : AAnalysisTagBase
     {
         #region Constructors
 
-        public RepresentationsTag() { }
+        public RepresentationsUsedTag() { }
 
-        public RepresentationsTag(CLPPage parentPage, Origin origin)
+        public RepresentationsUsedTag(CLPPage parentPage, Origin origin)
             : base(parentPage, origin) { }
 
         #endregion //Constructors
@@ -272,9 +272,9 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static RepresentationsTag AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
+        public static RepresentationsUsedTag AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var tag = new RepresentationsTag(page, Origin.StudentPageGenerated);
+            var tag = new RepresentationsUsedTag(page, Origin.StudentPageGenerated);
 
             var leftRelation = FinalRepresentationCorrectnessTag.GenerateLeftRelationFromPageAnswerDefinition(page);
             var rightRelation = FinalRepresentationCorrectnessTag.GenerateRightRelationFromPageAnswerDefinition(page);
@@ -329,7 +329,7 @@ namespace CLP.Entities
             return tag;
         }
 
-        public static void GenerateBinsUsedInformation(CLPPage page, RepresentationsTag tag)
+        public static void GenerateBinsUsedInformation(CLPPage page, RepresentationsUsedTag tag)
         {
             switch (page.PageNumber)
             {
@@ -669,7 +669,7 @@ namespace CLP.Entities
         }
 
         public static void GenerateArraysUsedInformation(CLPPage page,
-                                                         RepresentationsTag tag,
+                                                         RepresentationsUsedTag tag,
                                                          List<ISemanticEvent> semanticEvents,
                                                          SimplifiedRelation leftRelation,
                                                          SimplifiedRelation rightRelation,
@@ -1209,7 +1209,7 @@ namespace CLP.Entities
         }
 
         public static void GenerateNumberLinesUsedInformation(CLPPage page,
-                                                              RepresentationsTag tag,
+                                                              RepresentationsUsedTag tag,
                                                               List<ISemanticEvent> semanticEvents,
                                                               SimplifiedRelation leftRelation,
                                                               SimplifiedRelation rightRelation,
@@ -1505,7 +1505,7 @@ namespace CLP.Entities
         }
 
         public static void GenerateStampsUsedInformation(CLPPage page,
-                                                         RepresentationsTag tag,
+                                                         RepresentationsUsedTag tag,
                                                          List<ISemanticEvent> semanticEvents,
                                                          SimplifiedRelation leftRelation,
                                                          SimplifiedRelation rightRelation,
@@ -1710,7 +1710,7 @@ namespace CLP.Entities
             return usedRepresentation;
         }
 
-        public static bool IsMR2STEP(RepresentationsTag tag)
+        public static bool IsMR2STEP(RepresentationsUsedTag tag)
         {
             var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).Select(r => r.CodedObject).Distinct().ToList();
             var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT)
@@ -1919,7 +1919,7 @@ namespace CLP.Entities
             }
         }
 
-        public static bool IsMR(RepresentationsTag tag)
+        public static bool IsMR(RepresentationsUsedTag tag)
         {
             var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).Select(r => r.CodedObject).Distinct().ToList();
             var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT)
