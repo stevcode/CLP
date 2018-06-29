@@ -28,8 +28,8 @@ namespace CLP.Entities
         /// <summary>Classifies Final Answer as MC or Fill In.</summary>
         public string FinalAnswerPageObjectType
         {
-            get { return GetValue<string>(FinalAnswerPageObjectTypeProperty); }
-            set { SetValue(FinalAnswerPageObjectTypeProperty, value); }
+            get => GetValue<string>(FinalAnswerPageObjectTypeProperty);
+            set => SetValue(FinalAnswerPageObjectTypeProperty, value);
         }
 
         public static readonly PropertyData FinalAnswerPageObjectTypeProperty = RegisterProperty("FinalAnswerPageObjectType", typeof(string), string.Empty);
@@ -37,8 +37,8 @@ namespace CLP.Entities
         /// <summary>Value of the correct answer.</summary>
         public string CorrectAnswer
         {
-            get { return GetValue<string>(CorrectAnswerProperty); }
-            set { SetValue(CorrectAnswerProperty, value); }
+            get => GetValue<string>(CorrectAnswerProperty);
+            set => SetValue(CorrectAnswerProperty, value);
         }
 
         public static readonly PropertyData CorrectAnswerProperty = RegisterProperty("CorrectAnswer", typeof(string), Codings.ANSWER_UNDEFINED);
@@ -46,8 +46,8 @@ namespace CLP.Entities
         /// <summary>Value of the student's answer.</summary>
         public string StudentAnswer
         {
-            get { return GetValue<string>(StudentAnswerProperty); }
-            set { SetValue(StudentAnswerProperty, value); }
+            get => GetValue<string>(StudentAnswerProperty);
+            set => SetValue(StudentAnswerProperty, value);
         }
 
         public static readonly PropertyData StudentAnswerProperty = RegisterProperty("StudentAnswer", typeof(string), string.Empty);
@@ -55,8 +55,8 @@ namespace CLP.Entities
         /// <summary>Correctness of student's answer.</summary>
         public Correctness FinalAnswerCorrectness
         {
-            get { return GetValue<Correctness>(FinalAnswerCorrectnessProperty); }
-            set { SetValue(FinalAnswerCorrectnessProperty, value); }
+            get => GetValue<Correctness>(FinalAnswerCorrectnessProperty);
+            set => SetValue(FinalAnswerCorrectnessProperty, value);
         }
 
         public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty("FinalAnswerCorrectness", typeof(Correctness), Correctness.Unknown);
@@ -97,11 +97,13 @@ namespace CLP.Entities
 
         public static FinalAnswerCorrectnessTag AttemptTagGeneration(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
-            var lastFinalAnswerEvent =
-                semanticEvents.LastOrDefault(
-                                             e =>
-                                                 Codings.IsFinalAnswerEvent(e) && e.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN && e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL &&
-                                                 e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL && (e.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE ? e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE : true));
+            var lastFinalAnswerEvent = semanticEvents.LastOrDefault(e => Codings.IsFinalAnswerEvent(e) &&
+                                                                         e.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN &&
+                                                                         e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL &&
+                                                                         e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL &&
+                                                                         (e.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE
+                                                                              ? e.EventType != Codings.EVENT_MULTIPLE_CHOICE_ERASE
+                                                                              : true));
 
             var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated);
             if (lastFinalAnswerEvent == null)
@@ -146,8 +148,12 @@ namespace CLP.Entities
                 var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
                 tag.FinalAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
             }
-            
-            AnalysisCode.AddFinalAnswerCorrectness(tag, tag.FinalAnswerPageObjectType, tag.CorrectAnswer, tag.StudentAnswer, Codings.CorrectnessToCodedCorrectness(tag.FinalAnswerCorrectness));
+
+            AnalysisCode.AddFinalAnswerCorrectness(tag,
+                                                   tag.FinalAnswerPageObjectType,
+                                                   tag.CorrectAnswer,
+                                                   tag.StudentAnswer,
+                                                   Codings.CorrectnessToCodedCorrectness(tag.FinalAnswerCorrectness));
             page.AddTag(tag);
 
             return tag;

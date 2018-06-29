@@ -831,6 +831,7 @@ namespace CLP.Entities
 
         public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            ProblemInformationTag.AttemptTagGeneration(page);
             AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
 
             var representationsUsedTag = RepresentationsUsedTag.AttemptTagGeneration(page, semanticEvents);

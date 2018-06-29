@@ -42,8 +42,6 @@ namespace CLP.Entities
         public MetaDataTag() { }
 
         /// <summary>Initializes <see cref="MetaDataTag" /> from values.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="MetaDataTag" /> belongs to.</param>
-        /// <param name="origin"></param>
         public MetaDataTag(CLPPage parentPage, Origin origin, string name, string contents)
             : base(parentPage, origin)
         {
@@ -58,8 +56,8 @@ namespace CLP.Entities
         /// <summary>Key of the KeyValue Pair that makes up this tag.</summary>
         public string TagName
         {
-            get { return GetValue<string>(TagNameProperty); }
-            set { SetValue(TagNameProperty, value); }
+            get => GetValue<string>(TagNameProperty);
+            set => SetValue(TagNameProperty, value);
         }
 
         public static readonly PropertyData TagNameProperty = RegisterProperty("TagName", typeof(string), string.Empty);
@@ -67,12 +65,12 @@ namespace CLP.Entities
         /// <summary>Value of the KeyValue Pair that makes up this tag.</summary>
         public string TagContents
         {
-            get { return GetValue<string>(TagContentsProperty); }
-            set { SetValue(TagContentsProperty, value); }
+            get => GetValue<string>(TagContentsProperty);
+            set => SetValue(TagContentsProperty, value);
         }
 
         public static readonly PropertyData TagContentsProperty = RegisterProperty("TagContents", typeof(string), string.Empty);
-        
+
         #endregion //Properties
 
         #region ATagBase Overrides

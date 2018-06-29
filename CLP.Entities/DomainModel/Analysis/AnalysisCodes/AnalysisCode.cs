@@ -148,6 +148,14 @@ namespace CLP.Entities
             arrSkip.AddConstraint(Codings.CONSTRAINT_STRATEGY_CORRECTNESS_REASON);
             conditions.Add(arrSkip);
 
+            var wordProblem = new AnalysisCode(Codings.ANALYSIS_LABEL_WORD_PROBLEM);
+            wordProblem.AddConstraint(Codings.CONSTRAINT_IS_WORD_PROBLEM);
+            conditions.Add(wordProblem);
+
+            var pageDef = new AnalysisCode(Codings.ANALYSIS_LABEL_PAGE_DEFINITION);
+            pageDef.AddConstraint(Codings.CONSTRAINT_PROBLEM_TYPE);
+            conditions.Add(pageDef);
+
             return conditions;
         }
 

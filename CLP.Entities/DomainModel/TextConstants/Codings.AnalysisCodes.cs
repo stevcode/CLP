@@ -21,6 +21,9 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP = "ARRAY SKIP";
         public const string ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT = "ARRAY PARTIAL PRODUCT";
 
+        public const string ANALYSIS_LABEL_WORD_PROBLEM = "WORD PROBLEM";
+        public const string ANALYSIS_LABEL_PAGE_DEFINITION = "PAGE DEFINITION";
+
         #endregion // Analysis Labels
 
         #region Analysis Short Names
@@ -38,6 +41,9 @@ namespace CLP.Entities
 
         public const string ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_SKIP = "ARR_SKIP";
         public const string ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_PARTIAL_PRODUCT = "ARR_PARTIAL_PRODUCT";
+
+        public const string ANALYSIS_SHORT_NAME_WORD_PROBLEM = "WORD_PROBLEM";
+        public const string ANALYSIS_SHORT_NAME_PAGE_DEFINITION = "PAGE_DEF";
 
         #endregion // Analysis Short Names
 
@@ -67,11 +73,16 @@ namespace CLP.Entities
         public const string CONSTRAINT_STRATEGY_CORRECTNESS = "STRATEGY_CORRECTNESS";
         public const string CONSTRAINT_STRATEGY_CORRECTNESS_REASON = "STRATEGY_CORRECTNESS_REASON";
 
+        public const string CONSTRAINT_IS_WORD_PROBLEM = "IS_WORD_PROBLEM";
+        public const string CONSTRAINT_PROBLEM_TYPE = "PROBLEM_TYPE";
+
         #endregion // Analysis Constraint Labels
 
         #region Analysis Constraint Values
 
         public const string CONSTRAINT_VALUE_ANY = "ANY";
+        public const string CONSTRAINT_VALUE_YES = "YES";
+        public const string CONSTRAINT_VALUE_NO = "NO";
 
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE = "BLANK_PAGE";
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY = "INK_ONLY";
@@ -96,6 +107,12 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_WRONG_DIMENSION = "WRONG_DIMENSION";
         public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_LIKELY_ARITH_ERROR = "LIKELY_ARITH_ERROR";
         public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_UNKNOWN = "UNKNOWN";
+
+        public const string CONSTRAINT_VALUE_PROBLEM_TYPE_MULTIPLICATION = "MULTIPLICATION";
+        public const string CONSTRAINT_VALUE_PROBLEM_TYPE_DIVISION = "DIVISION";
+        public const string CONSTRAINT_VALUE_PROBLEM_TYPE_EQUIVALENCE = "EQUIVALENCE";
+        public const string CONSTRAINT_VALUE_PROBLEM_TYPE_OTHER = "OTHER";
+        public const string CONSTRAINT_VALUE_PROBLEM_TYPE_NONE = "NONE";
 
         #endregion // Analysis Constraint Values
 
@@ -184,6 +201,10 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_SKIP;
                 case ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT:
                     return ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_PARTIAL_PRODUCT;
+                case ANALYSIS_LABEL_WORD_PROBLEM:
+                    return ANALYSIS_SHORT_NAME_WORD_PROBLEM;
+                case ANALYSIS_LABEL_PAGE_DEFINITION:
+                    return ANALYSIS_SHORT_NAME_PAGE_DEFINITION;
             }
 
             return "No matching Short Name";
@@ -215,6 +236,10 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP;
                 case ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_PARTIAL_PRODUCT:
                     return ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT;
+                case ANALYSIS_SHORT_NAME_WORD_PROBLEM:
+                    return ANALYSIS_LABEL_WORD_PROBLEM;
+                case ANALYSIS_SHORT_NAME_PAGE_DEFINITION:
+                    return ANALYSIS_LABEL_PAGE_DEFINITION;
             }
 
             return "No matching Label";
@@ -235,7 +260,9 @@ namespace CLP.Entities
                            //ANALYSIS_LABEL_PROBLEM_TYPE,
                            ANALYSIS_LABEL_REPRESENTATION_ORDER,
                            ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP,
-                           ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT
+                           ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT,
+                           ANALYSIS_LABEL_WORD_PROBLEM,
+                           ANALYSIS_LABEL_PAGE_DEFINITION
                        };
 
             return list;
@@ -288,6 +315,11 @@ namespace CLP.Entities
                     return "Correctness";
                 case CONSTRAINT_STRATEGY_CORRECTNESS_REASON:
                     return "Reason";
+
+                case CONSTRAINT_IS_WORD_PROBLEM:
+                    return "Value";
+                case CONSTRAINT_PROBLEM_TYPE:
+                    return "Problem Type";
             }
 
             return "No matching Alias";

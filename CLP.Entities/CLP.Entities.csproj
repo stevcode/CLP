@@ -84,6 +84,8 @@
     <Compile Include="..\VersionAssemblyInfo.cs">
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DomainModel\Analysis\AnalysisCodes\AnalysisCode.PageInformation.cs" />
+    <Compile Include="DomainModel\Analysis\Tags\ProblemInformationTag.cs" />
     <Compile Include="DomainModel\Cache\AInternalZipEntryFile.cs" />
     <Compile Include="DomainModel\Cache\ClassRoster.cs" />
     <Compile Include="DomainModel\Cache\NotebookExtensions.cs" />

@@ -155,6 +155,18 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_LIKELY_ARITH_ERROR);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_UNKNOWN);
                     break;
+
+                case Codings.CONSTRAINT_IS_WORD_PROBLEM:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
+                    break;
+                case Codings.CONSTRAINT_PROBLEM_TYPE:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_MULTIPLICATION);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_DIVISION);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_EQUIVALENCE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_OTHER);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_NONE);
+                    break;
             }
 
             return possibleConstraintValues;
