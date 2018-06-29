@@ -235,7 +235,7 @@ namespace CLP.Entities
 
         public override Category Category => Category.Representation;
 
-        public override string FormattedName => "Representations Used";
+        public override string FormattedName => "Representations";
 
         public override string FormattedValue
         {
