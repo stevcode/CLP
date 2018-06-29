@@ -158,10 +158,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRegenerateTagsCommandExecute()
         {
+            var authorNotebook = _dataService.LoadedNotebooks.FirstOrDefault(n => n.OwnerID == Person.AUTHOR_ID);
+
             foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent))
             {
                 foreach (var page in notebook.Pages)
                 {
+                    #region Propagate Meta Data Tag for Word Problem
+
+                    //var authorPage = authorNotebook?.Pages.FirstOrDefault(p => p.ID == page.ID);
+                    //var wordProblemTag = authorPage?.Tags.OfType<MetaDataTag>().FirstOrDefault(t => t.TagName == MetaDataTag.NAME_WORD_PROBLEM);
+                    //if (wordProblemTag != null)
+                    //{
+                    //    page.AddTag(wordProblemTag);
+                    //}
+
+                    #endregion // Propagate Meta Data Tag for Word Problem
+
+
                     var existingTags = page.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
                     foreach (var tempArraySkipCountingTag in existingTags)
                     {
