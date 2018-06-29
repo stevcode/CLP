@@ -1125,7 +1125,7 @@ namespace Classroom_Learning_Partner.Services
 
             #region Whole Page Characteristics
 
-            var representationsUsedTag = page.Tags.OfType<RepresentationsUsedTag>().FirstOrDefault();
+            var representationsUsedTag = page.Tags.OfType<RepresentationsTag>().FirstOrDefault();
             if (representationsUsedTag == null)
             {
                 entry.IsInkOnly = AnalysisEntry.UNKOWN_ERROR;

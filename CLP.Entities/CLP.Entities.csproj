@@ -221,7 +221,7 @@
     <Compile Include="DomainModel\Obsolete Code\HighlightedObjectTypesOnPageTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Representation\AnswerRepresentationSequenceTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Answer\FinalRepresentationCorrectnessTag.cs" />
-    <Compile Include="DomainModel\Analysis\Tags\Representation\RepresentationsUsedTag.cs" />
+    <Compile Include="DomainModel\Analysis\Tags\Representation\RepresentationsTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\OtherPageInformation\DottedTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\OtherPageInformation\StarredTag.cs" />
     <Compile Include="DomainModel\Obsolete Code\TagAnalysis.cs" />
