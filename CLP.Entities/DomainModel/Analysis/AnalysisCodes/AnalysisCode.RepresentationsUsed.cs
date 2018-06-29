@@ -36,6 +36,26 @@ namespace CLP.Entities
             analysisCode.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS, historyStatus);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, Codings.CorrectnessToCodedCorrectness(usedRepresentation.Correctness));
 
+            if (usedRepresentation.Correctness == Correctness.Correct)
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
+            }
+            else
+            {
+                if (usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS)
+                {
+                    analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_GAPS_OR_OVERLAPS);
+                }
+                else if (usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_SWAPPED)
+                {
+                    analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_SWAPPED);
+                }
+                else
+                {
+                    analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
+                }
+            }
+
             tag.QueryCodes.Add(analysisCode);
         }
 

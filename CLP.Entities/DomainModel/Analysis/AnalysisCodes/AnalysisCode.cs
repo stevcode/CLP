@@ -113,6 +113,7 @@ namespace CLP.Entities
             repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME_LAX);
             repsUsed.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS);
             repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
+            repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON);
             conditions.Add(repsUsed);
 
             var repOrder = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_ORDER);
