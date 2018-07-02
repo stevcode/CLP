@@ -118,6 +118,12 @@ namespace CLP.Entities
                                                       });
                     break;
 
+                case Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE);
+                    break;
+
                 case Codings.CONSTRAINT_HISTORY_STATUS:
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED);

@@ -59,18 +59,36 @@ namespace CLP.Entities
             tag.QueryCodes.Add(analysisCode);
         }
 
-        public static void AddMultipleRepresentations2Step(IAnalysis tag)
+        public static void AddMultipleRepresentations2Step(RepresentationsUsedTag tag)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP);
+            AddMRCorrectnessConstraintValue(tag, analysisCode);
 
             tag.QueryCodes.Add(analysisCode);
         }
 
-        public static void AddMultipleRepresentations1Step(IAnalysis tag)
+        public static void AddMultipleRepresentations1Step(RepresentationsUsedTag tag)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP);
+            AddMRCorrectnessConstraintValue(tag, analysisCode);
 
             tag.QueryCodes.Add(analysisCode);
+        }
+
+        private static void AddMRCorrectnessConstraintValue(RepresentationsUsedTag tag, AnalysisCode analysisCode)
+        {
+            if (tag.RepresentationsUsed.All(r => r.Correctness == Correctness.Correct))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
+            }
+            else if (tag.RepresentationsUsed.All(r => r.Correctness == Correctness.Incorrect))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE);
+            }
+            else
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
+            }
         }
 
         public static void AddArraySkipStrategies(IAnalysis tag, UsedRepresentation usedRepresentation)

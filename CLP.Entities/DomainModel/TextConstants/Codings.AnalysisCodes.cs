@@ -56,6 +56,8 @@ namespace CLP.Entities
         public const string CONSTRAINT_REPRESENTATION_FIRST = "REPRESENTATION_NAME_FIRST";
         public const string CONSTRAINT_REPRESENTATION_LAST = "REPRESENTATION_NAME_LAST";
 
+        public const string CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS = "MULTIPLE_REPRESENTATION_CORRECTNESS";
+
         public const string CONSTRAINT_HISTORY_STATUS = "HISTORY_STATUS";
 
         public const string CONSTRAINT_ANSWER_TYPE = "ANSWER_TYPE";
@@ -91,6 +93,10 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE = "BLANK_PAGE";
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY = "INK_ONLY";
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE = "NONE";
+
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL = "ALL";
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME = "SOME";
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE = "NONE";
 
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_FINAL = "FINAL";
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_DELETED = "DELETED";
@@ -310,6 +316,9 @@ namespace CLP.Entities
                     return "First";
                 case CONSTRAINT_REPRESENTATION_LAST:
                     return "Last";
+
+                case CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS:
+                    return "Correctness";
 
                 case CONSTRAINT_HISTORY_STATUS:
                     return "Status";
