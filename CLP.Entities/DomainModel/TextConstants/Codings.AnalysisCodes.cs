@@ -22,7 +22,7 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT = "ARRAY PARTIAL PRODUCT";
 
         public const string ANALYSIS_LABEL_WORD_PROBLEM = "WORD PROBLEM";
-        public const string ANALYSIS_LABEL_PAGE_DEFINITION = "PAGE DEFINITION";
+        public const string ANALYSIS_LABEL_PAGE_DEFINITION = "ANSWER DEFINITION";
 
         #endregion // Analysis Labels
 
@@ -43,7 +43,7 @@ namespace CLP.Entities
         public const string ANALYSIS_SHORT_NAME_STRATEGY_ARRAY_PARTIAL_PRODUCT = "ARR_PARTIAL_PRODUCT";
 
         public const string ANALYSIS_SHORT_NAME_WORD_PROBLEM = "WORD_PROBLEM";
-        public const string ANALYSIS_SHORT_NAME_PAGE_DEFINITION = "PAGE_DEF";
+        public const string ANALYSIS_SHORT_NAME_PAGE_DEFINITION = "ANSWER_DEF";
 
         #endregion // Analysis Short Names
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -207,6 +208,89 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             MessageBox.Show("Tags Regenerated.");
+        }
+
+        public Command ForceWordProblemTagsCommand { get; private set; }
+
+        private void OnForceWordProblemTagsCommandExecute()
+        {
+            var wordProblemPages = new List<int>
+                                   {
+                                       5,
+                                       6,
+                                       10,
+                                       11,
+                                       12,
+                                       13
+                                   };
+
+            foreach (var notebook in _dataService.LoadedNotebooks)
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    if (page.PageNumber == 1)
+                    {
+                        continue;
+                    }
+
+                    var wordProblemValue = wordProblemPages.Contains(page.PageNumber) ? MetaDataTag.VALUE_TRUE : MetaDataTag.VALUE_FALSE;
+                    var wordProblemTag = new MetaDataTag(page, Origin.Author, MetaDataTag.NAME_WORD_PROBLEM, wordProblemValue); 
+                    
+                    page.AddTag(wordProblemTag);
+
+                    foreach (var submission in page.Submissions)
+                    {
+                        var wordProblemTag1 = new MetaDataTag(submission, Origin.Author, MetaDataTag.NAME_WORD_PROBLEM, wordProblemValue); 
+                        submission.AddTag(wordProblemTag1);
+                    }
+
+                    if (page.PageNumber == 3)
+                    {
+                        var pageDef = new MultiplicationRelationDefinitionTag(page, Origin.Author)
+                                      {
+                                          RelationType = MultiplicationRelationDefinitionTag
+                                                         .RelationTypes.Commutativity,
+                                          Product = 63.0
+                                      };
+                        var firstFactor = new NumericValueDefinitionTag(page, Origin.Author)
+                                          {
+                                              NumericValue = 9.0
+                                          };
+                        var secondFactor = new NumericValueDefinitionTag(page, Origin.Author)
+                                           {
+                                               NumericValue = 7.0
+                                           };
+                        pageDef.Factors.Add(firstFactor);
+                        pageDef.Factors.Add(secondFactor);
+
+                        page.AddTag(pageDef);
+
+                        foreach (var submission in page.Submissions)
+                        {
+                            var pageDef1 = new MultiplicationRelationDefinitionTag(submission, Origin.Author)
+                                          {
+                                              RelationType = MultiplicationRelationDefinitionTag
+                                                             .RelationTypes.Commutativity,
+                                              Product = 63.0
+                                          };
+                            var firstFactor1 = new NumericValueDefinitionTag(submission, Origin.Author)
+                                              {
+                                                  NumericValue = 9.0
+                                              };
+                            var secondFactor1 = new NumericValueDefinitionTag(submission, Origin.Author)
+                                               {
+                                                   NumericValue = 7.0
+                                               };
+                            pageDef.Factors.Add(firstFactor1);
+                            pageDef.Factors.Add(secondFactor1);
+
+                            submission.AddTag(pageDef1);
+                        }
+                    }
+                }
+            }
+
+            MessageBox.Show("Tags Added.");
         }
 
         #endregion //Commands
