@@ -52,6 +52,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AnalyzeAllLoadedPagesCommand = new Command(OnAnalyzeAllLoadedPagesCommandExecute);
             AnalyzeCurrentPageAndSubmissionsCommand = new Command(OnAnalyzeCurrentPageAndSubmissionsCommandExecute);
             RegenerateTagsCommand = new Command(OnRegenerateTagsCommandExecute);
+            ForceWordProblemTagsCommand = new Command(OnForceWordProblemTagsCommandExecute);
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
@@ -281,8 +282,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                {
                                                    NumericValue = 7.0
                                                };
-                            pageDef.Factors.Add(firstFactor1);
-                            pageDef.Factors.Add(secondFactor1);
+                            pageDef1.Factors.Add(firstFactor1);
+                            pageDef1.Factors.Add(secondFactor1);
 
                             submission.AddTag(pageDef1);
                         }

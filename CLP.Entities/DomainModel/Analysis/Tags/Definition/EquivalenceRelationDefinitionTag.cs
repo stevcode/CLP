@@ -44,7 +44,7 @@ namespace CLP.Entities
 
         public override string FormattedName => "Equivalence Relation Definition";
 
-        public override string FormattedValue => $"{LeftRelationPart.FormattedRelation} = {RightRelationPart.FormattedRelation}";
+        public override string FormattedValue => $"{LeftRelationPart?.FormattedRelation} = {RightRelationPart?.FormattedRelation}";
 
         #endregion //ATagBase Overrides
 
