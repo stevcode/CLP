@@ -993,7 +993,7 @@ namespace Classroom_Learning_Partner
                               InitialAspectRatio = page.InitialAspectRatio
                           };
 
-            foreach (var stroke in page.InkStrokes)
+            foreach (var stroke in page.InkStrokes.Where(s => s != null))
             {
                 newPage.InkStrokes.Add(stroke);
             }
@@ -1298,7 +1298,10 @@ namespace Classroom_Learning_Partner
             foreach (var acceptedStrokeParentID in newArray.AcceptedStrokeParentIDs)
             {
                 var stroke = newPage.GetStrokeByIDOnPageOrInHistory(acceptedStrokeParentID);
-                newArray.AcceptedStrokes.Add(stroke);
+                if (stroke != null)
+                {
+                    newArray.AcceptedStrokes.Add(stroke);
+                }
 
                 var logString = $"Array - {newPage.PageNumber} - {newPage.Owner.FullName}";
                 CapturedStrokesLog.Add(logString);
@@ -1360,7 +1363,10 @@ namespace Classroom_Learning_Partner
             foreach (var acceptedStrokeParentID in newNumberLine.AcceptedStrokeParentIDs)
             {
                 var stroke = newPage.GetStrokeByIDOnPageOrInHistory(acceptedStrokeParentID);
-                newNumberLine.AcceptedStrokes.Add(stroke);
+                if (stroke != null)
+                {
+                    newNumberLine.AcceptedStrokes.Add(stroke);
+                }
             }
 
             return newNumberLine;
@@ -1430,7 +1436,7 @@ namespace Classroom_Learning_Partner
                     throw new ArgumentOutOfRangeException();
             }
 
-            foreach (var strokeDTO in stampedObject.SerializedStrokes)
+            foreach (var strokeDTO in stampedObject.SerializedStrokes.Where(s => s != null))
             {
                 var stroke = strokeDTO.ToStroke();
                 newStampedObject.SerializedStrokes.Add(stroke.ToStrokeDTO());
@@ -1502,7 +1508,10 @@ namespace Classroom_Learning_Partner
             foreach (var acceptedStrokeParentID in newStamp.AcceptedStrokeParentIDs)
             {
                 var stroke = newPage.GetStrokeByIDOnPageOrInHistory(acceptedStrokeParentID);
-                newStamp.AcceptedStrokes.Add(stroke);
+                if (stroke != null)
+                {
+                    newStamp.AcceptedStrokes.Add(stroke);
+                }
 
                 var logString = $"Stamp - {newPage.PageNumber} - {newPage.Owner.FullName}";
                 CapturedStrokesLog.Add(logString);
@@ -1952,7 +1961,7 @@ namespace Classroom_Learning_Partner
             var newPageHistory = new PageHistory();
             newPage.History = newPageHistory;
 
-            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes)
+            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes.Where(s => s != null))
             {
                 newPageHistory.TrashedInkStrokes.Add(trashedInkStroke);
             }
