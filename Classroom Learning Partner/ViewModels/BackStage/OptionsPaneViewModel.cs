@@ -166,22 +166,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach (var page in notebook.Pages)
                 {
-                    #region Propagate Meta Data Tag for Word Problem
-
-                    //var authorPage = authorNotebook?.Pages.FirstOrDefault(p => p.ID == page.ID);
-                    //var wordProblemTag = authorPage?.Tags.OfType<MetaDataTag>().FirstOrDefault(t => t.TagName == MetaDataTag.NAME_WORD_PROBLEM);
-                    //if (wordProblemTag != null)
-                    //{
-                    //    page.AddTag(wordProblemTag);
-                    //}
-
-                    #endregion // Propagate Meta Data Tag for Word Problem
-
-
-                    var existingTags = page.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
-                    foreach (var tempArraySkipCountingTag in existingTags)
+                    var existingTags = page.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag) && t.Category != Category.MetaData).ToList();
+                    foreach (var existingTag in existingTags)
                     {
-                        page.RemoveTag(tempArraySkipCountingTag);
+                        page.RemoveTag(existingTag);
                     }
 
                     var indexOfPass3Start =
@@ -192,10 +180,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     foreach (var submission in page.Submissions)
                     {
-                        var existingTagsForSubmission = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
-                        foreach (var tempArraySkipCountingTag in existingTagsForSubmission)
+                        var existingTagsForSubmission =
+                            submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag) && t.Category != Category.MetaData).ToList();
+                        foreach (var existingTag in existingTagsForSubmission)
                         {
-                            submission.RemoveTag(tempArraySkipCountingTag);
+                            submission.RemoveTag(existingTag);
                         }
 
                         var indexOfPass3StartForSubmission = submission.History.SemanticEvents.IndexOf(submission.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
