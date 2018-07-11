@@ -855,6 +855,11 @@ namespace CLP.Entities
 
             var firstStroke = strokes.First();
             var cluster = GetContainingCluster(firstStroke);
+            if (cluster.Strokes.Count < 4)
+            {
+                return null;
+            }
+
             switch (cluster.ClusterType)
             {
                 case InkCluster.ClusterTypes.Unknown:
