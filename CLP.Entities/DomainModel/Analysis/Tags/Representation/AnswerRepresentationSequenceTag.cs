@@ -208,6 +208,11 @@ namespace CLP.Entities
                     AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Incorrect);
                 }
 
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_ILLEGIBLE) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
+                {
+                    AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Illegible);
+                }
+
                 if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_CORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
                     AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Correct);
@@ -216,6 +221,11 @@ namespace CLP.Entities
                 if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_INCORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
                     AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Incorrect);
+                }
+
+                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_ILLEGIBLE) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
+                {
+                    AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Illegible);
                 }
             }
 
