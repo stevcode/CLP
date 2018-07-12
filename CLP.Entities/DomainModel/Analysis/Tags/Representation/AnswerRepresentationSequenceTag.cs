@@ -107,6 +107,11 @@ namespace CLP.Entities
                     else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
                              mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
+                        var interpretation = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        if (interpretation == "\"\"")
+                        {
+                            continue;
+                        }
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
                         var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
                         sequence.Add(sequenceIdentifier);
@@ -131,6 +136,11 @@ namespace CLP.Entities
                     else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
                              mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
+                        var interpretation = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        if (interpretation == "\"\"")
+                        {
+                            continue;
+                        }
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
                         var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
                         sequence.Add(sequenceIdentifier);
