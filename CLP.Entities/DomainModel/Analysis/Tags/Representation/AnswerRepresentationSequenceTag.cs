@@ -294,34 +294,40 @@ namespace CLP.Entities
                     continue;
                 }
 
-                var isStartCOR = startItem == "FA-COR";
-                var isCurrentCOR = item == "FA-COR";
+                var startCorrectness = startItem == "FA-COR" ? Correctness.Correct : startItem == "FA-INC" ? Correctness.Incorrect : Correctness.Illegible;
+                var endCorrectness = item == "FA-COR" ? Correctness.Correct : item == "FA-INC" ? Correctness.Incorrect : Correctness.Illegible;
+                AnalysisCode.AddChangedAnswerAfterRepresentation(tag, startCorrectness, endCorrectness);
+                startItem = item;
+                isRepresentationUsedAfterAnswer = false;
 
-                if (isStartCOR && isCurrentCOR)
-                {
-                    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Correct, Correctness.Correct);
-                    startItem = item;
-                    isRepresentationUsedAfterAnswer = false;
-                }
-                else if (!isStartCOR &&
-                         !isCurrentCOR)
-                {
-                    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Incorrect, Correctness.Incorrect);
-                    startItem = item;
-                    isRepresentationUsedAfterAnswer = false;
-                }
-                else if (isStartCOR && !isCurrentCOR)
-                {
-                    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Correct, Correctness.Incorrect);
-                    startItem = item;
-                    isRepresentationUsedAfterAnswer = false;
-                }
-                else if (!isStartCOR && isCurrentCOR)
-                {
-                    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Incorrect, Correctness.Correct);
-                    startItem = item;
-                    isRepresentationUsedAfterAnswer = false;
-                }
+                //var isStartCOR = startItem == "FA-COR";
+                //var isCurrentCOR = item == "FA-COR";
+
+                //if (isStartCOR && isCurrentCOR)
+                //{
+                //    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Correct, Correctness.Correct);
+                //    startItem = item;
+                //    isRepresentationUsedAfterAnswer = false;
+                //}
+                //else if (!isStartCOR &&
+                //         !isCurrentCOR)
+                //{
+                //    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Incorrect, Correctness.Incorrect);
+                //    startItem = item;
+                //    isRepresentationUsedAfterAnswer = false;
+                //}
+                //else if (isStartCOR && !isCurrentCOR)
+                //{
+                //    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Correct, Correctness.Incorrect);
+                //    startItem = item;
+                //    isRepresentationUsedAfterAnswer = false;
+                //}
+                //else if (!isStartCOR && isCurrentCOR)
+                //{
+                //    AnalysisCode.AddChangedAnswerAfterRepresentation(tag, Correctness.Incorrect, Correctness.Correct);
+                //    startItem = item;
+                //    isRepresentationUsedAfterAnswer = false;
+                //}
             }
 
             page.AddTag(tag);
