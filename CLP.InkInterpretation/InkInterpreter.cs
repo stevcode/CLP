@@ -10,6 +10,8 @@ namespace CLP.InkInterpretation
 {
     public static class InkInterpreter
     {
+        public static bool IsDecimalInterpretation { get; set; } = true;
+
         public static void SaveStrokesToGif(StrokeCollection strokes)
         {
             var inkManager = new InkManager();
@@ -167,6 +169,13 @@ namespace CLP.InkInterpretation
                 adjustedInterpretation = adjustedInterpretation.Replace("Z", "2");
                 adjustedInterpretation = adjustedInterpretation.Replace("z", "2");
                 adjustedInterpretation = adjustedInterpretation.Replace("\"", "11");
+                adjustedInterpretation = adjustedInterpretation.Replace(",", string.Empty);
+                adjustedInterpretation = adjustedInterpretation.Replace("'", string.Empty);
+                if (!IsDecimalInterpretation)
+                {
+                    adjustedInterpretation = adjustedInterpretation.Replace(".", string.Empty);
+                }
+
                 if (int.TryParse(adjustedInterpretation, out var parsedInterpretation))
                 {
                     if (parsedInterpretation == number)
@@ -213,7 +222,15 @@ namespace CLP.InkInterpretation
                 }
             }
 
-            return mostNumbers;
+            //return mostNumbers;
+            var adjustedInterpretation = mostNumbers.Replace(",", string.Empty);
+            adjustedInterpretation = adjustedInterpretation.Replace("'", string.Empty);
+            if (!IsDecimalInterpretation)
+            {
+                adjustedInterpretation = adjustedInterpretation.Replace(".", string.Empty);
+            }
+
+            return adjustedInterpretation;
         }
 
         /// <summary>
