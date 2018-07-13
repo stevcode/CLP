@@ -63,9 +63,10 @@ namespace CLP.Entities
             var sequence = new List<string>();
             ISemanticEvent mostRecentSequenceItem = null;
 
+            var lastFinalAnswerEvent = semanticEvents.LastOrDefault(Codings.IsFinalAnswerEvent);
             foreach (var semanticEvent in semanticEvents)
             {
-                if (Codings.IsFinalAnswerEvent(semanticEvent))
+                if (Codings.IsFinalAnswerEvent(semanticEvent) && semanticEvent != lastFinalAnswerEvent)
                 {
                     var interpretation = Codings.GetFinalAnswerEventContent(semanticEvent);
                     if (interpretation == "\"\"")
