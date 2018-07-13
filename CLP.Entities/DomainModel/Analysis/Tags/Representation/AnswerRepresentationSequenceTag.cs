@@ -65,6 +65,15 @@ namespace CLP.Entities
 
             foreach (var semanticEvent in semanticEvents)
             {
+                if (Codings.IsFinalAnswerEvent(semanticEvent))
+                {
+                    var interpretation = Codings.GetFinalAnswerEventContent(semanticEvent);
+                    if (interpretation == "\"\"")
+                    {
+                        continue;
+                    }
+                }
+
                 if (Codings.IsFinalAnswerEvent(semanticEvent) &&
                     semanticEvent.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                 {
@@ -107,11 +116,6 @@ namespace CLP.Entities
                     else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
                              mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
-                        var interpretation = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
-                        if (interpretation == "\"\"")
-                        {
-                            continue;
-                        }
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
                         var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
                         sequence.Add(sequenceIdentifier);
@@ -136,11 +140,6 @@ namespace CLP.Entities
                     else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
                              mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
-                        var interpretation = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
-                        if (interpretation == "\"\"")
-                        {
-                            continue;
-                        }
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
                         var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
                         sequence.Add(sequenceIdentifier);
