@@ -686,165 +686,170 @@ namespace CLP.Entities
             {
                 var arrayID = semanticEvent.ReferencePageObjectID;
 
-                if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
-                {
-                    var historyAction = semanticEvent.FirstHistoryAction;
-                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                    if (objectsChanged == null)
+                switch (semanticEvent.EventType) {
+                    case Codings.EVENT_OBJECT_ADD:
                     {
-                        continue;
-                    }
+                        var historyAction = semanticEvent.FirstHistoryAction;
+                        if (!(historyAction is ObjectsOnPageChangedHistoryAction objectsChanged))
+                        {
+                            continue;
+                        }
 
-                    var patternPoint = new PatternPoint
-                                       {
-                                           PageObjectID = arrayID,
-                                           StartHistoryActionIndex = objectsChanged.HistoryActionIndex,
-                                           StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
-                                           StartEventType = semanticEvent.EventType
-                                       };
-                    patternPoints.Add(patternPoint);
-                }
-                else if (semanticEvent.EventType == Codings.EVENT_CUT)
-                {
-                    var historyAction = semanticEvent.FirstHistoryAction;
-                    var pageObjectsCut = historyAction as PageObjectCutHistoryAction;
-                    if (pageObjectsCut == null)
-                    {
-                        continue;
+                        var patternPoint = new PatternPoint
+                                           {
+                                               PageObjectID = arrayID,
+                                               StartHistoryActionIndex = objectsChanged.HistoryActionIndex,
+                                               StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
+                                               StartEventType = semanticEvent.EventType
+                                           };
+                        patternPoints.Add(patternPoint);
+                        break;
                     }
-
-                    var patternPoint = patternPoints.FirstOrDefault(p => p.PageObjectID == arrayID);
-                    if (patternPoint != null)
+                    case Codings.EVENT_CUT:
                     {
-                        patternPoint.EndHistoryActionIndex = pageObjectsCut.HistoryActionIndex;
+                        var historyAction = semanticEvent.FirstHistoryAction;
+                        if (!(historyAction is PageObjectCutHistoryAction pageObjectsCut))
+                        {
+                            continue;
+                        }
+
+                        var patternPoint = patternPoints.FirstOrDefault(p => p.PageObjectID == arrayID);
+                        if (patternPoint != null)
+                        {
+                            patternPoint.EndHistoryActionIndex = pageObjectsCut.HistoryActionIndex;
+                            patternPoint.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
+                            patternPoint.EndEventType = semanticEvent.EventType;
+                            patternPoints.Remove(patternPoint);
+                            completedPatternPoints.Add(patternPoint);
+                        }
+
+                        foreach (var halvedArrayID in pageObjectsCut.HalvedPageObjectIDs)
+                        {
+                            var patternPointForArrayHalf = new PatternPoint
+                                                           {
+                                                               PageObjectID = halvedArrayID,
+                                                               StartHistoryActionIndex = pageObjectsCut.HistoryActionIndex,
+                                                               StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
+                                                               StartEventType = semanticEvent.EventType
+                                                           };
+                            patternPoints.Add(patternPointForArrayHalf);
+                        }
+
+                        break;
+                    }
+                    case Codings.EVENT_ARRAY_SNAP:
+                    {
+                        var historyAction = semanticEvent.FirstHistoryAction;
+                        if (!(historyAction is CLPArraySnapHistoryAction arraySnap))
+                        {
+                            continue;
+                        }
+
+                        var persistingArrayID = arraySnap.PersistingArrayID;
+                        var patternPointForPersistingArray = patternPoints.FirstOrDefault(p => p.PageObjectID == persistingArrayID);
+                        if (patternPointForPersistingArray != null)
+                        {
+                            patternPointForPersistingArray.EndHistoryActionIndex = arraySnap.HistoryActionIndex;
+                            patternPointForPersistingArray.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
+                            patternPointForPersistingArray.EndEventType = semanticEvent.EventType;
+                            patternPoints.Remove(patternPointForPersistingArray);
+                            completedPatternPoints.Add(patternPointForPersistingArray);
+                        }
+
+                        var snappedArrayID = arraySnap.SnappedArrayID;
+                        var patternPointForSnappedArray = patternPoints.FirstOrDefault(p => p.PageObjectID == snappedArrayID);
+                        if (patternPointForSnappedArray != null)
+                        {
+                            patternPointForSnappedArray.EndHistoryActionIndex = arraySnap.HistoryActionIndex;
+                            patternPointForSnappedArray.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
+                            patternPointForSnappedArray.EndEventType = semanticEvent.EventType;
+                            patternPoints.Remove(patternPointForSnappedArray);
+                            completedPatternPoints.Add(patternPointForSnappedArray);
+                        }
+
+                        var patternPointForNewArray = new PatternPoint
+                                                      {
+                                                          PageObjectID = persistingArrayID,
+                                                          StartHistoryActionIndex = arraySnap.HistoryActionIndex,
+                                                          StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
+                                                          StartEventType = semanticEvent.EventType
+                                                      };
+                        patternPoints.Add(patternPointForNewArray);
+                        break;
+                    }
+                    case Codings.EVENT_ARRAY_DIVIDE_INK:
+                    {
+                        var historyAction = semanticEvent.FirstHistoryAction;
+                        if (!(historyAction is ObjectsOnPageChangedHistoryAction objectsChanged))
+                        {
+                            continue;
+                        }
+
+                        var eventInfo = semanticEvent.EventInformation;
+                        var subArrays = eventInfo.Split(", ", StringSplitOptions.RemoveEmptyEntries).ToList();
+                        if (!subArrayGroups.ContainsKey(arrayID))
+                        {
+                            subArrayGroups.Add(arrayID, subArrays);
+                        }
+                        else
+                        {
+                            subArrayGroups[arrayID].AddRange(subArrays);
+                        }
+
+                        break;
+                    }
+                    case Codings.EVENT_ARRAY_DIVIDE_INK_ERASE:
+                    {
+                        var historyAction = semanticEvent.FirstHistoryAction;
+                        if (!(historyAction is ObjectsOnPageChangedHistoryAction objectsChanged))
+                        {
+                            continue;
+                        }
+
+                        var eventInfo = semanticEvent.EventInformation;
+                        var subArrays = eventInfo.Split(", ", StringSplitOptions.RemoveEmptyEntries).ToList();
+                        foreach (var subArray in subArrays)
+                        {
+                            if (!subArrayGroups.ContainsKey(arrayID))
+                            {
+                                continue;
+                            }
+
+                            if (!subArrayGroups[arrayID].Contains(subArray))
+                            {
+                                continue;
+                            }
+
+                            subArrayGroups[arrayID].Remove(subArray);
+                            if (!subArrayGroups[arrayID].Any())
+                            {
+                                subArrayGroups.Remove(arrayID);
+                            }
+                        }
+
+                        break;
+                    }
+                    case Codings.EVENT_OBJECT_DELETE:
+                    {
+                        var historyAction = semanticEvent.FirstHistoryAction;
+                        if (!(historyAction is ObjectsOnPageChangedHistoryAction objectsChanged))
+                        {
+                            continue;
+                        }
+
+                        var patternPoint = patternPoints.FirstOrDefault(p => p.PageObjectID == arrayID);
+                        if (patternPoint == null)
+                        {
+                            continue;
+                        }
+
+                        patternPoint.EndHistoryActionIndex = objectsChanged.HistoryActionIndex;
                         patternPoint.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
                         patternPoint.EndEventType = semanticEvent.EventType;
                         patternPoints.Remove(patternPoint);
                         completedPatternPoints.Add(patternPoint);
+                        break;
                     }
-
-                    foreach (var halvedArrayID in pageObjectsCut.HalvedPageObjectIDs)
-                    {
-                        var patternPointForArrayHalf = new PatternPoint
-                                                       {
-                                                           PageObjectID = halvedArrayID,
-                                                           StartHistoryActionIndex = pageObjectsCut.HistoryActionIndex,
-                                                           StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
-                                                           StartEventType = semanticEvent.EventType
-                                                       };
-                        patternPoints.Add(patternPointForArrayHalf);
-                    }
-                }
-                else if (semanticEvent.EventType == Codings.EVENT_ARRAY_SNAP)
-                {
-                    var historyAction = semanticEvent.FirstHistoryAction;
-                    var arraySnap = historyAction as CLPArraySnapHistoryAction;
-                    if (arraySnap == null)
-                    {
-                        continue;
-                    }
-
-                    var persistingArrayID = arraySnap.PersistingArrayID;
-                    var patternPointForPersistingArray = patternPoints.FirstOrDefault(p => p.PageObjectID == persistingArrayID);
-                    if (patternPointForPersistingArray != null)
-                    {
-                        patternPointForPersistingArray.EndHistoryActionIndex = arraySnap.HistoryActionIndex;
-                        patternPointForPersistingArray.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
-                        patternPointForPersistingArray.EndEventType = semanticEvent.EventType;
-                        patternPoints.Remove(patternPointForPersistingArray);
-                        completedPatternPoints.Add(patternPointForPersistingArray);
-                    }
-
-                    var snappedArrayID = arraySnap.SnappedArrayID;
-                    var patternPointForSnappedArray = patternPoints.FirstOrDefault(p => p.PageObjectID == snappedArrayID);
-                    if (patternPointForSnappedArray != null)
-                    {
-                        patternPointForSnappedArray.EndHistoryActionIndex = arraySnap.HistoryActionIndex;
-                        patternPointForSnappedArray.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
-                        patternPointForSnappedArray.EndEventType = semanticEvent.EventType;
-                        patternPoints.Remove(patternPointForSnappedArray);
-                        completedPatternPoints.Add(patternPointForSnappedArray);
-                    }
-
-                    var patternPointForNewArray = new PatternPoint
-                                                  {
-                                                      PageObjectID = persistingArrayID,
-                                                      StartHistoryActionIndex = arraySnap.HistoryActionIndex,
-                                                      StartSemanticEventIndex = semanticEvent.SemanticEventIndex,
-                                                      StartEventType = semanticEvent.EventType
-                                                  };
-                    patternPoints.Add(patternPointForNewArray);
-                }
-                else if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK)
-                {
-                    var historyAction = semanticEvent.FirstHistoryAction;
-                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                    if (objectsChanged == null)
-                    {
-                        continue;
-                    }
-
-                    var eventInfo = semanticEvent.EventInformation;
-                    var subArrays = eventInfo.Split(", ", StringSplitOptions.RemoveEmptyEntries).ToList();
-                    if (!subArrayGroups.ContainsKey(arrayID))
-                    {
-                        subArrayGroups.Add(arrayID, subArrays);
-                    }
-                    else
-                    {
-                        subArrayGroups[arrayID].AddRange(subArrays);
-                    }
-                }
-                else if (semanticEvent.EventType == Codings.EVENT_ARRAY_DIVIDE_INK_ERASE)
-                {
-                    var historyAction = semanticEvent.FirstHistoryAction;
-                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                    if (objectsChanged == null)
-                    {
-                        continue;
-                    }
-
-                    var eventInfo = semanticEvent.EventInformation;
-                    var subArrays = eventInfo.Split(", ", StringSplitOptions.RemoveEmptyEntries).ToList();
-                    foreach (var subArray in subArrays)
-                    {
-                        if (!subArrayGroups.ContainsKey(arrayID))
-                        {
-                            continue;
-                        }
-
-                        if (!subArrayGroups[arrayID].Contains(subArray))
-                        {
-                            continue;
-                        }
-
-                        subArrayGroups[arrayID].Remove(subArray);
-                        if (!subArrayGroups[arrayID].Any())
-                        {
-                            subArrayGroups.Remove(arrayID);
-                        }
-                    }
-                }
-                else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
-                {
-                    var historyAction = semanticEvent.FirstHistoryAction;
-                    var objectsChanged = historyAction as ObjectsOnPageChangedHistoryAction;
-                    if (objectsChanged == null)
-                    {
-                        continue;
-                    }
-
-                    var patternPoint = patternPoints.FirstOrDefault(p => p.PageObjectID == arrayID);
-                    if (patternPoint == null)
-                    {
-                        continue;
-                    }
-
-                    patternPoint.EndHistoryActionIndex = objectsChanged.HistoryActionIndex;
-                    patternPoint.EndSemanticEventIndex = semanticEvent.SemanticEventIndex;
-                    patternPoint.EndEventType = semanticEvent.EventType;
-                    patternPoints.Remove(patternPoint);
-                    completedPatternPoints.Add(patternPoint);
                 }
             }
 
@@ -860,8 +865,7 @@ namespace CLP.Entities
             foreach (var patternPoint in completedPatternPoints)
             {
                 var arrayID = patternPoint.PageObjectID;
-                var array = page.GetPageObjectByIDOnPageOrInHistory(arrayID) as CLPArray;
-                if (array == null)
+                if (!(page.GetPageObjectByIDOnPageOrInHistory(arrayID) is CLPArray array))
                 {
                     continue;
                 }
@@ -964,9 +968,7 @@ namespace CLP.Entities
                                                            e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex &&
                                                            e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
                                                            (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) &&
-                                                           !e.EventInformation.Contains("bottom"));
-
-                var isSkipPlusArith = IsSkipPlusArith(arrayID, semanticEvents);
+                                                           !e.EventInformation.Contains("bottom")).ToList();
 
                 var skipEventGroupings = new List<List<ISemanticEvent>>();
                 var currentSkipGrouping = new List<ISemanticEvent>();
@@ -1054,6 +1056,10 @@ namespace CLP.Entities
                         continue;
                     }
 
+                    var firstSkipEventIndex = skipEventGrouping.First().SemanticEventIndex;
+                    var lastSkipEventIndex = skipEventGrouping.Last().SemanticEventIndex;
+                    var isSkipPlusArith = IsSkipPlusArith(arrayID, semanticEvents, firstSkipEventIndex, lastSkipEventIndex);
+
                     var bestSideSkipEvent = bestChoice.SemanticEvent as ISemanticEvent;
                     var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent, isSkipPlusArith);
                     if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
@@ -1067,7 +1073,7 @@ namespace CLP.Entities
                                                                                   (e.EventType == Codings.EVENT_ARRAY_SKIP || e.EventType == Codings.EVENT_ARRAY_SKIP_ERASE) &&
                                                                                   e.EventInformation.Contains("bottom"));
 
-                var bottomSkipCodedValue = BottomSkipCountingCorrectness(array, mostRecentBottomSkipEvent, isSkipPlusArith);
+                var bottomSkipCodedValue = BottomSkipCountingCorrectness(array, mostRecentBottomSkipEvent, false);
                 if (!string.IsNullOrWhiteSpace(bottomSkipCodedValue))
                 {
                     usedRepresentation.AdditionalInformation.Add(bottomSkipCodedValue);
@@ -1088,14 +1094,18 @@ namespace CLP.Entities
             }
         }
 
-        private static bool IsSkipPlusArith(string currentArrayID, List<ISemanticEvent> semanticEvents)
+        private static bool IsSkipPlusArith(string currentArrayID, List<ISemanticEvent> semanticEvents, int firstSkipEventIndex, int lastSkipEventIndex)
         {
             var skipArithCount = 0;
             var patternStartPoints = new Dictionary<string, string>();
 
-            for (var i = 0; i < semanticEvents.Count; i++)
+            foreach (var currentSemanticEvent in semanticEvents)
             {
-                var currentSemanticEvent = semanticEvents[i];
+                if (currentSemanticEvent.SemanticEventIndex < firstSkipEventIndex ||
+                    currentSemanticEvent.SemanticEventIndex > lastSkipEventIndex)
+                {
+                    continue;
+                }
 
                 if (currentSemanticEvent.CodedObject == Codings.OBJECT_ARITH &&
                     currentSemanticEvent.EventType == Codings.EVENT_ARITH_ADD)
