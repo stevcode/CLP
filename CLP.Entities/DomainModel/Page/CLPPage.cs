@@ -471,13 +471,13 @@ namespace CLP.Entities
             {
                 try
                 {
-                    var representationCorrectnessTag = Tags.FirstOrDefault(x => x is RepresentationCorrectnessTag) as RepresentationCorrectnessTag;
+                    var representationCorrectnessTag = Tags.FirstOrDefault(x => x is FinalRepresentationCorrectnessTag) as FinalRepresentationCorrectnessTag;
                     if (representationCorrectnessTag == null)
                     {
                         return "None";
                     }
 
-                    var codes = representationCorrectnessTag.AnalysisCodes;
+                    var codes = representationCorrectnessTag.SpreadSheetCodes;
                     if (codes.All(c => c.Contains("COR")))
                     {
                         return "Correct";
@@ -544,7 +544,7 @@ namespace CLP.Entities
                         return "None";
                     }
 
-                    var code = abrTag.AnalysisCodes;
+                    var code = abrTag.SpreadSheetCodes;
                     if (code.Contains("ABR-I"))
                     {
                         return "ABR-I";

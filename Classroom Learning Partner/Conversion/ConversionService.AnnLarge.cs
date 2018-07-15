@@ -315,6 +315,103 @@ namespace Classroom_Learning_Partner
             SaveNotebooksToZip(zipPath, notebooks);
         }
 
+        public static void RollingConversion(string notebookFolder)
+        {
+            CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
+            Ann.Notebook oldNotebook;
+
+#pragma warning disable 162
+            if (IS_LARGE_CACHE)
+
+            {
+                oldNotebook = AnnCustomPartialNotebookLoading(notebookFolder);
+                //oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            }
+            else
+            {
+                oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            }
+#pragma warning restore 162
+
+            CLogger.AppendToLog("Notebook Loaded");
+            var newNotebook = ConvertNotebook(oldNotebook);
+            CLogger.AppendToLog("Notebook Converted");
+
+            CLogger.AppendToLog("Saving Notebook File");
+
+            #region Setup Folder Structure
+
+            var rootFolderName = "notebooks";
+            var rootFolderPath = Path.Combine(ConvertedFolder, rootFolderName);
+            var setFolderPath = Path.Combine(rootFolderPath, newNotebook.NotebookSetDirectoryName);
+            var notebookOwnerDirectoryPath = Path.Combine(setFolderPath, newNotebook.NotebookOwnerDirectoryName);
+            if (!Directory.Exists(notebookOwnerDirectoryPath))
+            {
+                Directory.CreateDirectory(notebookOwnerDirectoryPath);
+            }
+
+            var pagesPath = Path.Combine(notebookOwnerDirectoryPath, "pages");
+            if (!Directory.Exists(pagesPath))
+            {
+                Directory.CreateDirectory(pagesPath);
+            }
+
+            var submissionsPath = Path.Combine(notebookOwnerDirectoryPath, "submissions");
+            if (!Directory.Exists(submissionsPath))
+            {
+                Directory.CreateDirectory(submissionsPath);
+            }
+
+            #endregion // Setup Folder Structure
+            
+            var notebookPath = Path.Combine(notebookOwnerDirectoryPath, "notebook.xml");
+            if (File.Exists(notebookPath))
+            {
+                CLogger.AppendToLog("Notebook Already Converted, skipping");
+                return;
+            }
+
+            CLogger.AppendToLog("Notebook File Saved");
+
+            foreach (var page in oldNotebook.Pages)
+            {
+                var pageFileName = $"p;{(int)page.PageNumber};0;{page.DifferentiationLevel};{page.VersionIndex};{page.ID}.xml";
+                var pageFilePath = Path.Combine(pagesPath, pageFileName);
+
+                if (File.ReadAllText(PageTrackerFilePath).Contains(pageFilePath))
+                {
+                    continue;
+                }
+                File.AppendAllText(PageTrackerFilePath, pageFilePath + Environment.NewLine);
+
+                CLogger.AppendToLog($"Converting Page {page.PageNumber} for {page.Owner.FullName}");
+                var newPage = ConvertPage(page);
+                CLogger.AppendToLog($"Finished Converting Page {page.PageNumber} for {page.Owner.FullName}");
+                foreach (var submission in page.Submissions)
+                {
+                    CLogger.AppendToLog($"Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
+                    var newSubmission = ConvertPage(submission);
+                    CLogger.AppendToLog($"Finished Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
+                    newPage.Submissions.Add(newSubmission);
+                }
+
+                PurifyPageSubmissions(newPage);
+
+                newPage.ToXmlFile(pageFilePath);
+                foreach (var submission in newPage.Submissions)
+                {
+                    var submissionFileName = $"p;{(int)submission.PageNumber};0;{submission.DifferentiationLevel};{submission.VersionIndex};{submission.ID}.xml";
+                    var submissionFilePath = Path.Combine(submissionsPath, submissionFileName);
+
+                    submission.ToXmlFile(submissionFilePath);
+                }
+
+                CLogger.AppendToLog($"Finished Saving Page {page.PageNumber} and submissions for {page.Owner.FullName}");
+            }
+
+            newNotebook.ToXmlFile(notebookPath);
+        }
+        
         public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
             CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
@@ -437,21 +534,207 @@ namespace Classroom_Learning_Partner
             //                        };
 
             // On  8/11/2017
+            //var pageNumbersToLoad = new List<int>
+            //                        {
+            //                            306,
+            //                            308,
+            //                            310,
+            //                            312,
+            //                            314,
+            //                            318,
+            //                            321,
+            //                            322,
+            //                            323,
+            //                            324,
+            //                            325,
+            //                            342,
+            //                            344,
+            //                            362,
+            //                            363,
+            //                            364,
+            //                            365,
+            //                            366,
+            //                            367,
+            //                            368,
+            //                            369,
+            //                            376,
+            //                            377,
+            //                            378
+            //                        };
+
+            // On  7/7/2018, M's "interesting pages"
             var pageNumbersToLoad = new List<int>
                                     {
+                                        31,
+                                        32,
+                                        43,
+                                        44,
+                                        49,
+                                        51,
+                                        93,
+                                        94,
+                                        113,
+                                        114,
+                                        132,
+                                        133,
+                                        134,
+                                        135,
+                                        136,
+                                        137,
+                                        147,
+                                        148,
+                                        149,
+                                        150,
+                                        151,
+                                        159,
+                                        160,
+                                        161,
+                                        162,
+                                        163,
+                                        171,
+                                        172,
+                                        173,
+                                        174,
+                                        175,
+                                        176,
+                                        177,
+                                        178,
+                                        179,
+                                        180,//
+                                        181,
+                                        185,
+                                        186,
+                                        194,
+                                        195,
+                                        196,
+                                        197,
+                                        198,
+                                        199,
+                                        200,
+                                        201,
+                                        209,
+                                        210,
+                                        211,
+                                        212,
+                                        213,
+                                        214,
+                                        215,
+                                        216,
+                                        217,
+                                        218,
+                                        219,
+                                        220,
+                                        221,
+                                        225,
+                                        226,
+                                        227,
+                                        228,
+                                        229,
+                                        230,
+                                        231,
+                                        232,
+                                        233,
+                                        234,
+                                        235,
+                                        236,
+                                        240,
+                                        241, //abeer
+                                        242,
+                                        243,
+                                        244,
+                                        245,
+                                        246,
+                                        247,
+                                        248,
+                                        249,
+                                        251,
+                                        252,
+                                        253,
+                                        254,
+                                        255,
+                                        256,
+                                        257,
+                                        258,
+                                        259,
+                                        260,
+                                        261,
+                                        262,
+                                        263,
+                                        264,
+                                        265,
+                                        266,
+                                        267,
+                                        268,
+                                        269,
+                                        270,
+                                        271,
+                                        272,
+                                        273,
+                                        276,
+                                        277,
+                                        278,
+                                        279,
+                                        280,
+                                        281,
+                                        282,
+                                        283,
+                                        284,
+                                        285,
+                                        286,
+                                        287,
+                                        288,
+                                        289,
+                                        290,
+                                        291,
+                                        292,
+                                        293,
+                                        295,
+                                        296,
+                                        297,
+                                        298,
+                                        299,
+                                        300,
+                                        301,
+                                        302,
+                                        303,
+                                        304,
+                                        305,
                                         306,
+                                        307,
                                         308,
+                                        309,
                                         310,
+                                        311,
                                         312,
+                                        313,
                                         314,
+                                        315,
+                                        316,
+                                        317,
                                         318,
+                                        320,
                                         321,
                                         322,
                                         323,
                                         324,
                                         325,
+                                        326,
+                                        335,
+                                        336,
+                                        337,
+                                        338,
+                                        339,
+                                        341,
                                         342,
+                                        343,
                                         344,
+                                        354,
+                                        355,
+                                        356,
+                                        357,
+                                        358,
+                                        359,
+                                        360,
                                         362,
                                         363,
                                         364,
@@ -460,9 +743,23 @@ namespace Classroom_Learning_Partner
                                         367,
                                         368,
                                         369,
+                                        370,
+                                        371,
+                                        372,
+                                        373,
+                                        374,
+                                        375,
                                         376,
                                         377,
-                                        378
+                                        378,
+                                        379,
+                                        380, //djemimah
+                                        381,
+                                        382,
+                                        383,
+                                        384,
+                                        385
+
                                     };
 
             pageNumbersToLoad = pageNumbersToLoad.Distinct().ToList();
@@ -793,7 +1090,7 @@ namespace Classroom_Learning_Partner
                               InitialAspectRatio = page.InitialAspectRatio
                           };
 
-            foreach (var stroke in page.InkStrokes)
+            foreach (var stroke in page.InkStrokes.Where(s => s != null))
             {
                 newPage.InkStrokes.Add(stroke);
             }
@@ -844,8 +1141,7 @@ namespace Classroom_Learning_Partner
 
             ConvertPageHistory(page.History, newPage);
 
-
-            HistoryAnalysis.GenerateSemanticEvents(newPage);
+            //HistoryAnalysis.GenerateSemanticEvents(newPage);
             if (!IS_LARGE_CACHE)
             {
                 //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(newPage);
@@ -1098,7 +1394,10 @@ namespace Classroom_Learning_Partner
             foreach (var acceptedStrokeParentID in newArray.AcceptedStrokeParentIDs)
             {
                 var stroke = newPage.GetStrokeByIDOnPageOrInHistory(acceptedStrokeParentID);
-                newArray.AcceptedStrokes.Add(stroke);
+                if (stroke != null)
+                {
+                    newArray.AcceptedStrokes.Add(stroke);
+                }
 
                 var logString = $"Array - {newPage.PageNumber} - {newPage.Owner.FullName}";
                 CapturedStrokesLog.Add(logString);
@@ -1160,7 +1459,10 @@ namespace Classroom_Learning_Partner
             foreach (var acceptedStrokeParentID in newNumberLine.AcceptedStrokeParentIDs)
             {
                 var stroke = newPage.GetStrokeByIDOnPageOrInHistory(acceptedStrokeParentID);
-                newNumberLine.AcceptedStrokes.Add(stroke);
+                if (stroke != null)
+                {
+                    newNumberLine.AcceptedStrokes.Add(stroke);
+                }
             }
 
             return newNumberLine;
@@ -1230,7 +1532,7 @@ namespace Classroom_Learning_Partner
                     throw new ArgumentOutOfRangeException();
             }
 
-            foreach (var strokeDTO in stampedObject.SerializedStrokes)
+            foreach (var strokeDTO in stampedObject.SerializedStrokes.Where(s => s != null))
             {
                 var stroke = strokeDTO.ToStroke();
                 newStampedObject.SerializedStrokes.Add(stroke.ToStrokeDTO());
@@ -1302,7 +1604,10 @@ namespace Classroom_Learning_Partner
             foreach (var acceptedStrokeParentID in newStamp.AcceptedStrokeParentIDs)
             {
                 var stroke = newPage.GetStrokeByIDOnPageOrInHistory(acceptedStrokeParentID);
-                newStamp.AcceptedStrokes.Add(stroke);
+                if (stroke != null)
+                {
+                    newStamp.AcceptedStrokes.Add(stroke);
+                }
 
                 var logString = $"Stamp - {newPage.PageNumber} - {newPage.Owner.FullName}";
                 CapturedStrokesLog.Add(logString);
@@ -1752,7 +2057,7 @@ namespace Classroom_Learning_Partner
             var newPageHistory = new PageHistory();
             newPage.History = newPageHistory;
 
-            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes)
+            foreach (var trashedInkStroke in pageHistory.TrashedInkStrokes.Where(s => s != null))
             {
                 newPageHistory.TrashedInkStrokes.Add(trashedInkStroke);
             }
