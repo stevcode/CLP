@@ -18,36 +18,88 @@ namespace Classroom_Learning_Partner
         public const bool IS_ANONYMIZED_CACHE = true;
         public const bool IS_CONVERTING_SUBMISSIONS = true;
 
+        #region Rolling
+
+        public static string ConvertedFolder => Path.Combine(DataService.DesktopFolderPath, "Converted");
+        public static string PageTrackerFilePath => Path.Combine(ConvertedFolder, "tracking.txt");
+
+        #endregion // Rolling
+
         #region Loop
 
         public static void ConvertAnnCache()
         {
+            if (!Directory.Exists(ConvertedFolder))
+            {
+                Directory.CreateDirectory(ConvertedFolder);
+            }
+
+            if (!File.Exists(PageTrackerFilePath))
+            {
+                using (File.CreateText(PageTrackerFilePath)) { }
+            }
+
             var cacheType = IS_LARGE_CACHE ? "Large" : "Assessment";
             CLogger.AppendToLog($"Beginning Conversion of Ann's {cacheType} Cache.");
-
-            var zipPath = IS_LARGE_CACHE ? AnnZipFilePath : AssessmentZipFilePath;
+            
             var notebooksFolderPath = IS_LARGE_CACHE ? AnnNotebooksFolder : AssessmentNotebooksFolder;
-            var classesFolderPath = IS_LARGE_CACHE ? AnnClassesFolder : AssessmentClassesFolder;
-            var imagesFolderPath = IS_LARGE_CACHE ? AnnImageFolder : AssessmentImageFolder;
-            const string SUBJECT_FILE_NAME = "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml";
-
-            var notebooks = new List<Notebook>();
-            Notebook authorNotebook = null;
-
             var dirInfo = new DirectoryInfo(notebooksFolderPath);
             foreach (var directory in dirInfo.EnumerateDirectories())
             {
                 var notebookFolder = directory.FullName;
-                var notebook = ConvertCacheAnnNotebook(notebookFolder);
-                notebooks.Add(notebook);
+                RollingConversion(notebookFolder);
+            }
+        }
 
-                if (notebook.OwnerID == Person.AUTHOR_ID)
+        public static void CreateSavedZip()
+        {
+            var zipPath = IS_LARGE_CACHE ? AnnZipFilePath : AssessmentZipFilePath;
+            var classesFolderPath = IS_LARGE_CACHE ? AnnClassesFolder : AssessmentClassesFolder;
+            var imagesFolderPath = IS_LARGE_CACHE ? AnnImageFolder : AssessmentImageFolder;
+            const string SUBJECT_FILE_NAME = "subject;L6xDfDuP-kCMBjQ3-HdAPQ.xml";
+
+            Notebook authorNotebook = null;
+            var rootFolderName = "notebooks";
+            var rootFolderPath = Path.Combine(ConvertedFolder, rootFolderName);
+            var setFolderName = IS_LARGE_CACHE ? "Math Notebook;pUVQ-qBPyUWCuHWMs9dryA" : "Math Assessment;_455DjGei0661H49s5f4Cw";
+            var setFolderPath = Path.Combine(rootFolderPath, setFolderName);
+            var dirInfo = new DirectoryInfo(setFolderPath);
+            foreach (var directory in dirInfo.EnumerateDirectories())
+            {
+                var notebookFolderPath = directory.FullName;
+                
+                var pagesFolderPath = Path.Combine(notebookFolderPath, "pages");
+                var pagesDirectoryInfo = new DirectoryInfo(pagesFolderPath);
+                var pages = new List<CLPPage>();
+                foreach (var pageFile in pagesDirectoryInfo.EnumerateFiles())
+                {
+                    var pageFilePath = pageFile.FullName;
+                    var page = ASerializableBase.FromXmlFile<CLPPage>(pageFilePath);
+
+                    pages.Add(page);
+                }
+
+                var submissionsFolderPath = Path.Combine(notebookFolderPath, "submissions");
+                var submissionsDirectoryInfo = new DirectoryInfo(submissionsFolderPath);
+                var submissions = new List<CLPPage>();
+                foreach (var submissionFile in submissionsDirectoryInfo.EnumerateFiles())
+                {
+                    var submissionFilePath = submissionFile.FullName;
+                    var submission = ASerializableBase.FromXmlFile<CLPPage>(submissionFilePath);
+
+                    submissions.Add(submission);
+                }
+
+                var notebookFilePath = Path.Combine(notebookFolderPath, "notebook.xml");
+                var notebook = ASerializableBase.FromXmlFile<Notebook>(notebookFilePath);
+
+                SaveNotebookToZip(zipPath, notebook, pages, submissions);
+
+                if (notebook.Owner.ID == Person.AUTHOR_ID)
                 {
                     authorNotebook = notebook;
                 }
             }
-
-            SaveNotebooksToZip(zipPath, notebooks);
 
             var subjectFilePath = Path.Combine(classesFolderPath, SUBJECT_FILE_NAME);
             var classRoster = ConvertCacheAnnClassSubject(subjectFilePath, authorNotebook);
@@ -55,29 +107,23 @@ namespace Classroom_Learning_Partner
 
             SaveImagesToZip(zipPath, imagesFolderPath);
 
-            var classesDirInfo = new DirectoryInfo(classesFolderPath);
-            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
-            var i = 1;
-            foreach (var session in sessions)
-            {
-                session.SessionTitle = $"Class {i}";
-                i++;
-            }
+            //var classesDirInfo = new DirectoryInfo(classesFolderPath);
+            //var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
+            //var i = 1;
+            //foreach (var session in sessions)
+            //{
+            //    session.SessionTitle = $"Class {i}";
+            //    i++;
+            //}
 
-            SaveSessionsToZip(zipPath, sessions, authorNotebook);
+            //SaveSessionsToZip(zipPath, sessions, authorNotebook);
 
-            CLogger.AppendToLog($"Finished Conversion of Ann's {cacheType} Cache.");
+            CLogger.AppendToLog($"Finished Conversion of Ann's Cache.");
 
-            if (!IS_LARGE_CACHE &&
-                IS_ANONYMIZED_CACHE)
-            {
-                AnonymizationFixesForAssessmentCache();
-            }
-
-            foreach (var line in CapturedStrokesLog.Distinct())
-            {
-                CLogger.AppendToLog(line);
-            }
+            //if (!IS_LARGE_CACHE && IS_ANONYMIZED_CACHE)
+            //{
+            //    AnonymizationFixesForAssessmentCache();
+            //}
         }
 
         public static void AnonymizationFixesForAssessmentCache()
@@ -193,42 +239,64 @@ namespace Classroom_Learning_Partner
 
         #region All
 
-        public static void SaveNotebookToZip(string zipFilePath, Notebook notebook, bool isIncludingSubmissions = true)
+        public static void SaveNotebookToZip(string zipFilePath, Notebook notebook, List<CLPPage> pages, List<CLPPage> submissions)
         {
-            if (File.Exists(zipFilePath))
-            {
-                return;
-            }
-
+            CLogger.AppendToLog($"Saving {notebook.Owner.DisplayName}'s Notebook To Zip.");
+            notebook.ContainerZipFilePath = zipFilePath;
             var entryList = new List<DataService.ZipEntrySaver>
                             {
                                 new DataService.ZipEntrySaver(notebook, notebook)
                             };
 
-            foreach (var page in notebook.Pages)
+            foreach (var page in pages)
             {
+                page.ContainerZipFilePath = zipFilePath;
                 entryList.Add(new DataService.ZipEntrySaver(page, notebook));
-
-                if (isIncludingSubmissions)
-                {
-                    entryList.AddRange(page.Submissions.Select(submission => new DataService.ZipEntrySaver(submission, notebook)));
-                }
             }
 
-            using (var zip = new ZipFile())
+            foreach (var submission in submissions)
             {
-                zip.CompressionMethod = CompressionMethod.None;
-                zip.CompressionLevel = CompressionLevel.None;
-                //zip.UseZip64WhenSaving = Zip64Option.Always;
-                zip.CaseSensitiveRetrieval = true;
-
-                foreach (var zipEntrySaver in entryList)
-                {
-                    zipEntrySaver.UpdateEntry(zip);
-                }
-
-                zip.Save(zipFilePath);
+                submission.ContainerZipFilePath = zipFilePath;
+                entryList.Add(new DataService.ZipEntrySaver(submission, notebook));
             }
+
+            if (!File.Exists(zipFilePath))
+            {
+                using (var zip = new ZipFile())
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    //zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    foreach (var zipEntrySaver in entryList)
+                    {
+                        zipEntrySaver.UpdateEntry(zip);
+                    }
+
+                    zip.Save(zipFilePath);
+                }
+            }
+            else
+            {
+                using (var zip = ZipFile.Read(zipFilePath))
+                {
+                    zip.CompressionMethod = CompressionMethod.None;
+                    zip.CompressionLevel = CompressionLevel.None;
+                    //zip.UseZip64WhenSaving = Zip64Option.Always;
+                    zip.CaseSensitiveRetrieval = true;
+
+                    foreach (var zipEntrySaver in entryList)
+                    {
+                        zipEntrySaver.UpdateEntry(zip);
+                    }
+
+                    zip.Save();
+                }
+            }
+            
+
+            CLogger.AppendToLog($"Finished Saving {notebook.Owner.DisplayName}'s Notebook To Zip.");
         }
 
         public static void SaveNotebooksToZip(string zipFilePath, List<Notebook> notebooks)

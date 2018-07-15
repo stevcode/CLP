@@ -315,6 +315,103 @@ namespace Classroom_Learning_Partner
             SaveNotebooksToZip(zipPath, notebooks);
         }
 
+        public static void RollingConversion(string notebookFolder)
+        {
+            CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
+            Ann.Notebook oldNotebook;
+
+#pragma warning disable 162
+            if (IS_LARGE_CACHE)
+
+            {
+                oldNotebook = AnnCustomPartialNotebookLoading(notebookFolder);
+                //oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            }
+            else
+            {
+                oldNotebook = Ann.Notebook.LoadLocalFullNotebook(notebookFolder);
+            }
+#pragma warning restore 162
+
+            CLogger.AppendToLog("Notebook Loaded");
+            var newNotebook = ConvertNotebook(oldNotebook);
+            CLogger.AppendToLog("Notebook Converted");
+
+            CLogger.AppendToLog("Saving Notebook File");
+
+            #region Setup Folder Structure
+
+            var rootFolderName = "notebooks";
+            var rootFolderPath = Path.Combine(ConvertedFolder, rootFolderName);
+            var setFolderPath = Path.Combine(rootFolderPath, newNotebook.NotebookSetDirectoryName);
+            var notebookOwnerDirectoryPath = Path.Combine(setFolderPath, newNotebook.NotebookOwnerDirectoryName);
+            if (!Directory.Exists(notebookOwnerDirectoryPath))
+            {
+                Directory.CreateDirectory(notebookOwnerDirectoryPath);
+            }
+
+            var pagesPath = Path.Combine(notebookOwnerDirectoryPath, "pages");
+            if (!Directory.Exists(pagesPath))
+            {
+                Directory.CreateDirectory(pagesPath);
+            }
+
+            var submissionsPath = Path.Combine(notebookOwnerDirectoryPath, "submissions");
+            if (!Directory.Exists(submissionsPath))
+            {
+                Directory.CreateDirectory(submissionsPath);
+            }
+
+            #endregion // Setup Folder Structure
+            
+            var notebookPath = Path.Combine(notebookOwnerDirectoryPath, "notebook.xml");
+            if (File.Exists(notebookPath))
+            {
+                CLogger.AppendToLog("Notebook Already Converted, skipping");
+                return;
+            }
+
+            CLogger.AppendToLog("Notebook File Saved");
+
+            foreach (var page in oldNotebook.Pages)
+            {
+                var pageFileName = $"p;{(int)page.PageNumber};0;{page.DifferentiationLevel};{page.VersionIndex};{page.ID}.xml";
+                var pageFilePath = Path.Combine(pagesPath, pageFileName);
+
+                if (File.ReadAllText(PageTrackerFilePath).Contains(pageFilePath))
+                {
+                    continue;
+                }
+                File.AppendAllText(PageTrackerFilePath, pageFilePath + Environment.NewLine);
+
+                CLogger.AppendToLog($"Converting Page {page.PageNumber} for {page.Owner.FullName}");
+                var newPage = ConvertPage(page);
+                CLogger.AppendToLog($"Finished Converting Page {page.PageNumber} for {page.Owner.FullName}");
+                foreach (var submission in page.Submissions)
+                {
+                    CLogger.AppendToLog($"Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
+                    var newSubmission = ConvertPage(submission);
+                    CLogger.AppendToLog($"Finished Converting Submission Version {submission.VersionIndex} for Page {page.PageNumber} for {page.Owner.FullName}");
+                    newPage.Submissions.Add(newSubmission);
+                }
+
+                PurifyPageSubmissions(newPage);
+
+                newPage.ToXmlFile(pageFilePath);
+                foreach (var submission in newPage.Submissions)
+                {
+                    var submissionFileName = $"p;{(int)submission.PageNumber};0;{submission.DifferentiationLevel};{submission.VersionIndex};{submission.ID}.xml";
+                    var submissionFilePath = Path.Combine(submissionsPath, submissionFileName);
+
+                    submission.ToXmlFile(submissionFilePath);
+                }
+
+                CLogger.AppendToLog($"Finished Saving Page {page.PageNumber} and submissions for {page.Owner.FullName}");
+            }
+
+            newNotebook.ToXmlFile(notebookPath);
+        }
+        
         public static Notebook ConvertCacheAnnNotebook(string notebookFolder)
         {
             CLogger.AppendToLog($"Loading Notebook To Convert: {notebookFolder}");
@@ -503,7 +600,7 @@ namespace Classroom_Learning_Partner
                                         177,
                                         178,
                                         179,
-                                      //  180,
+                                        180,//
                                         181,
                                         185,
                                         186,
@@ -541,7 +638,7 @@ namespace Classroom_Learning_Partner
                                         235,
                                         236,
                                         240,
-                                     //   241, abeer
+                                        241, //abeer
                                         242,
                                         243,
                                         244,
@@ -656,7 +753,7 @@ namespace Classroom_Learning_Partner
                                         377,
                                         378,
                                         379,
-                                        //380, djemimah
+                                        380, //djemimah
                                         381,
                                         382,
                                         383,
@@ -1044,8 +1141,7 @@ namespace Classroom_Learning_Partner
 
             ConvertPageHistory(page.History, newPage);
 
-
-            HistoryAnalysis.GenerateSemanticEvents(newPage);
+            //HistoryAnalysis.GenerateSemanticEvents(newPage);
             if (!IS_LARGE_CACHE)
             {
                 //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(newPage);
