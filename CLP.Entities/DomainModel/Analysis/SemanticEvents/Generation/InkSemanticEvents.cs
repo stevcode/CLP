@@ -986,6 +986,7 @@ namespace CLP.Entities
 
                 historyActionBuffer.Add(currentHistoryAction);
                 isPreviousInkAdd = isCurrentInkAdd;
+                isPreviousStrokeInvisiblySmall = isCurrentStrokeInvisiblySmall;
                 previousStroke = currentStroke;
             }
 
