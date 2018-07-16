@@ -928,8 +928,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var interpretationRegion = page.GetPageObjectByIDOnPageOrInHistory(semanticEvent.ReferencePageObjectID) as InterpretationRegion;
-            if (interpretationRegion == null)
+            if (!(page.GetPageObjectByIDOnPageOrInHistory(semanticEvent.ReferencePageObjectID) is InterpretationRegion interpretationRegion))
             {
                 return null;
             }

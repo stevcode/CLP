@@ -91,7 +91,8 @@ namespace CLP.Entities
                              mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                         sequence.Add(sequenceIdentifier);
 
                         mostRecentSequenceItem = semanticEvent;
@@ -118,7 +119,8 @@ namespace CLP.Entities
                              mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                         sequence.Add(sequenceIdentifier);
 
                         mostRecentSequenceItem = semanticEvent;
@@ -142,7 +144,8 @@ namespace CLP.Entities
                              mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                         sequence.Add(sequenceIdentifier);
 
                         mostRecentSequenceItem = semanticEvent;
@@ -151,7 +154,8 @@ namespace CLP.Entities
                              mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                        var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                         sequence.Add(sequenceIdentifier);
 
                         mostRecentSequenceItem = semanticEvent;
@@ -168,14 +172,16 @@ namespace CLP.Entities
                 mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
             {
                 var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                 sequence.Add(sequenceIdentifier);
             }
             else if (Codings.IsFinalAnswerEvent(mostRecentSequenceItem) &&
                      mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
             {
                 var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}";
+                var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                 sequence.Add(sequenceIdentifier);
             }
             else if (Codings.IsRepresentationEvent(mostRecentSequenceItem))
@@ -208,35 +214,21 @@ namespace CLP.Entities
             if (firstRepresentationIndex > 0)
             {
                 var previousSequenceItems = sequence.Take(firstRepresentationIndex).ToList();
-
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_CORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
+                foreach (var sequenceItem in previousSequenceItems)
                 {
-                    AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Correct);
-                }
+                    var objectType = sequenceItem.Substring(0, 2);
+                    var codedCorrectness = sequenceItem.Substring(3, 3);
+                    var studentAnswer = sequenceItem.Substring(7);
 
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_INCORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
-                {
-                    AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Incorrect);
-                }
-
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_ILLEGIBLE) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
-                {
-                    AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Illegible);
-                }
-
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_CORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
-                {
-                    AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Correct);
-                }
-
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_INCORRECT) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
-                {
-                    AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Incorrect);
-                }
-
-                if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_ILLEGIBLE) && i.Contains(INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER)))
-                {
-                    AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, Correctness.Illegible);
+                    var correctness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
+                    if (objectType == FINAL_ANSWER_SEQUENCE_IDENTIFIER)
+                    {
+                        AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, correctness, studentAnswer);
+                    }
+                    else
+                    {
+                        AnalysisCode.AddIntermediaryAnswerBeforeRepresentation(tag, correctness, studentAnswer);
+                    }
                 }
             }
 
