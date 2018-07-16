@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using System.Windows.Ink;
 using System.Xml.Linq;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using CLP.MachineAnalysis;
 using Ionic.Zip;
@@ -38,7 +41,15 @@ namespace Classroom_Learning_Partner.Services
 
             public double Distance(QueryablePage otherPage)
             {
-                return 0.0;
+                var distance = 0.0;
+
+                var analysisCodeTypes = AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
+                var analysisCodeTypesOther = otherPage.AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
+                distance += Math.Abs(analysisCodeTypes.Count - analysisCodeTypesOther.Count);
+
+                //Debug.WriteLine($"Distance: {distance}");
+
+                return distance;
             }
 
             #endregion // Methods
@@ -204,7 +215,16 @@ namespace Classroom_Learning_Partner.Services
             optics.BuildReachability();
             var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
-            const double CLUSTERING_EPSILON = 51.0;
+            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            var plotView = new OPTICSReachabilityPlotView()
+                           {
+                               Owner = Application.Current.MainWindow,
+                               WindowStartupLocation = WindowStartupLocation.Manual,
+                               Reachability = normalizedReachabilityPlot
+                           };
+            plotView.Show();
+
+            const double CLUSTERING_EPSILON = 0.33;
 
             var currentCluster = new List<QueryablePage>();
             var allClusteredQueryablePages = new List<QueryablePage>();

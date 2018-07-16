@@ -410,7 +410,7 @@
                             Content="Run Query"
                             Command="{Binding RunQueryCommand}" />
 
-                    <Button Grid.Column="2"
+                    <Button Grid.Column="3"
                             HorizontalAlignment="Center"
                             Height="32"
                             Width="125"
