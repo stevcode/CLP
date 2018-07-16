@@ -43,11 +43,42 @@ namespace Classroom_Learning_Partner.Services
             {
                 var distance = 0.0;
 
-                var analysisCodeTypes = AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
-                var analysisCodeTypesOther = otherPage.AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
-                distance += Math.Abs(analysisCodeTypes.Count - analysisCodeTypesOther.Count);
+                //var analysisCodeTypes = AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
+                //var analysisCodeTypesOther = otherPage.AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
+                //distance += Math.Abs(analysisCodeTypes.Count - analysisCodeTypesOther.Count);
 
                 //Debug.WriteLine($"Distance: {distance}");
+
+                distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_NAME_LAX);
+                distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_HISTORY_STATUS);
+                distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
+
+                return distance;
+            }
+
+            private static double Blah(QueryablePage page1, QueryablePage page2, string analysisCodeLabel, string constraintLabel)
+            {
+                var codes = page1.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCodeLabel).ToList();
+                var codesOther = page2.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCodeLabel).ToList();
+
+                var groups = codes.Select(c => c.Constraints.First(con => con.ConstraintLabel == constraintLabel).ConstraintValue).GroupBy(t => t);
+                var groupsOther = codesOther.Select(c => c.Constraints.First(con => con.ConstraintLabel == constraintLabel).ConstraintValue).GroupBy(t => t);
+
+                var groupings = groups.ToDictionary(@group => @group.Key, @group => @group.Count());
+                var groupingsOther = groupsOther.ToDictionary(@group => @group.Key, @group => @group.Count());
+
+                var distance = 0.0;
+                foreach (var groupingsKey in groupings.Keys)
+                {
+                    if (groupingsOther.ContainsKey(groupingsKey))
+                    {
+                        distance += Math.Abs(groupings[groupingsKey] - groupingsOther[groupingsKey]);
+                    }
+                    else
+                    {
+                        distance += groupings[groupingsKey];
+                    }
+                }
 
                 return distance;
             }
@@ -207,11 +238,18 @@ namespace Classroom_Learning_Partner.Services
                 return new List<QueryResult>();
             }
 
+            //var queryablePages = new List<QueryablePage>();
+            //foreach (var queryablePage in QueryablePages.Where(qp => qp.PageNameComposite.PageNumber == 2))
+            //{
+            //    queryablePages.Add(queryablePage);
+            //}
+            var queryablePages = QueryablePages.ToList();
+
             const int MAX_EPSILON = 1000;
             const int MINIMUM_PAGES_IN_CLUSTER = 1;
 
             double DistanceEquation(QueryablePage p1, QueryablePage p2) => Math.Sqrt(p1.Distance(p2));
-            var optics = new OPTICS<QueryablePage>(MAX_EPSILON, MINIMUM_PAGES_IN_CLUSTER, QueryablePages, DistanceEquation);
+            var optics = new OPTICS<QueryablePage>(MAX_EPSILON, MINIMUM_PAGES_IN_CLUSTER, queryablePages, DistanceEquation);
             optics.BuildReachability();
             var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
@@ -229,7 +267,7 @@ namespace Classroom_Learning_Partner.Services
             var currentCluster = new List<QueryablePage>();
             var allClusteredQueryablePages = new List<QueryablePage>();
             var firstQueryablePageIndex = (int)reachabilityDistances[0].OriginalIndex;
-            var firstQueryablePage = QueryablePages[firstQueryablePageIndex];
+            var firstQueryablePage = queryablePages[firstQueryablePageIndex];
             currentCluster.Add(firstQueryablePage);
             allClusteredQueryablePages.Add(firstQueryablePage);
 
@@ -238,7 +276,7 @@ namespace Classroom_Learning_Partner.Services
             for (var i = 1; i < reachabilityDistances.Count; i++)
             {
                 var queryablePageIndex = (int)reachabilityDistances[i].OriginalIndex;
-                var queryablePage = QueryablePages[queryablePageIndex];
+                var queryablePage = queryablePages[queryablePageIndex];
 
                 // Epsilon cluster decision.
                 var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
@@ -262,7 +300,7 @@ namespace Classroom_Learning_Partner.Services
                 clusters.Add(finalCluster);
             }
 
-            var anomaliesCluster = QueryablePages.Where(qp => !allClusteredQueryablePages.Contains(qp)).ToList();
+            var anomaliesCluster = queryablePages.Where(qp => !allClusteredQueryablePages.Contains(qp)).ToList();
 
             var queryResults = new List<QueryResult>();
             foreach (var queryablePage in anomaliesCluster)
