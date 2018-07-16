@@ -102,8 +102,8 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_DELETED = "DELETED";
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_ERASED = "ERASED";
 
-        public const string CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY = "INTERMEDIARY";
-        public const string CONSTRAINT_VALUE_ANSWER_TYPE_FINAL = "FINAL";
+        public const string CONSTRAINT_VALUE_ANSWER_TYPE_INTERMEDIARY = "IA";
+        public const string CONSTRAINT_VALUE_ANSWER_TYPE_FINAL = "FA";
 
         public const string CONSTRAINT_VALUE_ANSWER_OBJECT_MULTIPLE_CHOICE = "MULTIPLE_CHOICE";
         public const string CONSTRAINT_VALUE_ANSWER_OBJECT_FILL_IN = "FILL_IN";

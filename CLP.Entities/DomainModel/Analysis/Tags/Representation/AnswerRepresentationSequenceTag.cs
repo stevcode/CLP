@@ -208,6 +208,7 @@ namespace CLP.Entities
             if (firstRepresentationIndex > 0)
             {
                 var previousSequenceItems = sequence.Take(firstRepresentationIndex).ToList();
+
                 if (previousSequenceItems.Any(i => i.Contains(Codings.CORRECTNESS_CODED_CORRECT) && i.Contains(FINAL_ANSWER_SEQUENCE_IDENTIFIER)))
                 {
                     AnalysisCode.AddFinalAnswerBeforeRepresentation(tag, Correctness.Correct);
