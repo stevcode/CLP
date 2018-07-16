@@ -25,16 +25,19 @@ namespace Classroom_Learning_Partner.ViewModels
         StudentName,
         PageNumber,
         RepresentationType,
-        OverallCorrectness
+        OverallCorrectness,
+        Cluster
     }
 
     public class QueryPanelViewModel : APanelBaseViewModel
     {
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StudentNameGroup = new PropertyGroupDescription("StudentName");
+        private static readonly PropertyGroupDescription ClusterGroup = new PropertyGroupDescription("Cluster");
 
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
         private static readonly SortDescription StudentNameAscendingSort = new SortDescription("StudentName", ListSortDirection.Ascending);
+        private static readonly SortDescription ClusterAscendingSort = new SortDescription("Cluster", ListSortDirection.Ascending);
 
         private readonly IDataService _dataService;
         private readonly IQueryService _queryService;
@@ -222,6 +225,7 @@ namespace Classroom_Learning_Partner.ViewModels
             NewQueryCommand = new Command(OnNewQueryCommandExecute);
             
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
+            ClusterCommand = new Command(OnClusterCommandExecute);
             SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
         }
 
@@ -386,6 +390,18 @@ namespace Classroom_Learning_Partner.ViewModels
             QueryResults.AddRange(queryResults);
         }
 
+        public Command ClusterCommand { get; private set; }
+
+        private void OnClusterCommandExecute()
+        {
+            QueryResults.Clear();
+
+            var queryResults = _queryService.Cluster();
+            queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
+
+            QueryResults.AddRange(queryResults);
+        }
+
         public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
 
         private void OnSetCurrentPageCommandExecute(QueryService.QueryResult queryResult)
@@ -413,6 +429,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case GroupTypes.PageNumber:
                     ApplySortAndGroupByPageNumber();
                     break;
+                case GroupTypes.Cluster:
+                    ApplySortAndGroupByCluster();
+                    break;
                 default:
                     ApplySortAndGroupByName();
                     break;
@@ -435,6 +454,17 @@ namespace Classroom_Learning_Partner.ViewModels
             GroupedQueryResults.SortDescriptions.Clear();
 
             GroupedQueryResults.GroupDescriptions.Add(PageNumberGroup);
+            GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
+            GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
+        }
+
+        public void ApplySortAndGroupByCluster()
+        {
+            GroupedQueryResults.GroupDescriptions.Clear();
+            GroupedQueryResults.SortDescriptions.Clear();
+
+            GroupedQueryResults.GroupDescriptions.Add(ClusterGroup);
+            GroupedQueryResults.SortDescriptions.Add(ClusterAscendingSort);
             GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
             GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
         }

@@ -14,5 +14,6 @@ namespace Classroom_Learning_Partner.Services
         void LoadQueryablePages();
         void LoadSavedQueries();
         List<QueryService.QueryResult> RunQuery(AnalysisCodeQuery query);
+        List<QueryService.QueryResult> Cluster();
     }
 }

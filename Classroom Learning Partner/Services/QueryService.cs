@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Ink;
 using System.Xml.Linq;
-using Catel;
 using CLP.Entities;
+using CLP.MachineAnalysis;
 using Ionic.Zip;
 using Ionic.Zlib;
 
@@ -32,6 +33,15 @@ namespace Classroom_Learning_Partner.Services
             {
                 get { return $"Page {PageNameComposite.PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingAnalysisCodes.Select(q => q.FormattedValue))}"; }
             }
+
+            #region Methods
+
+            public double Distance(QueryablePage otherPage)
+            {
+                return 0.0;
+            }
+
+            #endregion // Methods
         }
 
         public class QueryResult
@@ -44,6 +54,7 @@ namespace Classroom_Learning_Partner.Services
 
             public QueryablePage Page { get; set; }
             public List<IAnalysisCode> MatchingQueryCodes { get; set; }
+            public string Cluster { get; set; }
 
             public int PageNumber => Page.PageNameComposite.PageNumber;
             public string StudentName => Page.StudentName;
@@ -175,6 +186,91 @@ namespace Classroom_Learning_Partner.Services
                 queryResults.Add(queryResult);
             }
 
+            return queryResults;
+        }
+
+        public List<QueryResult> Cluster()
+        {
+            if (NotebookToQuery == null)
+            {
+                return new List<QueryResult>();
+            }
+
+            const int MAX_EPSILON = 1000;
+            const int MINIMUM_PAGES_IN_CLUSTER = 1;
+
+            double DistanceEquation(QueryablePage p1, QueryablePage p2) => Math.Sqrt(p1.Distance(p2));
+            var optics = new OPTICS<QueryablePage>(MAX_EPSILON, MINIMUM_PAGES_IN_CLUSTER, QueryablePages, DistanceEquation);
+            optics.BuildReachability();
+            var reachabilityDistances = optics.ReachabilityDistances().ToList();
+
+            const double CLUSTERING_EPSILON = 51.0;
+
+            var currentCluster = new List<QueryablePage>();
+            var allClusteredQueryablePages = new List<QueryablePage>();
+            var firstQueryablePageIndex = (int)reachabilityDistances[0].OriginalIndex;
+            var firstQueryablePage = QueryablePages[firstQueryablePageIndex];
+            currentCluster.Add(firstQueryablePage);
+            allClusteredQueryablePages.Add(firstQueryablePage);
+
+            var clusters = new List<List<QueryablePage>>();
+
+            for (var i = 1; i < reachabilityDistances.Count; i++)
+            {
+                var queryablePageIndex = (int)reachabilityDistances[i].OriginalIndex;
+                var queryablePage = QueryablePages[queryablePageIndex];
+
+                // Epsilon cluster decision.
+                var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
+                if (currentReachabilityDistance < CLUSTERING_EPSILON)
+                {
+                    currentCluster.Add(queryablePage);
+                    allClusteredQueryablePages.Add(queryablePage);
+                    continue;
+                }
+
+                var fullCluster = currentCluster.ToList();
+                currentCluster.Clear();
+                currentCluster.Add(queryablePage);
+                allClusteredQueryablePages.Add(queryablePage);
+                clusters.Add(fullCluster);
+            }
+
+            if (currentCluster.Any())
+            {
+                var finalCluster = currentCluster.ToList();
+                clusters.Add(finalCluster);
+            }
+
+            var anomaliesCluster = QueryablePages.Where(qp => !allClusteredQueryablePages.Contains(qp)).ToList();
+
+            var queryResults = new List<QueryResult>();
+            foreach (var queryablePage in anomaliesCluster)
+            {
+                var queryResult = new QueryResult(queryablePage)
+                                  {
+                                      MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList(),
+                                      Cluster = "Anomalies"
+                                  };
+                queryResults.Add(queryResult);
+            }
+
+            var clusterCount = 1;
+            foreach (var cluster in clusters)
+            {
+                foreach (var queryablePage in cluster)
+                {
+                    var queryResult = new QueryResult(queryablePage)
+                                      {
+                                          MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList(),
+                                          Cluster = $"Cluster {clusterCount}"
+                                      };
+                    queryResults.Add(queryResult);
+                }
+
+                clusterCount++;
+            }
+            
             return queryResults;
         }
 

@@ -386,6 +386,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="0"
@@ -408,6 +409,13 @@
                             Width="125"
                             Content="Run Query"
                             Command="{Binding RunQueryCommand}" />
+
+                    <Button Grid.Column="2"
+                            HorizontalAlignment="Center"
+                            Height="32"
+                            Width="125"
+                            Content="Cluster"
+                            Command="{Binding ClusterCommand}" />
 
                 </Grid>
 
