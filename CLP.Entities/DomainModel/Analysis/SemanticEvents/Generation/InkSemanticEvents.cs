@@ -928,8 +928,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var interpretationRegion = page.GetPageObjectByIDOnPageOrInHistory(semanticEvent.ReferencePageObjectID) as InterpretationRegion;
-            if (interpretationRegion == null)
+            if (!(page.GetPageObjectByIDOnPageOrInHistory(semanticEvent.ReferencePageObjectID) is InterpretationRegion interpretationRegion))
             {
                 return null;
             }
@@ -949,6 +948,7 @@ namespace CLP.Entities
 
             var previousStroke = previousStrokes.First();
             var isPreviousStrokeInvisiblySmall = previousStroke.IsInvisiblySmall();
+            var isPreviousStrokeHighlighter = previousStroke.DrawingAttributes.IsHighlighter;
 
             var historyActionBuffer = new List<IHistoryAction>
                                       {
@@ -968,8 +968,11 @@ namespace CLP.Entities
 
                 var currentStroke = currentStrokes.First();
                 var isCurrentStrokeInvisiblySmall = currentStroke.IsInvisiblySmall();
+                var isCurrentStrokeHighlighter = currentStroke.DrawingAttributes.IsHighlighter;
 
-                var isBreakCondition = isPreviousInkAdd != isCurrentInkAdd || isPreviousStrokeInvisiblySmall != isCurrentStrokeInvisiblySmall;
+                var isBreakCondition = isPreviousInkAdd != isCurrentInkAdd ||
+                                       isPreviousStrokeInvisiblySmall != isCurrentStrokeInvisiblySmall ||
+                                       isPreviousStrokeHighlighter != isCurrentStrokeHighlighter;
                 if (isBreakCondition)
                 {
                     var processedInkEvent = ProcessANSFIChangeHistoryActionBuffer(page,
@@ -987,6 +990,7 @@ namespace CLP.Entities
 
                 historyActionBuffer.Add(currentHistoryAction);
                 isPreviousInkAdd = isCurrentInkAdd;
+                isPreviousStrokeInvisiblySmall = isCurrentStrokeInvisiblySmall;
                 previousStroke = currentStroke;
             }
 
@@ -1012,7 +1016,7 @@ namespace CLP.Entities
                                       ? historyActionBuffer.Cast<FillInAnswerChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
                                       : historyActionBuffer.Cast<FillInAnswerChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
 
-            if (isPreviousStrokeInvisiblySmall)
+            if (isPreviousStrokeInvisiblySmall || previousStroke.DrawingAttributes.IsHighlighter)
             {
                 var ignoreCluster = InkClusters.FirstOrDefault(c => c.ClusterType == InkCluster.ClusterTypes.Ignore);
                 if (ignoreCluster == null)

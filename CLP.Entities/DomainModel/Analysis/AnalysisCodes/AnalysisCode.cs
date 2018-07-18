@@ -122,7 +122,7 @@ namespace CLP.Entities
             conditions.Add(repOrder);
 
             var abr = new AnalysisCode(Codings.ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION);
-            //abr.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);    // Only useful for large cache
+            abr.AddConstraint(Codings.CONSTRAINT_ANSWER_TYPE);    // Only useful for large cache
             abr.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
             conditions.Add(abr);
 
