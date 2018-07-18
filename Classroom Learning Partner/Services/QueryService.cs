@@ -49,9 +49,9 @@ namespace Classroom_Learning_Partner.Services
                 //distance += Math.Abs(analysisCodeTypes.Count - analysisCodeTypesOther.Count);
 
                 // Dist v 2, ???
-                distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_NAME_LAX);
-                distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_HISTORY_STATUS);
-                distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
+                distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_NAME_LAX);
+                distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_HISTORY_STATUS);
+                distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
 
                 // Dist v 3, Pure Hamming between all code constraint values on both pages
                 //distance = ALL_PURE(this, otherPage);
@@ -66,14 +66,14 @@ namespace Classroom_Learning_Partner.Services
                 {
                     foreach (var code2 in page2.AllAnalysisCodes)
                     {
-                        distance += HammingDistanceBetweenAnalysisCodes(code1, code2);
+                        distance += HammingDistance(code1, code2);
                     }
                 }
 
                 return distance;
             }
 
-            private static double HammingDistanceBetweenAnalysisCodes(IAnalysisCode code1, IAnalysisCode code2)
+            private static double HammingDistance(IAnalysisCode code1, IAnalysisCode code2)
             {
                 if (code1.AnalysisCodeLabel != code2.AnalysisCodeLabel)
                 {
@@ -101,7 +101,7 @@ namespace Classroom_Learning_Partner.Services
                 return distance;
             }
 
-            private static double Blah(QueryablePage page1, QueryablePage page2, string analysisCodeLabel, string constraintLabel)
+            private static double ConstraintSimilarityDistance(QueryablePage page1, QueryablePage page2, string analysisCodeLabel, string constraintLabel)
             {
                 var codes = page1.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCodeLabel).ToList();
                 var codesOther = page2.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCodeLabel).ToList();
