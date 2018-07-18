@@ -394,11 +394,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClusterCommandExecute()
         {
-            QueryResults.Clear();
+            var queryablePages = QueryResults.Select(qr => qr.Page).ToList();
+            if (!queryablePages.Any())
+            {
+                queryablePages = _queryService.QueryablePages.Where(qp => _queryService.PageNumbersToQuery.Contains(qp.PageNameComposite.PageNumber)).ToList();
+            }
 
-            var queryResults = _queryService.Cluster();
+            var queryResults = _queryService.Cluster(queryablePages);
             queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
 
+            QueryResults.Clear();
             QueryResults.AddRange(queryResults);
         }
 

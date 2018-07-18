@@ -386,7 +386,6 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <Button Grid.Column="0"
@@ -409,13 +408,6 @@
                             Width="125"
                             Content="Run Query"
                             Command="{Binding RunQueryCommand}" />
-
-                    <Button Grid.Column="3"
-                            HorizontalAlignment="Center"
-                            Height="32"
-                            Width="125"
-                            Content="Cluster"
-                            Command="{Binding ClusterCommand}" />
 
                 </Grid>
 
@@ -544,10 +536,34 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0"
+                    <Grid Grid.Row="0">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                HorizontalAlignment="Center"
+                                Height="20"
+                                Width="75"
+                                Content="Pages"
+                                Command="{Binding SelectPageRangeCommand}" />
+
+                        <Button Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                Height="20"
+                                Width="75"
+                                Content="Cluster"
+                                Command="{Binding ClusterCommand}" />
+
+                    </Grid>
+
+                    <Grid Grid.Row="1"
                           Margin="5,15">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -570,7 +586,7 @@
 
                     </Grid>
 
-                    <ListBox Grid.Row="1"
+                    <ListBox Grid.Row="2"
                              ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
                              ItemsSource="{Binding GroupedQueryResults.View, IsAsync=True}"
                              SelectedValue="{Binding SelectedQueryResult, Mode=OneWay}"

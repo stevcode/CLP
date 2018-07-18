@@ -71,7 +71,6 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -124,11 +123,6 @@
                     </ListBox.ItemTemplate>
 
                 </ListBox>
-
-                <TextBlock Grid.Row="2"
-                           Text="Page Numbers"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Stretch" />
 
                 <TextBlock Grid.Row="3"
                            Text="Student Names"

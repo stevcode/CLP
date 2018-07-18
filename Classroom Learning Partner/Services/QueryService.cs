@@ -268,27 +268,22 @@ namespace Classroom_Learning_Partner.Services
                     continue;
                 }
 
-                var queryResult = new QueryResult(queryablePage);
-                queryResult.MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList();
+                var queryResult = new QueryResult(queryablePage)
+                                  {
+                                      MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList()
+                                  };
                 queryResults.Add(queryResult);
             }
 
             return queryResults;
         }
 
-        public List<QueryResult> Cluster()
+        public List<QueryResult> Cluster(List<QueryablePage> queryablePages)
         {
             if (NotebookToQuery == null)
             {
                 return new List<QueryResult>();
             }
-
-            //var queryablePages = new List<QueryablePage>();
-            //foreach (var queryablePage in QueryablePages.Where(qp => qp.PageNameComposite.PageNumber == 2))
-            //{
-            //    queryablePages.Add(queryablePage);
-            //}
-            var queryablePages = QueryablePages.ToList();
 
             const int MAX_EPSILON = 1000;
             const int MINIMUM_PAGES_IN_CLUSTER = 1;
