@@ -43,15 +43,60 @@ namespace Classroom_Learning_Partner.Services
             {
                 var distance = 0.0;
 
+                // Dist v 1, Label Count
                 //var analysisCodeTypes = AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
                 //var analysisCodeTypesOther = otherPage.AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
                 //distance += Math.Abs(analysisCodeTypes.Count - analysisCodeTypesOther.Count);
 
-                //Debug.WriteLine($"Distance: {distance}");
-
+                // Dist v 2, ???
                 distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_NAME_LAX);
                 distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_HISTORY_STATUS);
                 distance += Blah(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
+
+                // Dist v 3, Pure Hamming between all code constraint values on both pages
+                //distance = ALL_PURE(this, otherPage);
+
+                return distance;
+            }
+
+            private static double ALL_PURE(QueryablePage page1, QueryablePage page2)
+            {
+                var distance = 0.0;
+                foreach (var code1 in page1.AllAnalysisCodes)
+                {
+                    foreach (var code2 in page2.AllAnalysisCodes)
+                    {
+                        distance += HammingDistanceBetweenAnalysisCodes(code1, code2);
+                    }
+                }
+
+                return distance;
+            }
+
+            private static double HammingDistanceBetweenAnalysisCodes(IAnalysisCode code1, IAnalysisCode code2)
+            {
+                if (code1.AnalysisCodeLabel != code2.AnalysisCodeLabel)
+                {
+                    return Math.Max(code1.Constraints.Count, code2.Constraints.Count);
+                }
+
+                if (code1.Constraints.Count != code2.Constraints.Count)
+                {
+                    // Print error?
+                    return Math.Max(code1.Constraints.Count, code2.Constraints.Count);
+                }
+
+                var distance = 0;
+                for (var i = 0; i < code1.Constraints.Count; i++)
+                {
+                    var constraint1 = code1.Constraints[i];
+                    var constraint2 = code2.Constraints[i];
+
+                    if (constraint1.ConstraintValue != constraint2.ConstraintValue)
+                    {
+                        distance += 1;
+                    }
+                }
 
                 return distance;
             }
@@ -464,6 +509,5 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Methods
-
     }
 }
