@@ -539,7 +539,7 @@ namespace CLP.Entities
                 historyAction.HistoryActionIndex = UndoActions.Count;
                 historyAction.CachedFormattedValue = historyAction.FormattedValue;
                 UndoActions.Insert(0, historyAction);
-                RedoActions.Clear();   // TODO: Remove temporarily for manual stroke adding fix
+              //  RedoActions.Clear();   // TODO: Remove temporarily for manual stroke adding fix
             }
 
             UpdateTicks();

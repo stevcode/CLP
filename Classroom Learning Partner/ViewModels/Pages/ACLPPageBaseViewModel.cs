@@ -331,15 +331,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             // TODO: Remove temporarily for manual stroke adding fix
-            if (History.RedoActions.Any())
-            {
-                InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                InkStrokes.Add(e.Removed);
-                InkStrokes.Remove(e.Added);
-                MessageBox.Show("Sorry, you need to play all the way to the end and then write.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                return;
-            }
+            //if (History.RedoActions.Any())
+            //{
+            //    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            //    InkStrokes.Add(e.Removed);
+            //    InkStrokes.Remove(e.Added);
+            //    MessageBox.Show("Sorry, you need to play all the way to the end and then write.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            //    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+            //    return;
+            //}
 
             StrokesChanged(e);
 
