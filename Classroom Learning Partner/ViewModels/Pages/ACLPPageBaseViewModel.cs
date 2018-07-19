@@ -330,6 +330,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            // TODO: Remove temporarily for manual stroke adding fix
             if (History.RedoActions.Any())
             {
                 InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;

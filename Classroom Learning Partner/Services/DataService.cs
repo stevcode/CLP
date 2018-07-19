@@ -82,10 +82,15 @@ namespace Classroom_Learning_Partner.Services
 
             //ConversionService.Combine();
             //ConversionService.Stitch();
+
             //ConversionService.ConvertAnnCache();
             //ConversionService.CreateSavedZip();
+
             //ConversionService.AnonymizationFixesForAssessmentCache();
+            // BUG: Make sure pages/submissions are not being loaded in parallel for this to work correctly.
+
             //ConvertEmilyCache();
+
             //AnalysisService.RunFullBatchAnalysis(AnalysisService.AllPageNumbersToAnalyze);
             //AnalysisService.RunFullBatchAnalysis(new List<int>{213});
             //AnalysisService.RunFullBatchAnalysisOnAlreadyConvertedPages();
@@ -1666,7 +1671,7 @@ namespace Classroom_Learning_Partner.Services
         {
             var pages = new List<CLPPage>();
 
-            var isLoadingInParallel = true;
+            var isLoadingInParallel = false;
 
             if (isLoadingInParallel)
             {

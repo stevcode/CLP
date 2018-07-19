@@ -160,8 +160,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRegenerateTagsCommandExecute()
         {
-            var authorNotebook = _dataService.LoadedNotebooks.FirstOrDefault(n => n.OwnerID == Person.AUTHOR_ID);
-
             foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent))
             {
                 foreach (var page in notebook.Pages)
