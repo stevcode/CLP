@@ -286,7 +286,9 @@ namespace CLP.Entities
             var isRepresentationUsedAfterAnswer = false;
             foreach (var item in sequence)
             {
-                var isItemAnswer = item == "FA-COR" || item == "FA-INC" || item == "FA-ILL";
+                var adjustedItem = item == "R" ? item : item.Substring(0, 6);
+
+                var isItemAnswer = adjustedItem == "FA-COR" || adjustedItem == "FA-INC" || adjustedItem == "FA-ILL";
                 if (!isItemAnswer)
                 {
                     if (!string.IsNullOrWhiteSpace(startItem))
@@ -298,7 +300,7 @@ namespace CLP.Entities
 
                 if (string.IsNullOrWhiteSpace(startItem))
                 {
-                    startItem = item;
+                    startItem = adjustedItem;
                     continue;
                 }
 
@@ -308,9 +310,9 @@ namespace CLP.Entities
                 }
 
                 var startCorrectness = startItem == "FA-COR" ? Correctness.Correct : startItem == "FA-INC" ? Correctness.Incorrect : Correctness.Illegible;
-                var endCorrectness = item == "FA-COR" ? Correctness.Correct : item == "FA-INC" ? Correctness.Incorrect : Correctness.Illegible;
+                var endCorrectness = adjustedItem == "FA-COR" ? Correctness.Correct : adjustedItem == "FA-INC" ? Correctness.Incorrect : Correctness.Illegible;
                 AnalysisCode.AddChangedAnswerAfterRepresentation(tag, startCorrectness, endCorrectness);
-                startItem = item;
+                startItem = adjustedItem;
                 isRepresentationUsedAfterAnswer = false;
 
                 //var isStartCOR = startItem == "FA-COR";
