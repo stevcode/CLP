@@ -366,12 +366,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnGenerateSemanticEventsCommandExecute()
         {
-            var existingTags = CurrentPage.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
-            foreach (var tempArraySkipCountingTag in existingTags)
-            {
-                CurrentPage.RemoveTag(tempArraySkipCountingTag);
-            }
-
             HistoryAnalysis.GenerateSemanticEvents(CurrentPage);
         }
 
@@ -849,12 +843,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRegenerateTagsCommandExecute()
         {
-            var existingTags = CurrentPage.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
-            foreach (var tempArraySkipCountingTag in existingTags)
-            {
-                CurrentPage.RemoveTag(tempArraySkipCountingTag);
-            }
-
             var indexOfPass3Start =
                 CurrentPage.History.SemanticEvents.IndexOf(CurrentPage.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
             var interpretedInkSemanticEvents = CurrentPage.History.SemanticEvents.Skip(indexOfPass3Start + 1).ToList();

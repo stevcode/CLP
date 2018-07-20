@@ -962,8 +962,23 @@ namespace CLP.Entities
 
         #region Last Pass: Tag Generation
 
-        public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents)
+        public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents, bool isRemovingExistingTags = true)
         {
+            if (isRemovingExistingTags)
+            {
+                var existingTags = page.Tags.Where(t => t.Category != Category.Definition).ToList();
+                foreach (var existingTag in existingTags)
+                {
+                    if (existingTag is MetaDataTag metaDataTag &&
+                        metaDataTag.TagName == MetaDataTag.NAME_WORD_PROBLEM)
+                    {
+                        continue;
+                    }
+
+                    page.RemoveTag(existingTag);
+                }
+            }
+
             ProblemInformationTag.AttemptTagGeneration(page);
             AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
 
