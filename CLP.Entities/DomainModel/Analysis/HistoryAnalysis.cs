@@ -151,6 +151,27 @@ namespace CLP.Entities
 
         private static void FixANSFIHistoryActions(CLPPage page)
         {
+            #region Adjust Interpretation Regions
+
+            switch (page.ID)
+            {
+                case "yzvpdIROIEOFrndOASGjvA": // Page 9 Assessment
+                {
+                    var interpretationRegion = page.PageObjects.OfType<InterpretationRegion>().First();
+                    interpretationRegion.Height = 100.0;
+                }
+                    break;
+                case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12 Assessment
+                {
+                    var interpretationRegion = page.PageObjects.OfType<InterpretationRegion>().First();
+                    interpretationRegion.Height = 170.3069;
+                    interpretationRegion.YPosition = 614.9809;
+                }
+                    break;
+            }
+
+            #endregion // Adjust Interpretation Regions
+
             var strokeChangedHistoryActions = page.History.UndoActions.OfType<ObjectsOnPageChangedHistoryAction>().Where(h => h.IsUsingStrokes).OrderBy(h => h.HistoryActionIndex).ToList();
 
             foreach (var strokeChangedHistoryAction in strokeChangedHistoryActions)
