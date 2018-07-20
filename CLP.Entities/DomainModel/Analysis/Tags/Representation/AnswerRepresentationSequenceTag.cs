@@ -75,6 +75,12 @@ namespace CLP.Entities
                     }
                 }
 
+                if (semanticEvent?.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE &&
+                    Codings.IsMultipleChoiceEventAnErase(semanticEvent))
+                {
+                    continue;
+                }
+
                 if (Codings.IsFinalAnswerEvent(semanticEvent) &&
                     semanticEvent.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                 {
