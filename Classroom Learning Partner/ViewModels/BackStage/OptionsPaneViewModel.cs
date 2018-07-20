@@ -53,6 +53,19 @@ namespace Classroom_Learning_Partner.ViewModels
             AnalyzeCurrentPageAndSubmissionsCommand = new Command(OnAnalyzeCurrentPageAndSubmissionsCommandExecute);
             RegenerateTagsCommand = new Command(OnRegenerateTagsCommandExecute);
             ForceWordProblemTagsCommand = new Command(OnForceWordProblemTagsCommandExecute);
+            ToggleSubmissionModeCommand = new Command(OnToggleSubmissionModeCommandExecute);
+        }
+
+        public Command ToggleSubmissionModeCommand { get; private set; }
+
+        private void OnToggleSubmissionModeCommandExecute()
+        {
+            StagingPanelViewModel.IsForcingVersionZeroAsSubmission = !StagingPanelViewModel.IsForcingVersionZeroAsSubmission;
+            var text = StagingPanelViewModel.IsForcingVersionZeroAsSubmission
+                           ? "Shown submissions will now display Version 0."
+                           : "Shown submissions will now be actual submissions.";
+
+            MessageBox.Show(text);
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
