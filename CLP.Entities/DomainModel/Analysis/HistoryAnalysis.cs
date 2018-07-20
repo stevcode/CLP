@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Ink;
 using Catel;
 using Catel.Collections;
+using Catel.Runtime.Serialization.Binary;
 
 namespace CLP.Entities
 {
@@ -180,6 +181,7 @@ namespace CLP.Entities
 
                 #region Check for Interpretation Region Fill-In
 
+                var isOverInterpretationRegion = false;
                 foreach (var interpretationRegion in page.PageObjects.OfType<InterpretationRegion>())
                 {
                     var isStrokeOver = interpretationRegion.IsStrokeOverPageObject(strokeChanged);
@@ -187,6 +189,8 @@ namespace CLP.Entities
                     {
                         continue;
                     }
+
+                    isOverInterpretationRegion = true;
 
                     var strokesAdded = new List<Stroke>();
                     var strokesRemoved = new List<Stroke>();
@@ -208,6 +212,7 @@ namespace CLP.Entities
                                                                                                 strokesRemoved);
 
                     fillInAnswerChangedHistoryAction.HistoryActionIndex = strokeChangedHistoryAction.HistoryActionIndex;
+                    fillInAnswerChangedHistoryAction.CachedFormattedValue = fillInAnswerChangedHistoryAction.FormattedValue;
 
                     var indexToReplace = page.History.UndoActions.IndexOf(strokeChangedHistoryAction);
                     page.History.UndoActions[indexToReplace] = fillInAnswerChangedHistoryAction;
@@ -216,6 +221,113 @@ namespace CLP.Entities
                 }
 
                 #endregion // Check for Interpretation Region Fill-In
+
+                #region Check for Multiple Choice
+
+                if (isOverInterpretationRegion)
+                {
+                    return;
+                }
+
+                foreach (var multipleChoice in page.PageObjects.OfType<MultipleChoice>())
+                {
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(strokeChanged);
+                    if (choiceBubbleStrokeIsOver == null)
+                    {
+                        continue;
+                    }
+
+                    var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                    var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+
+                    const int THRESHOLD = 80;
+                    var status = ChoiceBubbleStatuses.PartiallyFilledIn;
+                    var isStatusSet = false;
+                    if (isAdd)
+                    {
+                        var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                        if (totalStrokeLength >= THRESHOLD)
+                        {
+                            status = ChoiceBubbleStatuses.AdditionalFilledIn;
+                        }
+                        else
+                        {
+                            totalStrokeLength += strokeChanged.StylusPoints.Count;
+                            if (totalStrokeLength >= THRESHOLD)
+                            {
+                                status = ChoiceBubbleStatuses.FilledIn;
+                                choiceBubbleStrokeIsOver.IsFilledIn = true;
+                            }
+                            else
+                            {
+                                status = ChoiceBubbleStatuses.PartiallyFilledIn;
+                            }
+                        }
+                        isStatusSet = true;
+                    }
+                    else
+                    {
+                        var isRemovedStrokeOverBubble = strokesOverBubble.FirstOrDefault(s => s.GetStrokeID() == strokeChanged.GetStrokeID()) != null;
+                        if (!isRemovedStrokeOverBubble)
+                        {
+                            // TODO: Log error
+                            continue;
+                        }
+                        var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != strokeChanged.GetStrokeID()).ToList();
+                        var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                        var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
+
+                        if (totalStrokeLength < THRESHOLD)
+                        {
+                            status = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                        }
+                        else
+                        {
+                            if (otherStrokesStrokeLength < THRESHOLD)
+                            {
+                                status = ChoiceBubbleStatuses.CompletelyErased;
+                                choiceBubbleStrokeIsOver.IsFilledIn = false;
+                            }
+                            else
+                            {
+                                status = ChoiceBubbleStatuses.IncompletelyErased;
+                            }
+                        }
+                        isStatusSet = true;
+                    }
+
+                    if (!isStatusSet ||
+                        index == -1)
+                    {
+                        continue;
+                    }
+
+                    var strokesAdded = new List<Stroke>();
+                    var strokesRemoved = new List<Stroke>();
+
+                    if (isAdd)
+                    {
+                        strokesAdded.Add(strokeChanged);
+                    }
+                    else
+                    {
+                        strokesRemoved.Add(strokeChanged);
+                    }
+
+                    multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
+                    var multipleChoiceBubbleStatusChangedHistoryAction =
+                        new MultipleChoiceBubbleStatusChangedHistoryAction(page, page.Owner, multipleChoice, index, status, strokesAdded, strokesRemoved);
+
+                    multipleChoiceBubbleStatusChangedHistoryAction.HistoryActionIndex = strokeChangedHistoryAction.HistoryActionIndex;
+                    multipleChoiceBubbleStatusChangedHistoryAction.CachedFormattedValue = multipleChoiceBubbleStatusChangedHistoryAction.FormattedValue;
+
+                    var indexToReplace = page.History.UndoActions.IndexOf(strokeChangedHistoryAction);
+                    page.History.UndoActions[indexToReplace] = multipleChoiceBubbleStatusChangedHistoryAction;
+
+                    break;
+                }
+
+                #endregion // Check for Multiple Choice
             }
         }
 
