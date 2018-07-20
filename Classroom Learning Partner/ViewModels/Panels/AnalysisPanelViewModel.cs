@@ -356,6 +356,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             #endregion // Analysis Commands
 
+            EditSemanticEventCommand = new TaskCommand(OnEditSemanticEventCommandExecute);
             RegenerateTagsCommand = new Command(OnRegenerateTagsCommandExecute);
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
         }
@@ -837,6 +838,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion // Obsolete Commands 
+
+        /// <summary>Regenerates Analysis Tags</summary>
+        public TaskCommand EditSemanticEventCommand { get; private set; }
+
+        private async Task OnEditSemanticEventCommandExecute()
+        {
+            var semanticEvent = CurrentPage.History.CurrentSemanticEvent;
+
+            var viewModel = new SemanticEventEditorViewModel(semanticEvent);
+            await viewModel.ShowWindowAsDialogAsync();
+        }
 
         /// <summary>Regenerates Analysis Tags</summary>
         public Command RegenerateTagsCommand { get; private set; }

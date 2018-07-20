@@ -68,7 +68,7 @@ namespace CLP.Entities
             {
                 if (Codings.IsFinalAnswerEvent(semanticEvent) && semanticEvent != lastFinalAnswerEvent)
                 {
-                    var interpretation = Codings.GetFinalAnswerEventContent(semanticEvent);
+                    var interpretation = Codings.GetFinalAnswerEventStudentAnswer(semanticEvent);
                     if (interpretation == "\"\"")
                     {
                         continue;
@@ -97,7 +97,7 @@ namespace CLP.Entities
                              mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        var studentAnswer = Codings.GetFinalAnswerEventStudentAnswer(mostRecentSequenceItem);
                         var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                         sequence.Add(sequenceIdentifier);
 
@@ -125,7 +125,7 @@ namespace CLP.Entities
                              mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        var studentAnswer = Codings.GetFinalAnswerEventStudentAnswer(mostRecentSequenceItem);
                         var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                         sequence.Add(sequenceIdentifier);
 
@@ -150,7 +150,7 @@ namespace CLP.Entities
                              mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        var studentAnswer = Codings.GetFinalAnswerEventStudentAnswer(mostRecentSequenceItem);
                         var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                         sequence.Add(sequenceIdentifier);
 
@@ -160,7 +160,7 @@ namespace CLP.Entities
                              mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
                     {
                         var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                        var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                        var studentAnswer = Codings.GetFinalAnswerEventStudentAnswer(mostRecentSequenceItem);
                         var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                         sequence.Add(sequenceIdentifier);
 
@@ -178,7 +178,7 @@ namespace CLP.Entities
                 mostRecentSequenceItem.CodedObject != Codings.OBJECT_INTERMEDIARY_FILL_IN)
             {
                 var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                var studentAnswer = Codings.GetFinalAnswerEventStudentAnswer(mostRecentSequenceItem);
                 var sequenceIdentifier = $"{FINAL_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                 sequence.Add(sequenceIdentifier);
             }
@@ -186,7 +186,7 @@ namespace CLP.Entities
                      mostRecentSequenceItem.CodedObject == Codings.OBJECT_INTERMEDIARY_FILL_IN)
             {
                 var correctness = Codings.GetFinalAnswerEventCorrectness(mostRecentSequenceItem);
-                var studentAnswer = Codings.GetFinalAnswerEventContent(mostRecentSequenceItem);
+                var studentAnswer = Codings.GetFinalAnswerEventStudentAnswer(mostRecentSequenceItem);
                 var sequenceIdentifier = $"{INTERMEDIARY_ANSWER_SEQUENCE_IDENTIFIER}-{correctness}-{studentAnswer}";
                 sequence.Add(sequenceIdentifier);
             }

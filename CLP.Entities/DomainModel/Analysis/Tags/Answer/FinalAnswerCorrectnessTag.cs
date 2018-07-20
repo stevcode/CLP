@@ -144,7 +144,7 @@ namespace CLP.Entities
 
                 tag.FinalAnswerPageObjectType = Codings.FriendlyObjects[lastFinalAnswerEvent.CodedObject];
                 tag.CorrectAnswer = lastFinalAnswerEvent.CodedObjectID;
-                tag.StudentAnswer = Codings.GetFinalAnswerEventContent(lastFinalAnswerEvent);
+                tag.StudentAnswer = Codings.GetFinalAnswerEventStudentAnswer(lastFinalAnswerEvent);
                 var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
                 tag.FinalAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
             }

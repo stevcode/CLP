@@ -102,7 +102,7 @@ namespace CLP.Entities
                 tag.SemanticEventIDs.Add(lastIntermediaryAnswerEvent.ID);
 
                 tag.CorrectAnswer = lastIntermediaryAnswerEvent.CodedObjectID;
-                tag.StudentAnswer = Codings.GetFinalAnswerEventContent(lastIntermediaryAnswerEvent);
+                tag.StudentAnswer = Codings.GetFinalAnswerEventStudentAnswer(lastIntermediaryAnswerEvent);
                 var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastIntermediaryAnswerEvent);
                 tag.IntermediaryAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
 

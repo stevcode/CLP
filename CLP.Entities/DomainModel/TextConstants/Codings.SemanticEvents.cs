@@ -125,7 +125,9 @@ namespace CLP.Entities
             return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_INTERMEDIARY_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
         }
 
-        public static string GetFinalAnswerEventContent(ISemanticEvent semanticEvent)
+        // For MC, the bubble the student filled in
+        // For FI, the interpretation of the strokes on the page, inside the interpretation region, at that point in history
+        public static string GetFinalAnswerEventStudentAnswer(ISemanticEvent semanticEvent)
         {
             if (!IsFinalAnswerEvent(semanticEvent))
             {
