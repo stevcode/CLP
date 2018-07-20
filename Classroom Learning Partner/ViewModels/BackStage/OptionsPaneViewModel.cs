@@ -121,11 +121,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var page in notebook.Pages)
                 {
                     HistoryAnalysis.GenerateSemanticEvents(page);
-                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
-                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }
@@ -144,11 +144,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var page in notebook.Pages.Where(p => p.PageNumber == currentPage.PageNumber))
                 {
                     HistoryAnalysis.GenerateSemanticEvents(page);
-                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
-                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }
@@ -174,7 +174,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         page.History.SemanticEvents.IndexOf(page.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
                     var interpretedInkSemanticEvents = page.History.SemanticEvents.Skip(indexOfPass3Start + 1).ToList();
                     HistoryAnalysis.GenerateTags(page, interpretedInkSemanticEvents);
-                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
 
                     foreach (var submission in page.Submissions)
                     {
@@ -188,9 +188,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var indexOfPass3StartForSubmission = submission.History.SemanticEvents.IndexOf(submission.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
                         var interpretedInkSemanticEventsForSubmission = submission.History.SemanticEvents.Skip(indexOfPass3StartForSubmission + 1).ToList();
                         HistoryAnalysis.GenerateTags(submission, interpretedInkSemanticEventsForSubmission);
-                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
-
-                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }
