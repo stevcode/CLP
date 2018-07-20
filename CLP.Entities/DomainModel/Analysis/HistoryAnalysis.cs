@@ -226,7 +226,7 @@ namespace CLP.Entities
 
                 if (isOverInterpretationRegion)
                 {
-                    return;
+                    continue;
                 }
 
                 foreach (var multipleChoice in page.PageObjects.OfType<MultipleChoice>())
