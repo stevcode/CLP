@@ -165,6 +165,13 @@ namespace CLP.Entities
                    semanticEvent.CodedObject == OBJECT_BINS;
         }
 
+        public static bool IsMultipleChoiceEventAnErase(ISemanticEvent semanticEvent)
+        {
+            return semanticEvent.EventType == EVENT_MULTIPLE_CHOICE_ERASE ||
+                   semanticEvent.EventType == EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL ||
+                   semanticEvent.EventType == EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE;
+        }
+
         #endregion // Methods
     }
 }
