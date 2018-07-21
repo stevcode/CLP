@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -168,6 +169,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SelectedQueryResultProperty = RegisterProperty(nameof(SelectedQueryResult), typeof(QueryService.QueryResult), null);
+
+        public bool IsGeneratingReportOnQuery
+        {
+            get => GetValue<bool>(IsGeneratingReportOnQueryProperty);
+            set => SetValue(IsGeneratingReportOnQueryProperty, value);
+        }
+
+        public static readonly PropertyData IsGeneratingReportOnQueryProperty = RegisterProperty(nameof(IsGeneratingReportOnQuery), typeof(bool), false);
 
         #endregion // Bindings
 
@@ -388,6 +397,34 @@ namespace Classroom_Learning_Partner.ViewModels
                 MessageBox.Show("No results found.");
             }
             QueryResults.AddRange(queryResults);
+
+            if (!IsGeneratingReportOnQuery)
+            {
+                return;
+            }
+
+            const string FOLDER_NAME = "CLP Reports";
+            var folderPath = Path.Combine(DataService.DesktopFolderPath, FOLDER_NAME);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"Query Report - {DateTime.Now:yy.MM.dd-h.mm.ss}.{FILE_EXTENSION}";
+            var filePath = Path.Combine(folderPath, fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            File.AppendAllText(filePath, "*****QUERY REPORT*****\n\n");
+            File.AppendAllText(filePath, $"Query: {codeToQuery.LongFormattedValue}\n\n");
+
+            foreach (var queryResult in QueryResults.OrderBy(qr => qr.StudentName).ThenBy(qr => qr.PageNumber))
+            {
+                File.AppendAllText(filePath, $"{queryResult.FormattedValue}\n\n");
+            }
         }
 
         public Command ClusterCommand { get; private set; }

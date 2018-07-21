@@ -387,8 +387,14 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
                     <Button Grid.Column="0"
+                            Grid.Row="0"
                             HorizontalAlignment="Center"
                             Height="32"
                             Width="125"
@@ -396,6 +402,7 @@
                             Command="{Binding SaveQueryCommand}" />
 
                     <Button Grid.Column="1"
+                            Grid.Row="0"
                             HorizontalAlignment="Center"
                             Height="32"
                             Width="125"
@@ -403,11 +410,22 @@
                             Command="{Binding NewQueryCommand}" />
 
                     <Button Grid.Column="2"
+                            Grid.Row="0"
                             HorizontalAlignment="Center"
                             Height="32"
                             Width="125"
                             Content="Run Query"
                             Command="{Binding RunQueryCommand}" />
+
+                    <StackPanel Grid.Column="2"
+                                Grid.Row="1"
+                                Orientation="Horizontal">
+
+                        <CheckBox IsChecked="{Binding IsGeneratingReportOnQuery}" />
+                        
+                        <TextBlock Text="  Generate Report on Run Query?" />
+
+                    </StackPanel>
 
                 </Grid>
 
