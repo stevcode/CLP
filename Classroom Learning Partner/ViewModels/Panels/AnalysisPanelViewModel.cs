@@ -340,6 +340,7 @@ namespace Classroom_Learning_Partner.ViewModels
             #region Analysis Commands
 
             GenerateSemanticEventsCommand = new Command(OnGenerateSemanticEventsCommandExecute);
+            GenerateAnalysisReportCommand = new Command(OnGenerateAnalysisReportCommandExecute);
             ShowAnalysisClustersCommand = new Command(OnShowAnalysisClustersCommandExecute);
             ClusterTestCommand = new Command<string>(OnClusterTestCommandExecute);
             ClearTempBoundariesCommand = new Command(OnClearTempBoundariesCommandExecute);
@@ -368,6 +369,49 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnGenerateSemanticEventsCommandExecute()
         {
             HistoryAnalysis.GenerateSemanticEvents(CurrentPage);
+        }
+
+        public Command GenerateAnalysisReportCommand { get; private set; }
+
+        private void OnGenerateAnalysisReportCommandExecute()
+        {
+            const string FOLDER_NAME = "CLP Reports";
+            var folderPath = Path.Combine(DataService.DesktopFolderPath, FOLDER_NAME);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"{CurrentPage.Owner.DisplayName} - {CurrentPage.DefaultZipEntryName}.{FILE_EXTENSION}";
+            var filePath = Path.Combine(folderPath, fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            File.AppendAllText(filePath, "*****TAGS*****\n\n");
+            foreach (var tagGroup in CurrentPage.Tags.GroupBy(t => t.Category).OrderBy(g => g.Key))
+            {
+                File.AppendAllText(filePath, $">>>>Category: {tagGroup.Key.ToDescription()}<<<<\n\n");
+                foreach (var tag in tagGroup)
+                {
+                    File.AppendAllText(filePath, $"---{tag.FormattedName} Tag---\n");
+                    File.AppendAllText(filePath, $"{tag.FormattedValue}\n\n");
+                }
+            }
+
+            File.AppendAllText(filePath, "\n*****STEPS*****\n\n");
+            foreach (var semanticEvent in CurrentPage.History.SemanticEvents)
+            {
+                File.AppendAllText(filePath, $"{semanticEvent.CodedValue}\n");
+            }
+
+            File.AppendAllText(filePath, "\n\n*****HISTORY*****\n\n");
+            foreach (var historyAction in CurrentPage.History.CompleteOrderedHistoryActions)
+            {
+                File.AppendAllText(filePath, $"{historyAction.FormattedValue}\n");
+            }
         }
 
         public Command ShowAnalysisClustersCommand { get; private set; }

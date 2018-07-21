@@ -88,10 +88,16 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Button Content="Run Page Analysis"
                             Command="{Binding GenerateSemanticEventsCommand}"
+                            Height="20"
+                            Margin="1"
+                            Grid.ColumnSpan="2" />
+                    <Button Content="Generate Analysis Report"
+                            Command="{Binding GenerateAnalysisReportCommand}"
                             Height="20"
                             Margin="1"
                             Grid.ColumnSpan="2" />
