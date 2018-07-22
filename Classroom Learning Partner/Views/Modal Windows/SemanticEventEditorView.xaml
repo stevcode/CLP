@@ -7,14 +7,13 @@
              Title="Edit Semantic Event"
              ShowInTaskbar="False">
 
-    <orc:StackGrid Width="{x:Static views:PersonView.WINDOW_WIDTH}">
+    <orc:StackGrid Width="{x:Static views:SemanticEventEditorView.WINDOW_WIDTH}">
         <orc:StackGrid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </orc:StackGrid.ColumnDefinitions>
 
         <orc:StackGrid.RowDefinitions>
-            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
@@ -30,18 +29,32 @@
                    VerticalAlignment="Center"
                    FontWeight="Bold" />
 
-        <Label Content="Student Answer:" />
-        <TextBox Text="{Binding StudentAnswer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
+        <Label Content="Inked Part:" />
+        <TextBox Text="{Binding InkedPart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                 TextWrapping="Wrap" />
 
         <TextBlock Grid.ColumnSpan="2"
-                   Text="The is the interpretation of the strokes that are on the page at this point in the history."
+                   Width="400"
+                   Text="The is the interpretation of the strokes that were added or removed during this event."
+                   Margin="20 0 0 0"
+                   FontSize="10" />
+
+        <Label Content="Student Answer:" />
+        <TextBox Text="{Binding StudentAnswer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                 TextWrapping="Wrap" />
+
+        <TextBlock Grid.ColumnSpan="2"
+                   Width="400"
+                   Text="The is the interpretation of all the strokes that are on the page and on top of the region at this point in the history."
                    Margin="20 0 0 0"
                    FontSize="10" />
 
         <Label Content="Coded Correctness:" />
-        <TextBox Text="{Binding CodedCorrectness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
+        <TextBox Text="{Binding CodedCorrectness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                 TextWrapping="Wrap" />
 
         <TextBlock Grid.ColumnSpan="2"
+                   Width="400"
                    Text="Coded Correctness may be COR, PAR, INC, or ILL. Please type carefully."
                    Margin="20 0 0 0"
                    FontSize="10" />

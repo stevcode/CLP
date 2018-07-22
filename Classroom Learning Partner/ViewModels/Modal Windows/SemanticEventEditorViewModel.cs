@@ -26,6 +26,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 ActualAnswer = semanticEvent.CodedObjectID;
 
+                var eventInfo = SemanticEvent.EventInformation;
+                var delimiterIndex = eventInfo.LastIndexOf(',');
+                var interpretationOfChangedStroke = new string(eventInfo.Take(delimiterIndex).ToArray());
+                interpretationOfChangedStroke = interpretationOfChangedStroke.Split(';').First().Trim();
+                InkedPart = interpretationOfChangedStroke.Substring(1, interpretationOfChangedStroke.Length - 2); // Remove first and last quotes
+
                 var studentAnswer = Codings.GetFinalAnswerEventStudentAnswer(semanticEvent);
                 StudentAnswer = studentAnswer.Substring(1, studentAnswer.Length - 2); // Remove first and last quotes
 
@@ -60,6 +66,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData ActualAnswerProperty = RegisterProperty(nameof(ActualAnswer), typeof(string), string.Empty);
 
+        public string InkedPart
+        {
+            get => GetValue<string>(InkedPartProperty);
+            set => SetValue(InkedPartProperty, value);
+        }
+
+        public static readonly PropertyData InkedPartProperty = RegisterProperty(nameof(InkedPart), typeof(string), string.Empty);
+
         public string StudentAnswer
         {
             get => GetValue<string>(StudentAnswerProperty);
@@ -93,12 +107,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (_isANSFIEvent)
             {
-                var eventInfo = SemanticEvent.EventInformation;
-                var delimiterIndex = eventInfo.LastIndexOf(',');
-                var interpretationOfChangedStroke = new string(eventInfo.Take(delimiterIndex).ToArray());
-                interpretationOfChangedStroke = interpretationOfChangedStroke.Split(';').First().Trim();
-
-                SemanticEvent.EventInformation = $"{interpretationOfChangedStroke}; \"{StudentAnswer}\", {CodedCorrectness}";
+                SemanticEvent.EventInformation = $"\"{InkedPart}\"; \"{StudentAnswer}\", {CodedCorrectness}";
+                SemanticEvent.IsManuallyModified = true;
             }
 
             await SaveViewModelAsync();

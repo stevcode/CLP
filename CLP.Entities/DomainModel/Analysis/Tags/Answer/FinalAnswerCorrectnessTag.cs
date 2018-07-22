@@ -106,6 +106,7 @@ namespace CLP.Entities
                                                                               : true));
 
             var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated);
+            var isAnswerManuallyModified = false;
             if (lastFinalAnswerEvent == null)
             {
                 IPageObject finalAnswerPageObject = page.PageObjects.OfType<MultipleChoice>().FirstOrDefault();
@@ -147,13 +148,15 @@ namespace CLP.Entities
                 tag.StudentAnswer = Codings.GetFinalAnswerEventStudentAnswer(lastFinalAnswerEvent);
                 var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
                 tag.FinalAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
+                isAnswerManuallyModified = lastFinalAnswerEvent.IsManuallyModified;
             }
 
             AnalysisCode.AddFinalAnswerCorrectness(tag,
                                                    tag.FinalAnswerPageObjectType,
                                                    tag.CorrectAnswer,
                                                    tag.StudentAnswer,
-                                                   Codings.CorrectnessToCodedCorrectness(tag.FinalAnswerCorrectness));
+                                                   Codings.CorrectnessToCodedCorrectness(tag.FinalAnswerCorrectness),
+                                                   isAnswerManuallyModified);
             page.AddTag(tag);
 
             return tag;

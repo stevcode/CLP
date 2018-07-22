@@ -2,7 +2,7 @@
 {
     public partial class AnalysisCode
     {
-        public static void AddFinalAnswerCorrectness(IAnalysis tag, string answerObject, string correctAnswer, string studentAnswer, string codedCorrectness)
+        public static void AddFinalAnswerCorrectness(IAnalysis tag, string answerObject, string correctAnswer, string studentAnswer, string codedCorrectness, bool isAnswerManuallyModified)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS);
             
@@ -18,6 +18,7 @@
             analysisCode.AddConstraint(Codings.CONSTRAINT_ANSWER_STUDENT_ANSWER, studentAnswer);
             analysisCode.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS, codedCorrectness);
             analysisCode.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS, Codings.CONSTRAINT_VALUE_ANSWER_TYPE_FINAL);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_ANSWER_MODIFICATION, isAnswerManuallyModified ? Codings.CONSTRAINT_VALUE_YES : Codings.CONSTRAINT_VALUE_NO);
 
             tag.QueryCodes.Add(analysisCode);
         }

@@ -136,6 +136,10 @@ namespace CLP.Entities
                 case Codings.CONSTRAINT_ANSWER_CORRECTNESS:
                     possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
                     break;
+                case Codings.CONSTRAINT_ANSWER_MODIFICATION:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
+                    break;
                 case Codings.CONSTRAINT_ANSWER_CHANGE_FROM:
                     possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
                     break;

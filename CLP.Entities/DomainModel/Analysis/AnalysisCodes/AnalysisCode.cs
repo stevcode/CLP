@@ -134,6 +134,7 @@ namespace CLP.Entities
             var finalAnswer = new AnalysisCode(Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS);
             finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_OBJECT);
             finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
+            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_MODIFICATION);
             conditions.Add(finalAnswer);
 
             var mr = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP);

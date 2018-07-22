@@ -62,6 +62,7 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_ANSWER_TYPE = "ANSWER_TYPE";
         public const string CONSTRAINT_ANSWER_CORRECTNESS = "ANSWER_CORRECTNESS";
+        public const string CONSTRAINT_ANSWER_MODIFICATION = "ANSWER_MODIFICATION";
         
         public const string CONSTRAINT_ANSWER_CHANGE_FROM = "ANSWER_CHANGE_FROM";
         public const string CONSTRAINT_ANSWER_CHANGE_TO = "ANSWER_CHANGE_TO";
@@ -327,6 +328,8 @@ namespace CLP.Entities
                     return "Answer Type";
                 case CONSTRAINT_ANSWER_CORRECTNESS:
                     return "Correctness";
+                case CONSTRAINT_ANSWER_MODIFICATION:
+                    return "Manually Modified";
                 case CONSTRAINT_ANSWER_CHANGE_FROM:
                     return "Changed From";
                 case CONSTRAINT_ANSWER_CHANGE_TO:

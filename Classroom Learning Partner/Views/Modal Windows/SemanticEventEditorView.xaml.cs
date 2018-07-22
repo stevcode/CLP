@@ -6,7 +6,7 @@ namespace Classroom_Learning_Partner.Views
     /// <summary>Interaction logic for SemanticEventEditorView.xaml</summary>
     public partial class SemanticEventEditorView
     {
-        public const double WINDOW_HEIGHT = 300;
+        public const double WINDOW_WIDTH = 600;
 
         public SemanticEventEditorView()
             : base(DataWindowMode.Custom)
