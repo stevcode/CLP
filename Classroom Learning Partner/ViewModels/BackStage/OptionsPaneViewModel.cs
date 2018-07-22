@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -54,6 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
             RegenerateTagsCommand = new Command(OnRegenerateTagsCommandExecute);
             ForceWordProblemTagsCommand = new Command(OnForceWordProblemTagsCommandExecute);
             ToggleSubmissionModeCommand = new Command(OnToggleSubmissionModeCommandExecute);
+            FindIllsCommand = new Command(OnFindIllsCommandExecute);
         }
 
         public Command ToggleSubmissionModeCommand { get; private set; }
@@ -66,6 +68,37 @@ namespace Classroom_Learning_Partner.ViewModels
                            : "Shown submissions will now be actual submissions.";
 
             MessageBox.Show(text);
+        }
+
+        public Command FindIllsCommand { get; private set; }
+
+        private void OnFindIllsCommandExecute()
+        {
+            const string FOLDER_NAME = "CLP Reports";
+            var folderPath = Path.Combine(DataService.DesktopFolderPath, FOLDER_NAME);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"Pages with ILL in Semantic Events.{FILE_EXTENSION}";
+            var filePath = Path.Combine(folderPath, fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent))
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    if (page.History.SemanticEvents.Any(e => e.CodedValue.Contains("ILL")))
+                    {
+                        File.AppendAllText(filePath, $"{page.Owner.DisplayName}, Page {page.PageNumber}\n");
+                    }
+                }
+            }
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>

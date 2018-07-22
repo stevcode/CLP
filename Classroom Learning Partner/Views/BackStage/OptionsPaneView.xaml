@@ -91,6 +91,15 @@
                     FontWeight="Bold"
                     Visibility="{Binding ResearcherVisibility}" />
 
+            <Button Content="Find ILLs"
+                    Command="{Binding FindIllsCommand}"
+                    Height="50"
+                    Width="400"
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold"
+                    Visibility="{Binding ResearcherVisibility}" />
+
         </StackPanel>
 
     </DockPanel>
