@@ -136,11 +136,11 @@ namespace Classroom_Learning_Partner.Services
             public QueryResult(QueryablePage page)
             {
                 Page = page;
-                MatchingQueryCodes = new List<IAnalysisCode>();
+                AnalysisCodes = new List<AnalysisCodeContainer>();
             }
 
             public QueryablePage Page { get; set; }
-            public List<IAnalysisCode> MatchingQueryCodes { get; set; }
+            public List<AnalysisCodeContainer> AnalysisCodes { get; set; }
             public string ClusterName { get; set; }
             public int ClusterSize { get; set; }
 
@@ -149,8 +149,31 @@ namespace Classroom_Learning_Partner.Services
 
             public string FormattedValue
             {
-                get { return $"Page {PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingQueryCodes.Select(q => q.FormattedValue))}"; }
+                get
+                {
+                    var codes = string.Empty;
+                    foreach (var analysisCodeContainer in AnalysisCodes)
+                    {
+                        codes += analysisCodeContainer.IsDominantSharedCode
+                                     ? $"\n - ****{analysisCodeContainer.Code.FormattedValue}"
+                                     : $"\n - {analysisCodeContainer.Code.FormattedValue}";
+                    }
+                    
+                    return $"Page {PageNumber}, {StudentName}{codes}";
+                }
             }
+        }
+
+        public class AnalysisCodeContainer
+        {
+            public AnalysisCodeContainer(IAnalysisCode code)
+            {
+                Code = code;
+            }
+
+            public IAnalysisCode Code { get; set; }
+            public bool IsMatchingCode { get; set; }
+            public bool IsDominantSharedCode { get; set; }
         }
 
         #endregion // Nested Classes
@@ -271,7 +294,7 @@ namespace Classroom_Learning_Partner.Services
 
                 var queryResult = new QueryResult(queryablePage)
                                   {
-                                      MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList()
+                                      AnalysisCodes = queryablePage.AllAnalysisCodes.Select(c => new AnalysisCodeContainer(c)).ToList()
                                   };
                 queryResults.Add(queryResult);
             }
@@ -348,7 +371,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 var queryResult = new QueryResult(queryablePage)
                                   {
-                                      MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList(),
+                                      AnalysisCodes = queryablePage.AllAnalysisCodes.Select(c => new AnalysisCodeContainer(c)).ToList(),
                                       ClusterName = "Anomalies"
                                   };
                 queryResults.Add(queryResult);
@@ -361,7 +384,7 @@ namespace Classroom_Learning_Partner.Services
                 {
                     var queryResult = new QueryResult(queryablePage)
                                       {
-                                          MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList(),
+                                          AnalysisCodes = queryablePage.AllAnalysisCodes.Select(c => new AnalysisCodeContainer(c)).ToList(),
                                           ClusterName = $"Cluster {clusterCount:D3}",
                                           ClusterSize = cluster.Count
                                       };
@@ -370,6 +393,8 @@ namespace Classroom_Learning_Partner.Services
 
                 clusterCount++;
             }
+
+            FindDominantSharedCodes(queryResults);
             
             return queryResults;
         }
@@ -377,6 +402,11 @@ namespace Classroom_Learning_Partner.Services
         #endregion // IQueryService Implementation
 
         #region Methods
+
+        private void FindDominantSharedCodes(List<QueryResult> results)
+        {
+
+        }
 
         private List<XDocument> GetAllPageXDocumentsFromCache(string cacheFilePath)
         {
