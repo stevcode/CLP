@@ -142,6 +142,7 @@ namespace Classroom_Learning_Partner.Services
             public QueryablePage Page { get; set; }
             public List<IAnalysisCode> MatchingQueryCodes { get; set; }
             public string ClusterName { get; set; }
+            public int ClusterSize { get; set; }
 
             public int PageNumber => Page.PageNameComposite.PageNumber;
             public string StudentName => Page.StudentName;
@@ -361,7 +362,8 @@ namespace Classroom_Learning_Partner.Services
                     var queryResult = new QueryResult(queryablePage)
                                       {
                                           MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList(),
-                                          ClusterName = $"Cluster {clusterCount:D3}"
+                                          ClusterName = $"Cluster {clusterCount:D3}",
+                                          ClusterSize = cluster.Count
                                       };
                     queryResults.Add(queryResult);
                 }

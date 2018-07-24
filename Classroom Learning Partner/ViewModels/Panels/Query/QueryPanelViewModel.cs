@@ -4,11 +4,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Xml.Linq;
 using Catel;
 using Catel.Collections;
 using Catel.Data;
@@ -27,7 +25,8 @@ namespace Classroom_Learning_Partner.ViewModels
         PageNumber,
         RepresentationType,
         OverallCorrectness,
-        ClusterName
+        ClusterName,
+        ClusterSize
     }
 
     public class QueryPanelViewModel : APanelBaseViewModel
@@ -35,10 +34,12 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StudentNameGroup = new PropertyGroupDescription("StudentName");
         private static readonly PropertyGroupDescription ClusterNameGroup = new PropertyGroupDescription("ClusterName");
+        private static readonly PropertyGroupDescription ClusterSizeGroup = new PropertyGroupDescription("ClusterSize");
 
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
         private static readonly SortDescription StudentNameAscendingSort = new SortDescription("StudentName", ListSortDirection.Ascending);
         private static readonly SortDescription ClusterNameAscendingSort = new SortDescription("ClusterName", ListSortDirection.Ascending);
+        private static readonly SortDescription ClusterSizeDescendingSort = new SortDescription("ClusterSize", ListSortDirection.Descending);
 
         private readonly IDataService _dataService;
         private readonly IQueryService _queryService;
@@ -448,6 +449,11 @@ namespace Classroom_Learning_Partner.ViewModels
             QueryResults.Clear();
             QueryResults.AddRange(queryResults);
 
+            if (CurrentGroupType == GroupTypes.ClusterSize)
+            {
+                return;
+            }
+
             CurrentGroupType = GroupTypes.ClusterName;
         }
 
@@ -479,7 +485,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     ApplySortAndGroupByPageNumber();
                     break;
                 case GroupTypes.ClusterName:
-                    ApplySortAndGroupByCluster();
+                    ApplySortAndGroupByClusterName();
+                    break;
+                case GroupTypes.ClusterSize:
+                    ApplySortAndGroupByClusterSize();
                     break;
                 default:
                     ApplySortAndGroupByName();
@@ -507,13 +516,24 @@ namespace Classroom_Learning_Partner.ViewModels
             GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
         }
 
-        public void ApplySortAndGroupByCluster()
+        public void ApplySortAndGroupByClusterName()
         {
             GroupedQueryResults.GroupDescriptions.Clear();
             GroupedQueryResults.SortDescriptions.Clear();
 
             GroupedQueryResults.GroupDescriptions.Add(ClusterNameGroup);
             GroupedQueryResults.SortDescriptions.Add(ClusterNameAscendingSort);
+            GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
+            GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
+        }
+
+        public void ApplySortAndGroupByClusterSize()
+        {
+            GroupedQueryResults.GroupDescriptions.Clear();
+            GroupedQueryResults.SortDescriptions.Clear();
+
+            GroupedQueryResults.GroupDescriptions.Add(ClusterSizeGroup);
+            GroupedQueryResults.SortDescriptions.Add(ClusterSizeDescendingSort);
             GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
             GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
         }
