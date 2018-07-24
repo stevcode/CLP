@@ -27,18 +27,18 @@ namespace Classroom_Learning_Partner.ViewModels
         PageNumber,
         RepresentationType,
         OverallCorrectness,
-        Cluster
+        ClusterName
     }
 
     public class QueryPanelViewModel : APanelBaseViewModel
     {
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StudentNameGroup = new PropertyGroupDescription("StudentName");
-        private static readonly PropertyGroupDescription ClusterGroup = new PropertyGroupDescription("Cluster");
+        private static readonly PropertyGroupDescription ClusterNameGroup = new PropertyGroupDescription("ClusterName");
 
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
         private static readonly SortDescription StudentNameAscendingSort = new SortDescription("StudentName", ListSortDirection.Ascending);
-        private static readonly SortDescription ClusterAscendingSort = new SortDescription("Cluster", ListSortDirection.Ascending);
+        private static readonly SortDescription ClusterNameAscendingSort = new SortDescription("ClusterName", ListSortDirection.Ascending);
 
         private readonly IDataService _dataService;
         private readonly IQueryService _queryService;
@@ -398,6 +398,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             QueryResults.AddRange(queryResults);
 
+            if (CurrentGroupType == GroupTypes.ClusterName)
+            {
+                CurrentGroupType = GroupTypes.StudentName;
+            }
+
             if (!IsGeneratingReportOnQuery)
             {
                 return;
@@ -442,6 +447,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             QueryResults.Clear();
             QueryResults.AddRange(queryResults);
+
+            CurrentGroupType = GroupTypes.ClusterName;
         }
 
         public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
@@ -471,7 +478,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case GroupTypes.PageNumber:
                     ApplySortAndGroupByPageNumber();
                     break;
-                case GroupTypes.Cluster:
+                case GroupTypes.ClusterName:
                     ApplySortAndGroupByCluster();
                     break;
                 default:
@@ -505,8 +512,8 @@ namespace Classroom_Learning_Partner.ViewModels
             GroupedQueryResults.GroupDescriptions.Clear();
             GroupedQueryResults.SortDescriptions.Clear();
 
-            GroupedQueryResults.GroupDescriptions.Add(ClusterGroup);
-            GroupedQueryResults.SortDescriptions.Add(ClusterAscendingSort);
+            GroupedQueryResults.GroupDescriptions.Add(ClusterNameGroup);
+            GroupedQueryResults.SortDescriptions.Add(ClusterNameAscendingSort);
             GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
             GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
         }

@@ -141,7 +141,7 @@ namespace Classroom_Learning_Partner.Services
 
             public QueryablePage Page { get; set; }
             public List<IAnalysisCode> MatchingQueryCodes { get; set; }
-            public string Cluster { get; set; }
+            public string ClusterName { get; set; }
 
             public int PageNumber => Page.PageNameComposite.PageNumber;
             public string StudentName => Page.StudentName;
@@ -348,7 +348,7 @@ namespace Classroom_Learning_Partner.Services
                 var queryResult = new QueryResult(queryablePage)
                                   {
                                       MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList(),
-                                      Cluster = "Anomalies"
+                                      ClusterName = "Anomalies"
                                   };
                 queryResults.Add(queryResult);
             }
@@ -361,7 +361,7 @@ namespace Classroom_Learning_Partner.Services
                     var queryResult = new QueryResult(queryablePage)
                                       {
                                           MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList(),
-                                          Cluster = $"Cluster {clusterCount}"
+                                          ClusterName = $"Cluster {clusterCount:D3}"
                                       };
                     queryResults.Add(queryResult);
                 }
