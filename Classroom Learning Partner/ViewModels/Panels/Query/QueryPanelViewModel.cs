@@ -34,7 +34,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StudentNameGroup = new PropertyGroupDescription("StudentName");
         private static readonly PropertyGroupDescription ClusterNameGroup = new PropertyGroupDescription("ClusterName");
-        private static readonly PropertyGroupDescription ClusterSizeGroup = new PropertyGroupDescription("ClusterSize");
 
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
         private static readonly SortDescription StudentNameAscendingSort = new SortDescription("StudentName", ListSortDirection.Ascending);
@@ -399,7 +398,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             QueryResults.AddRange(queryResults);
 
-            if (CurrentGroupType == GroupTypes.ClusterName)
+            if (CurrentGroupType == GroupTypes.ClusterName ||
+                CurrentGroupType == GroupTypes.ClusterSize)
             {
                 CurrentGroupType = GroupTypes.StudentName;
             }
@@ -449,12 +449,12 @@ namespace Classroom_Learning_Partner.ViewModels
             QueryResults.Clear();
             QueryResults.AddRange(queryResults);
 
-            if (CurrentGroupType == GroupTypes.ClusterSize)
+            if (CurrentGroupType == GroupTypes.ClusterName)
             {
                 return;
             }
 
-            CurrentGroupType = GroupTypes.ClusterName;
+            CurrentGroupType = GroupTypes.ClusterSize;
         }
 
         public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
@@ -532,7 +532,7 @@ namespace Classroom_Learning_Partner.ViewModels
             GroupedQueryResults.GroupDescriptions.Clear();
             GroupedQueryResults.SortDescriptions.Clear();
 
-            GroupedQueryResults.GroupDescriptions.Add(ClusterSizeGroup);
+            GroupedQueryResults.GroupDescriptions.Add(ClusterNameGroup);
             GroupedQueryResults.SortDescriptions.Add(ClusterSizeDescendingSort);
             GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
             GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
