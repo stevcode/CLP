@@ -405,7 +405,83 @@ namespace Classroom_Learning_Partner.Services
 
         private void FindDominantSharedCodes(List<QueryResult> results)
         {
+            foreach (var group in results.GroupBy(r => r.ClusterName))
+            {
+                var sizes = new Dictionary<int, List<AnalysisCodeContainer>>();
 
+                var queryResults = group.ToList();
+                for (var i = 0; i < queryResults.Count - 1; i++)
+                {
+                    var result1 = queryResults[i];
+                    for (var j = i + 1; j < queryResults.Count; j++)
+                    {
+                        var result2 = queryResults[j];
+
+                        foreach (var analysisCodeContainer1 in result1.AnalysisCodes)
+                        {
+                            foreach (var analysisCodeContainer2 in result2.AnalysisCodes)
+                            {
+                                var size = CompareAnalysisCodes(analysisCodeContainer1.Code, analysisCodeContainer2.Code);
+                                if (!sizes.ContainsKey(size))
+                                {
+                                    sizes.Add(size, new List<AnalysisCodeContainer>());
+                                }
+
+                                if (!sizes[size].Contains(analysisCodeContainer1))
+                                {
+                                    sizes[size].Add(analysisCodeContainer1);
+                                }
+
+                                if (!sizes[size].Contains(analysisCodeContainer2))
+                                {
+                                    sizes[size].Add(analysisCodeContainer2);
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                if (sizes.Keys.Count == 0)
+                {
+                    continue;
+                }
+
+                var largestSize = sizes.Keys.Max();
+                if (largestSize <= 0)
+                {
+                    continue;
+                }
+
+                foreach (var analysisCodeContainer in sizes[largestSize])
+                {
+                    analysisCodeContainer.IsDominantSharedCode = true;
+                }
+            }
+        }
+
+        private int CompareAnalysisCodes(IAnalysisCode code1, IAnalysisCode code2)
+        {
+            var matchingConstraintCount = 0;
+            foreach (var constraint1 in code1.Constraints)
+            {
+                foreach (var constraint2 in code1.Constraints)
+                {
+                    if (constraint1.IsQueryable &&
+                        constraint1.ConstraintLabel == constraint2.ConstraintLabel &&
+                        constraint1.ConstraintValue == constraint2.ConstraintValue)
+                    {
+                        matchingConstraintCount++;
+                    }
+                }
+            }
+
+            if (code1.AnalysisCodeLabel == code2.AnalysisCodeLabel)
+            {
+                matchingConstraintCount *= 2;
+            }
+
+            return matchingConstraintCount;
         }
 
         private List<XDocument> GetAllPageXDocumentsFromCache(string cacheFilePath)
