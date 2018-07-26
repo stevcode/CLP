@@ -178,6 +178,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsGeneratingReportOnQueryProperty = RegisterProperty(nameof(IsGeneratingReportOnQuery), typeof(bool), false);
 
+        public string PagesFilter
+        {
+            get => GetValue<string>(PagesFilterProperty);
+            set => SetValue(PagesFilterProperty, value);
+        }
+
+        public static readonly PropertyData PagesFilterProperty = RegisterProperty(nameof(PagesFilter), typeof(string), string.Empty);
+
         #endregion // Bindings
 
         #region Methods
@@ -213,6 +221,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 var pageNumbers = DataService.GetAllPageNumbersInNotebook(zip, _queryService.NotebookToQuery);
                 _queryService.PageNumbersToQuery = pageNumbers;
             }
+
+            PagesFilter = RangeHelper.ParseIntNumbersToString(_queryService.PageNumbersToQuery.OrderBy(i => i), true, true);
         }
 
         #endregion // Methods
@@ -278,7 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var textInputViewModel = new TextInputViewModel
                                      {
                                          TextPrompt = "Enter page range or leave blank for all pages.",
-                                         InputText = RangeHelper.ParseIntNumbersToString(_queryService.PageNumbersToQuery, true, true)
+                                         InputText = RangeHelper.ParseIntNumbersToString(_queryService.PageNumbersToQuery.OrderBy(i => i), true, true)
                                      };
             var textInputView = new TextInputView(textInputViewModel);
             textInputView.ShowDialog();
@@ -299,6 +309,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _queryService.PageNumbersToQuery = pageNumbersToOpen;
+            PagesFilter = textInputViewModel.InputText;
         }
 
         public Command SaveQueryCommand { get; private set; }

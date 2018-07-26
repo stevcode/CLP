@@ -565,12 +565,19 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Column="0"
-                                HorizontalAlignment="Center"
-                                Height="20"
-                                Width="75"
-                                Content="Pages"
-                                Command="{Binding SelectPageRangeCommand}" />
+                        <StackPanel Grid.Column="0"
+                                    Orientation="Horizontal">
+
+                            <Button Height="20"
+                                    Width="75"
+                                    Margin="10 0"
+                                    Content="Pages"
+                                    Command="{Binding SelectPageRangeCommand}" />
+
+                            <TextBlock Text="{Binding PagesFilter}"
+                                       Margin="10 0" />
+
+                        </StackPanel>
 
                         <Button Grid.Column="1"
                                 HorizontalAlignment="Center"
