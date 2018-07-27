@@ -9,6 +9,7 @@ using System.Windows;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using Ionic.Zip;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -56,6 +57,88 @@ namespace Classroom_Learning_Partner.ViewModels
             ForceWordProblemTagsCommand = new Command(OnForceWordProblemTagsCommandExecute);
             ToggleSubmissionModeCommand = new Command(OnToggleSubmissionModeCommandExecute);
             FindIllsCommand = new Command(OnFindIllsCommandExecute);
+            DeletePagesCommand = new Command(OnDeletePagesCommandExecute);
+        }
+
+        public Command DeletePagesCommand { get; private set; }
+
+        private void OnDeletePagesCommandExecute()
+        {
+            var pageNumbersToDelete = new List<int>
+                                      {
+                                          113,
+                                          114,
+                                          132,
+                                          133,
+                                          134,
+                                          135,
+                                          136,
+                                          137,
+                                          151,
+                                          172,
+                                          173,
+                                          174,
+                                          176,
+                                          177,
+                                          178,
+                                          179,
+                                          180,
+                                          181,
+                                          215,
+                                          225,
+                                          226,
+                                          227,
+                                          230,
+                                          231,
+                                          240,
+                                          241,
+                                          242,
+                                          243,
+                                          244,
+                                          245,
+                                          246,
+                                          247,
+                                          248,
+                                          249,
+                                          305,
+                                          368
+                                      };
+
+            var zipEntryFullPaths = new List<string>();
+            foreach (var notebook in _dataService.LoadedNotebooks)
+            {
+                var pagesToDelete = new List<CLPPage>();
+                foreach (var page in notebook.Pages)
+                {
+                    if (pageNumbersToDelete.Contains(page.PageNumber))
+                    {
+                        pagesToDelete.Add(page);
+                    }
+                }
+
+                foreach (var pageToDelete in pagesToDelete)
+                {
+                    notebook.Pages.Remove(pageToDelete);
+                    zipEntryFullPaths.Add(pageToDelete.GetZipEntryFullPath(notebook));
+                    foreach (var submission in pageToDelete.Submissions)
+                    {
+                        zipEntryFullPaths.Add(submission.GetZipEntryFullPath(notebook));
+                    }
+                }
+            }
+
+            var zipContainerFilePath = _dataService.LoadedNotebooks.First().ContainerZipFilePath;
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                foreach (var zipEntryFullPath in zipEntryFullPaths)
+                {
+                    zip.RemoveEntry(zipEntryFullPath);
+                }
+
+                zip.Save();
+            }
+
+            MessageBox.Show("Finished deleting pages.");
         }
 
         public Command ToggleSubmissionModeCommand { get; private set; }

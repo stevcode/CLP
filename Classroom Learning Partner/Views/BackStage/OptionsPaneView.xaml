@@ -91,14 +91,14 @@
                     FontWeight="Bold"
                     Visibility="{Binding ResearcherVisibility}" />
 
-            <Button Content="Find ILLs"
-                    Command="{Binding FindIllsCommand}"
+            <!--<Button Content="Delete Pages"
+                    Command="{Binding DeletePagesCommand}"
                     Height="50"
                     Width="400"
                     Margin="10"
                     FontSize="22"
                     FontWeight="Bold"
-                    Visibility="{Binding ResearcherVisibility}" />
+                    Visibility="{Binding ResearcherVisibility}" />-->
 
         </StackPanel>
 
