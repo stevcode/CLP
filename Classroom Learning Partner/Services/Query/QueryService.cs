@@ -161,7 +161,7 @@ namespace Classroom_Learning_Partner.Services
                            };
             plotView.Show();
 
-            const double CLUSTERING_EPSILON = 0.33;
+            var clusteringEpsilon = QueryablePage.GetClusteringEpsilon();
 
             var currentCluster = new List<QueryablePage>();
             var allClusteredQueryablePages = new List<QueryablePage>();

@@ -225,27 +225,19 @@ namespace Classroom_Learning_Partner.Services
                     File.AppendAllText(filePath, $"{label};1.0\n");
                 }
 
-                File.AppendAllText(filePath, "ANY\n");
+                File.AppendAllText(filePath, "CLUSTERING_EPSILON;0.33\n");
+
+                File.AppendAllText(filePath, "ANY");
             }
 
-            return File.ReadLines(filePath).Last();
+            return File.ReadLines(filePath).Last(l => !string.IsNullOrWhiteSpace(l)).Trim();
         }
 
         private static double GetLabelWeight(string analysisCodeLabel)
         {
             const string FILE_EXTENSION = "txt";
-            var fileName = $"CLP Label Weights.{FILE_EXTENSION}";
+            var fileName = $"CLP Constraint Cluster Settings.{FILE_EXTENSION}";
             var filePath = Path.Combine(DataService.DesktopFolderPath, fileName);
-            if (!File.Exists(filePath))
-            {
-                var allAnalysisCodeLabels = Codings.GetAllAnalysisShortNames();
-                foreach (var label in allAnalysisCodeLabels)
-                {
-                    File.AppendAllText(filePath, $"{label};1.0\n");
-                }
-
-                File.AppendAllText(filePath, "ALL");
-            }
 
             var analysisCodeShortName = Codings.AnalysisLabelToShortName(analysisCodeLabel);
             var weightLine = File.ReadLines(filePath).FirstOrDefault(l => l.Contains(analysisCodeShortName));
@@ -254,7 +246,7 @@ namespace Classroom_Learning_Partner.Services
                 return 1.0;
             }
 
-            var weightParts = weightLine.Split(";");
+            var weightParts = weightLine.Trim().Split(";");
             var weight = weightParts[1].ToDouble();
             if (weight is null)
             {
@@ -262,6 +254,11 @@ namespace Classroom_Learning_Partner.Services
             }
 
             return (double)weight;
+        }
+
+        public static double GetClusteringEpsilon()
+        {
+            return GetLabelWeight("CLUSTERING_EPSILON");
         }
 
         #endregion // Distance New
