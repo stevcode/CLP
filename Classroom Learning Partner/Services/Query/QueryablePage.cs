@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CLP.Entities;
 
@@ -37,31 +38,17 @@ namespace Classroom_Learning_Partner.Services
             //distance += Math.Abs(analysisCodeTypes.Count - analysisCodeTypesOther.Count);
 
             // Dist v 2, ???
-            distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_NAME_LAX);
-            distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_HISTORY_STATUS);
-            distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
+            //distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_NAME_LAX);
+            //distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_HISTORY_STATUS);
+            //distance += ConstraintSimilarityDistance(this, otherPage, Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED, Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
 
             // Dist v 3, Pure Hamming between all code constraint values on both pages
-            //distance = ALL_PURE(this, otherPage);
+            distance = PageHammingDistance(this, otherPage, true);
 
             return distance;
         }
 
-        private static double ALL_PURE(QueryablePage page1, QueryablePage page2)
-        {
-            var distance = 0.0;
-            foreach (var code1 in page1.AllAnalysisCodes)
-            {
-                foreach (var code2 in page2.AllAnalysisCodes)
-                {
-                    distance += HammingDistance(code1, code2);
-                }
-            }
-
-            return distance;
-        }
-
-        private static double HammingDistance(IAnalysisCode code1, IAnalysisCode code2)
+        private static double CodeHammingDistance(IAnalysisCode code1, IAnalysisCode code2)
         {
             if (code1.AnalysisCodeLabel != code2.AnalysisCodeLabel)
             {
@@ -117,5 +104,120 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Methods
+
+        #region Distance New
+
+        private static double PageHammingDistance(QueryablePage page, QueryablePage otherPage, bool isALL)
+        {
+            var analysisCodeLabels = page.AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Concat(otherPage.AllAnalysisCodes.Select(c => c.AnalysisCodeLabel)).Distinct().ToList();
+
+            var distance = 0.0;
+            foreach (var analysisCodeLabel in analysisCodeLabels)
+            {
+                var codes = page.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCodeLabel).ToList();
+                var otherCodes = otherPage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCodeLabel).ToList();
+
+                var labelDistance = 0.0;
+                foreach (var analysisCode in codes)
+                {
+                    if (!otherCodes.Any())
+                    {
+                        labelDistance += 1.0;
+                        continue;
+                    }
+
+                    IAnalysisCode closestCode = null;
+                    var smallestDistance = double.MaxValue;
+                    foreach (var otherAnalysisCode in otherCodes)
+                    {
+                        var codeDistance = CodeHammingDistance(analysisCode, otherAnalysisCode);
+                        if (codeDistance < smallestDistance)
+                        {
+                            smallestDistance = codeDistance;
+                            closestCode = otherAnalysisCode;
+                        }
+                    }
+
+                    var constraintWeight = 1.0 / analysisCode.Constraints.Count;
+                    labelDistance += smallestDistance * constraintWeight;
+                    if (isALL)
+                    {
+                        otherCodes.Remove(closestCode);
+                    }
+                }
+
+                foreach (var otherAnalysisCode in otherCodes)
+                {
+                    if (isALL)
+                    {
+                        labelDistance += 1.0;
+                    }
+                    else
+                    {
+                        if (!codes.Any())
+                        {
+                            labelDistance += 1.0;
+                            continue;
+                        }
+
+                        var smallestDistance = double.MaxValue;
+                        foreach (var analysisCode in codes)
+                        {
+                            var codeDistance = CodeHammingDistance(otherAnalysisCode, analysisCode);
+                            if (codeDistance < smallestDistance)
+                            {
+                                smallestDistance = codeDistance;
+                            }
+                        }
+
+                        var constraintWeight = 1.0 / otherAnalysisCode.Constraints.Count;
+                        labelDistance += smallestDistance * constraintWeight;
+                    }
+                }
+
+                if (!isALL)
+                {
+                    labelDistance = labelDistance / 2.0;
+                }
+
+                var labelWeight = GetLabelWeight(analysisCodeLabel);
+                labelDistance = labelDistance * labelWeight;
+                distance += labelDistance;
+            }
+
+            return distance;
+        }
+
+        private static double GetLabelWeight(string analysisCodeLabel)
+        {
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"CLP Label Weights.{FILE_EXTENSION}";
+            var filePath = Path.Combine(DataService.DesktopFolderPath, fileName);
+            if (!File.Exists(filePath))
+            {
+                var allAnalysisCodeLabels = Codings.GetAllAnalysisLabels();
+                foreach (var label in allAnalysisCodeLabels)
+                {
+                    File.AppendAllText(filePath, $"{label};1.0\n");
+                }
+            }
+
+            var weightLine = File.ReadLines(filePath).FirstOrDefault(l => l.Contains(analysisCodeLabel));
+            if (weightLine is null)
+            {
+                return 1.0;
+            }
+
+            var weightParts = weightLine.Split(";");
+            var weight = weightParts[1].ToDouble();
+            if (weight is null)
+            {
+                return 1.0;
+            }
+
+            return (double)weight;
+        }
+
+        #endregion // Distance New
     }
 }
