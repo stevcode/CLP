@@ -244,7 +244,7 @@ namespace Classroom_Learning_Partner.Services
 
         private void FindDominantSharedCodes(List<QueryResult> results)
         {
-            foreach (var group in results.GroupBy(r => r.ClusterName))
+            foreach (var group in results.GroupBy(r => r.ClusterName).Where(g => g.Key != "OUTLIERS"))
             {
                 var sizes = new Dictionary<int, List<AnalysisCodeContainer>>();
 
@@ -307,6 +307,7 @@ namespace Classroom_Learning_Partner.Services
                 foreach (var constraint2 in code1.Constraints)
                 {
                     if (constraint1.IsQueryable &&
+                        constraint2.IsQueryable &&
                         constraint1.ConstraintLabel == constraint2.ConstraintLabel &&
                         constraint1.ConstraintValue == constraint2.ConstraintValue)
                     {
