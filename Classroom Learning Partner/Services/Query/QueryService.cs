@@ -220,13 +220,17 @@ namespace Classroom_Learning_Partner.Services
                     var queryResult = new QueryResult(queryablePage)
                                       {
                                           AnalysisCodes = queryablePage.AllAnalysisCodes.Select(c => new AnalysisCodeContainer(c)).ToList(),
-                                          ClusterName = $"Cluster {clusterCount:D3}",
+                                          ClusterName = cluster.Count == 1 ? "OUTLIERS" : $"Cluster {clusterCount:D3}",
                                           ClusterSize = cluster.Count
                                       };
+
                     queryResults.Add(queryResult);
                 }
 
-                clusterCount++;
+                if (cluster.Count != 1)
+                {
+                    clusterCount++;
+                }
             }
 
             FindDominantSharedCodes(queryResults);
