@@ -61,13 +61,13 @@ namespace Classroom_Learning_Partner.Services
         {
             if (code1.AnalysisCodeLabel != code2.AnalysisCodeLabel)
             {
-                return Math.Max(code1.Constraints.Count, code2.Constraints.Count);
+                return Math.Max(code1.Constraints.Count(c => c.IsQueryable), code2.Constraints.Count(c => c.IsQueryable));
             }
 
             if (code1.Constraints.Count != code2.Constraints.Count)
             {
                 // Print error?
-                return Math.Max(code1.Constraints.Count, code2.Constraints.Count);
+                return Math.Max(code1.Constraints.Count(c => c.IsQueryable), code2.Constraints.Count(c => c.IsQueryable));
             }
 
             var distance = 0;
@@ -75,6 +75,11 @@ namespace Classroom_Learning_Partner.Services
             {
                 var constraint1 = code1.Constraints[i];
                 var constraint2 = code2.Constraints[i];
+
+                if (!constraint1.IsQueryable)
+                {
+                    continue;
+                }
 
                 if (constraint1.ConstraintValue != constraint2.ConstraintValue)
                 {
