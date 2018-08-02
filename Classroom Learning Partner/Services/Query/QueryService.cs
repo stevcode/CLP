@@ -179,7 +179,7 @@ namespace Classroom_Learning_Partner.Services
 
                 // Epsilon cluster decision.
                 var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
-                if (currentReachabilityDistance < CLUSTERING_EPSILON)
+                if (currentReachabilityDistance < clusteringEpsilon)
                 {
                     currentCluster.Add(queryablePage);
                     allClusteredQueryablePages.Add(queryablePage);
