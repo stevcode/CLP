@@ -70,7 +70,7 @@ namespace Classroom_Learning_Partner.Services
                 return Math.Max(code1.Constraints.Count(c => c.IsQueryable), code2.Constraints.Count(c => c.IsQueryable));
             }
 
-            var distance = 0;
+            var distance = 0.0;
             for (var i = 0; i < code1.Constraints.Count; i++)
             {
                 var constraint1 = code1.Constraints[i];
@@ -80,10 +80,11 @@ namespace Classroom_Learning_Partner.Services
                 {
                     continue;
                 }
-
+                
                 if (constraint1.ConstraintValue != constraint2.ConstraintValue)
                 {
-                    distance += 1;
+                    var constraintWeight = GetConstraintWeight(code1.AnalysisCodeLabel, constraint1.ConstraintLabel);
+                    distance += 1.0 * constraintWeight;
                 }
             }
 
@@ -222,10 +223,16 @@ namespace Classroom_Learning_Partner.Services
             var filePath = Path.Combine(DataService.DesktopFolderPath, fileName);
             if (!File.Exists(filePath))
             {
-                var allAnalysisCodeLabels = Codings.GetAllAnalysisShortNames();
-                foreach (var label in allAnalysisCodeLabels)
+                var allAnalysisCodes = AnalysisCode.GenerateAvailableQueryConditions();
+                foreach (var code in allAnalysisCodes)
                 {
-                    File.AppendAllText(filePath, $"{label};1.0\n");
+                    var shortName = Codings.AnalysisLabelToShortName(code.AnalysisCodeLabel);
+                    File.AppendAllText(filePath, $"{shortName};1.0\n");
+                    foreach (var constraint in code.Constraints)
+                    {
+                        var constraintFriendlyName = Codings.ConstraintLabelToShortName(constraint.ConstraintLabel);
+                        File.AppendAllText(filePath, $"{shortName}-{constraintFriendlyName};1.0\n");
+                    }
                 }
 
                 File.AppendAllText(filePath, "CLUSTERING_EPSILON;0.33\n");
@@ -243,7 +250,31 @@ namespace Classroom_Learning_Partner.Services
             var filePath = Path.Combine(DataService.DesktopFolderPath, fileName);
 
             var analysisCodeShortName = Codings.AnalysisLabelToShortName(analysisCodeLabel);
-            var weightLine = File.ReadLines(filePath).FirstOrDefault(l => l.Contains(analysisCodeShortName));
+            var weightLine = File.ReadLines(filePath).FirstOrDefault(l => l.Contains($"{analysisCodeShortName};"));
+            if (weightLine is null)
+            {
+                return 1.0;
+            }
+
+            var weightParts = weightLine.Trim().Split(";");
+            var weight = weightParts[1].ToDouble();
+            if (weight is null)
+            {
+                return 1.0;
+            }
+
+            return (double)weight;
+        }
+
+        private static double GetConstraintWeight(string analysisCodeLabel, string constraintLabel)
+        {
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"CLP Constraint Cluster Settings.{FILE_EXTENSION}";
+            var filePath = Path.Combine(DataService.DesktopFolderPath, fileName);
+
+            var analysisCodeShortName = Codings.AnalysisLabelToShortName(analysisCodeLabel);
+            var constraintShortName = Codings.ConstraintLabelToShortName(constraintLabel);
+            var weightLine = File.ReadLines(filePath).FirstOrDefault(l => l.Contains($"{analysisCodeShortName}-{constraintShortName};"));
             if (weightLine is null)
             {
                 return 1.0;
