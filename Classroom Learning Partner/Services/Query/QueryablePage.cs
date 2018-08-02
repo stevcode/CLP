@@ -165,19 +165,17 @@ namespace Classroom_Learning_Partner.Services
 
                     var constraintWeight = 1.0 / analysisCode.Constraints.Count;
                     labelDistance += smallestDistance * constraintWeight;
-                    if (isAll)
-                    {
-                        otherCodes.Remove(closestCode);
-                    }
+                    otherCodes.Remove(closestCode);
                 }
 
-                foreach (var otherAnalysisCode in otherCodes)
+                if (isAll)
                 {
-                    if (isAll)
-                    {
-                        labelDistance += 1.0;
-                    }
-                    else
+                    labelDistance += otherCodes.Count;
+                }
+                else
+                {
+                    otherCodes = otherPage.AllAnalysisCodes.Where(c => c.AnalysisCodeLabel == analysisCodeLabel).ToList();
+                    foreach (var otherAnalysisCode in otherCodes)
                     {
                         if (!codes.Any())
                         {
@@ -185,6 +183,7 @@ namespace Classroom_Learning_Partner.Services
                             continue;
                         }
 
+                        IAnalysisCode closestCode = null;
                         var smallestDistance = double.MaxValue;
                         foreach (var analysisCode in codes)
                         {
@@ -192,6 +191,7 @@ namespace Classroom_Learning_Partner.Services
                             if (codeDistance < smallestDistance)
                             {
                                 smallestDistance = codeDistance;
+                                closestCode = otherAnalysisCode;
                             }
 
                             if (smallestDistance == 0.0)
@@ -202,11 +202,9 @@ namespace Classroom_Learning_Partner.Services
 
                         var constraintWeight = 1.0 / otherAnalysisCode.Constraints.Count;
                         labelDistance += smallestDistance * constraintWeight;
+                        codes.Remove(closestCode);
                     }
-                }
 
-                if (!isAll)
-                {
                     labelDistance = labelDistance / 2.0;
                 }
 
