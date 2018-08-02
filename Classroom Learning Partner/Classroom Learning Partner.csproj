@@ -254,7 +254,9 @@
     <Compile Include="Services\Interfaces\IWindowManagerService.cs" />
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
-    <Compile Include="Services\QueryService.cs" />
+    <Compile Include="Services\Query\QueryablePage.cs" />
+    <Compile Include="Services\Query\QueryResult.cs" />
+    <Compile Include="Services\Query\QueryService.cs" />
     <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\TestService.cs" />
     <Compile Include="Services\WindowManagerService.cs" />

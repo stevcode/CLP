@@ -10,11 +10,11 @@ namespace Classroom_Learning_Partner.Services
         List<int> PageNumbersToQuery { get; set; }
         List<string> StudentIDsToQuery { get; set; }
         Queries SavedQueries { get; set; }
-        List<QueryService.QueryablePage> QueryablePages { get; set; }
+        List<QueryablePage> QueryablePages { get; set; }
 
         void LoadQueryablePages();
         void LoadSavedQueries();
-        List<QueryService.QueryResult> RunQuery(AnalysisCodeQuery query);
-        List<QueryService.QueryResult> Cluster(List<QueryService.QueryablePage> queryablePages);
+        List<QueryResult> RunQuery(AnalysisCodeQuery query);
+        List<QueryResult> Cluster(List<QueryablePage> queryablePages);
     }
 }

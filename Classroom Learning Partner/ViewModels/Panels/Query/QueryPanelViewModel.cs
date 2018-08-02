@@ -153,22 +153,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SavedQueriesProperty = RegisterProperty(nameof(SavedQueries), typeof(Queries), null);
 
-        public ObservableCollection<QueryService.QueryResult> QueryResults
+        public ObservableCollection<QueryResult> QueryResults
         {
-            get => GetValue<ObservableCollection<QueryService.QueryResult>>(QueryResultsProperty);
+            get => GetValue<ObservableCollection<QueryResult>>(QueryResultsProperty);
             set => SetValue(QueryResultsProperty, value);
         }
 
         public static readonly PropertyData QueryResultsProperty =
-            RegisterProperty(nameof(QueryResults), typeof(ObservableCollection<QueryService.QueryResult>), () => new ObservableCollection<QueryService.QueryResult>());
+            RegisterProperty(nameof(QueryResults), typeof(ObservableCollection<QueryResult>), () => new ObservableCollection<QueryResult>());
 
-        public QueryService.QueryResult SelectedQueryResult
+        public QueryResult SelectedQueryResult
         {
-            get => GetValue<QueryService.QueryResult>(SelectedQueryResultProperty);
+            get => GetValue<QueryResult>(SelectedQueryResultProperty);
             set => SetValue(SelectedQueryResultProperty, value);
         }
 
-        public static readonly PropertyData SelectedQueryResultProperty = RegisterProperty(nameof(SelectedQueryResult), typeof(QueryService.QueryResult), null);
+        public static readonly PropertyData SelectedQueryResultProperty = RegisterProperty(nameof(SelectedQueryResult), typeof(QueryResult), null);
 
         public bool IsGeneratingReportOnQuery
         {
@@ -245,7 +245,7 @@ namespace Classroom_Learning_Partner.ViewModels
             
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
             ClusterCommand = new Command(OnClusterCommandExecute);
-            SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
+            SetCurrentPageCommand = new Command<QueryResult>(OnSetCurrentPageCommandExecute);
         }
 
         public Command SetANDConditionalCommand { get; private set; }
@@ -468,9 +468,9 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentGroupType = GroupTypes.ClusterSize;
         }
 
-        public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
+        public Command<QueryResult> SetCurrentPageCommand { get; private set; }
 
-        private void OnSetCurrentPageCommandExecute(QueryService.QueryResult queryResult)
+        private void OnSetCurrentPageCommandExecute(QueryResult queryResult)
         {
             var page = _dataService.GetPageByCompositeID(queryResult.Page.PageNameComposite, queryResult.Page.StudentID);
             if (page == null)
