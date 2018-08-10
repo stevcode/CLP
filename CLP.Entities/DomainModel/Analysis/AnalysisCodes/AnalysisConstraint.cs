@@ -197,6 +197,10 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_OTHER);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_NONE);
                     break;
+
+                case Codings.CONSTRAINT_OVERALL_CORRECTNESS:
+                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
+                    break;
             }
 
             return possibleConstraintValues;

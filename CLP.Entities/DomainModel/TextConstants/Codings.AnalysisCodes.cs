@@ -13,6 +13,7 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION = "CHANGED ANSWER AFTER REPRESENTATION";
         public const string ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS = "FINAL ANSWER CORRECTNESS";
         public const string ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS = "FINAL REPRESENTATION CORRECTNESS";
+        public const string ANALYSIS_LABEL_OVERALL_CORRECTNESS = "OVERALL CORRECTNESS";
         public const string ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP = "MULTIPLE REPRESENTATIONS - 1-STEP";
         public const string ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP = "MULTIPLE REPRESENTATIONS - 2-STEP";
         
@@ -37,6 +38,7 @@ namespace CLP.Entities
         public const string ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION = "CAAR";
         public const string ANALYSIS_SHORT_NAME_FINAL_ANSWER_CORRECTNESS = "ANS_FINAL";
         public const string ANALYSIS_SHORT_NAME_FINAL_REPRESENTATION_CORRECTNESS = "REP_FINAL";
+        public const string ANALYSIS_SHORT_NAME_OVERALL_CORRECTNESS = "REP+ANS_FINAL";
         public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP = "MR";
         public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP = "MR2STEP";
         
@@ -90,6 +92,8 @@ namespace CLP.Entities
         public const string CONSTRAINT_PROBLEM_TYPE = "PROBLEM_TYPE";
 
         public const string CONSTRAINT_COUNT = "COUNT";
+
+        public const string CONSTRAINT_OVERALL_CORRECTNESS = "OVERALL_CORRECTNESS";
 
         #endregion // Analysis Constraint Labels
 
@@ -228,6 +232,8 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_FINAL_ANSWER_CORRECTNESS;
                 case ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
                     return ANALYSIS_SHORT_NAME_FINAL_REPRESENTATION_CORRECTNESS;
+                case ANALYSIS_LABEL_OVERALL_CORRECTNESS:
+                    return ANALYSIS_SHORT_NAME_OVERALL_CORRECTNESS;
                 case ANALYSIS_LABEL_PROBLEM_TYPE:
                     return ANALYSIS_SHORT_NAME_PROBLEM_TYPE;
                 case ANALYSIS_LABEL_REPRESENTATION_ORDER:
@@ -267,6 +273,8 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS;
                 case ANALYSIS_SHORT_NAME_FINAL_REPRESENTATION_CORRECTNESS:
                     return ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS;
+                case ANALYSIS_SHORT_NAME_OVERALL_CORRECTNESS:
+                    return ANALYSIS_LABEL_OVERALL_CORRECTNESS;
                 case ANALYSIS_SHORT_NAME_PROBLEM_TYPE:
                     return ANALYSIS_LABEL_PROBLEM_TYPE;
                 case ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER:
@@ -299,6 +307,7 @@ namespace CLP.Entities
                            //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
                            ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS,
                            ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS,
+                           ANALYSIS_LABEL_OVERALL_CORRECTNESS,
                            //ANALYSIS_LABEL_PROBLEM_TYPE,
                            ANALYSIS_LABEL_REPRESENTATION_ORDER,
                            ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP,
@@ -378,6 +387,9 @@ namespace CLP.Entities
 
                 case CONSTRAINT_COUNT:
                     return "Count";
+
+                case CONSTRAINT_OVERALL_CORRECTNESS:
+                    return "Correctness";
             }
 
             return "No matching Alias";

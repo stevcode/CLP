@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class CorrectnessSummaryTag : ATagBase
+    public class CorrectnessSummaryTag : AAnalysisTagBase
     {
         #region Constructors
 
@@ -30,15 +30,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData FinalRepresentationCorrectnessProperty = RegisterProperty(nameof(FinalRepresentationCorrectness), typeof(Correctness), Correctness.Unknown);
 
-        /// <summary>Correctness of the final Strategies on the page.</summary>
-        public Correctness FinalStrategyCorrectness
-        {
-            get => GetValue<Correctness>(FinalStrategyCorrectnessProperty);
-            set => SetValue(FinalStrategyCorrectnessProperty, value);
-        }
-
-        public static readonly PropertyData FinalStrategyCorrectnessProperty = RegisterProperty(nameof(FinalStrategyCorrectness), typeof(Correctness), Correctness.Unknown);
-
         /// <summary>Correctness of the final fill-in/multiple choice answer on the page.</summary>
         public Correctness FinalAnswerCorrectness
         {
@@ -49,13 +40,13 @@ namespace CLP.Entities
         public static readonly PropertyData FinalAnswerCorrectnessProperty = RegisterProperty(nameof(FinalAnswerCorrectness), typeof(Correctness), Correctness.Unknown);
 
         /// <summary>Type of correctness.</summary>
-        public Correctness Correctness
+        public Correctness OverallCorrectness
         {
-            get => GetValue<Correctness>(CorrectnessProperty);
-            set => SetValue(CorrectnessProperty, value);
+            get => GetValue<Correctness>(OverallCorrectnessProperty);
+            set => SetValue(OverallCorrectnessProperty, value);
         }
 
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness), Correctness.Unknown);
+        public static readonly PropertyData OverallCorrectnessProperty = RegisterProperty(nameof(OverallCorrectness), typeof(Correctness), Correctness.Unknown);
 
         /// <summary>Signifies the Correctness Tag was set by an analysis routine.</summary>
         public bool IsCorrectnessAutomaticallySet
@@ -78,8 +69,17 @@ namespace CLP.Entities
 
         public override string FormattedName => "Overall Correctness";
 
-        public override string FormattedValue =>
-            $"{Correctness}, {(IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set Automatically" : string.Empty)}";
+        public override string FormattedValue
+        {
+            get
+            {
+                var overallCorrectness =
+                    $"{OverallCorrectness}, {(IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set by Analysis" : string.Empty)}";
+                var analysisCodes = string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
+                var codedSection = QueryCodes.Any() ? $"\nCodes:\n{analysisCodes}" : string.Empty;
+                return $"Combined Correctness of Final Representations and Final Answer:\n\t{overallCorrectness}{codedSection}";
+            }
+        }
 
         #endregion //ATagBase Overrides
 
@@ -102,26 +102,30 @@ namespace CLP.Entities
                               finalAnswerCorrectnessTag?.FinalAnswerCorrectness ?? Correctness.Unknown
                       };
 
-            //var correctnesses = new List<Correctness> {Final}
+            var correctness = Correctness.Unknown;
+            if (tag.FinalAnswerCorrectness == Correctness.Correct &&
+                (tag.FinalRepresentationCorrectness == Correctness.Correct || 
+                 tag.FinalRepresentationCorrectness == Correctness.Unanswered))
+            {
+                correctness = Correctness.Correct;
+            }
+            else if (tag.FinalAnswerCorrectness == Correctness.Incorrect &&
+                     (tag.FinalRepresentationCorrectness == Correctness.Incorrect ||
+                      tag.FinalRepresentationCorrectness == Correctness.Unanswered))
+            {
+                correctness = Correctness.Incorrect;
+            }
+            else if (tag.FinalAnswerCorrectness == Correctness.PartiallyCorrect ||
+                     tag.FinalRepresentationCorrectness == Correctness.PartiallyCorrect ||
+                     tag.FinalAnswerCorrectness == Correctness.Correct ||
+                     tag.FinalRepresentationCorrectness == Correctness.Correct)
+            {
+                correctness = Correctness.PartiallyCorrect;
+            }
 
-            //var correctness = Correctness.Unknown;
-            //if (tag.FinalAnswerCorrectness == Correctness.Correct &&
-            //    tag.FinalRepresentationCorrectness == Correctness.Correct)
-            //{
-            //    correctness = Correctness.Correct;
-            //}
-            //else if (finalAnswerCorrectness == Correctness.Incorrect &&
-            //         representationCorrectness == Correctness.Incorrect)
-            //{
-            //    correctness = Correctness.Incorrect;
-            //}
-            //else if (finalAnswerCorrectness == Correctness.PartiallyCorrect ||
-            //         representationCorrectness == Correctness.PartiallyCorrect ||
-            //         finalAnswerCorrectness == Correctness.Correct ||
-            //         representationCorrectness == Correctness.Correct)
-            //{
-            //    correctness = Correctness.PartiallyCorrect;
-            //}
+            tag.OverallCorrectness = correctness;
+
+            AnalysisCode.AddOverallCorrectness(tag, Codings.CorrectnessToCodedCorrectness(tag.OverallCorrectness));
 
             page.AddTag(tag);
         }

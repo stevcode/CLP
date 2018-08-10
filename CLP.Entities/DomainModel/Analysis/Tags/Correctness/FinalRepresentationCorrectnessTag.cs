@@ -52,11 +52,11 @@ namespace CLP.Entities
         {
             get
             {
-                var overallCorrectness = Codings.CorrectnessToFriendlyCorrectness(FinalRepresentationCorrectness);
+                var finalRepresentationCorrectness = Codings.CorrectnessToFriendlyCorrectness(FinalRepresentationCorrectness);
                 var representations = SpreadSheetCodes.Any() ? $"Representations:\n  - {string.Join("  - ", SpreadSheetCodes)}" : "No Representations";
                 var analysisCodes = string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
                 var codedSection = QueryCodes.Any() ? $"\nCodes:\n{analysisCodes}" : string.Empty;
-                return $"Correctness of Final Representations on Page: {overallCorrectness}\n{representations}{codedSection}";
+                return $"Correctness of Final Representations on Page: {finalRepresentationCorrectness}\n{representations}{codedSection}";
             }
         }
 

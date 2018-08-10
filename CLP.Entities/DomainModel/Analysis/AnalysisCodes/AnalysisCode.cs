@@ -141,6 +141,10 @@ namespace CLP.Entities
             finalRepresentationCorrectness.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
             conditions.Add(finalRepresentationCorrectness);
 
+            var overallCorrectness = new AnalysisCode(Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS);
+            overallCorrectness.AddConstraint(Codings.CONSTRAINT_OVERALL_CORRECTNESS);
+            conditions.Add(overallCorrectness);
+
             var mr = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP);
             mr.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS);
             conditions.Add(mr);

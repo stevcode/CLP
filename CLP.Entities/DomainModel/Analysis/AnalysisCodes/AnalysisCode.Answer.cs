@@ -23,11 +23,18 @@
             tag.QueryCodes.Add(analysisCode);
         }
 
-        public static void AddFinalRepresentationCorrectness(IAnalysis tag,
-                                                             string codedCorrectness)
+        public static void AddFinalRepresentationCorrectness(IAnalysis tag, string codedCorrectness)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, codedCorrectness);
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
+        public static void AddOverallCorrectness(IAnalysis tag, string codedCorrectness)
+        {
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_OVERALL_CORRECTNESS, codedCorrectness);
 
             tag.QueryCodes.Add(analysisCode);
         }

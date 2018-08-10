@@ -243,7 +243,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 var correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessSummaryTag) as CorrectnessSummaryTag;
-                return correctnessTag == null ? Correctness.Unknown : correctnessTag.Correctness;
+                return correctnessTag == null ? Correctness.Unknown : correctnessTag.OverallCorrectness;
             }
             set
             {
