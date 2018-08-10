@@ -98,6 +98,9 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.NOT_APPLICABLE);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_GAPS_OR_OVERLAPS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_SWAPPED);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
                     break;
                 case Codings.CONSTRAINT_REPRESENTATION_FIRST:

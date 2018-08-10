@@ -36,7 +36,8 @@ namespace CLP.Entities
             analysisCode.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS, historyStatus);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, Codings.CorrectnessToCodedCorrectness(usedRepresentation.Correctness));
 
-            if (usedRepresentation.Correctness == Correctness.Correct)
+            if (usedRepresentation.Correctness == Correctness.Correct ||
+                usedRepresentation.Correctness == Correctness.Unknown)
             {
                 analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
             }
@@ -52,7 +53,26 @@ namespace CLP.Entities
                 }
                 else
                 {
-                    analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
+                    switch (usedRepresentation.CodedObject)
+                    {
+                        case Codings.OBJECT_ARRAY:
+                            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
+                                                       Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS);
+                            break;
+                        case Codings.OBJECT_NUMBER_LINE:
+                            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
+                                                       Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS);
+                            break;
+                        case Codings.OBJECT_STAMP:
+                        case Codings.OBJECT_STAMPED_OBJECT:
+                        case Codings.OBJECT_BINS:
+                            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
+                                                       Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
+                            break;
+                        default:
+                            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
+                            break;
+                    }
                 }
             }
 
