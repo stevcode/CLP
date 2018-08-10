@@ -131,11 +131,15 @@ namespace CLP.Entities
             caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_TO);
             conditions.Add(caar);
 
-            var finalAnswer = new AnalysisCode(Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS);
-            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_OBJECT);
-            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
-            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_MODIFICATION);
-            conditions.Add(finalAnswer);
+            var finalAnswerCorrectness = new AnalysisCode(Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS);
+            finalAnswerCorrectness.AddConstraint(Codings.CONSTRAINT_ANSWER_OBJECT);
+            finalAnswerCorrectness.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
+            finalAnswerCorrectness.AddConstraint(Codings.CONSTRAINT_ANSWER_MODIFICATION);
+            conditions.Add(finalAnswerCorrectness);
+
+            var finalRepresentationCorrectness = new AnalysisCode(Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS);
+            finalRepresentationCorrectness.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
+            conditions.Add(finalRepresentationCorrectness);
 
             var mr = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP);
             mr.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS);

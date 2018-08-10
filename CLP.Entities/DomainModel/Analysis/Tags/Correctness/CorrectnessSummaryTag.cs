@@ -96,7 +96,7 @@ namespace CLP.Entities
             var tag = new CorrectnessSummaryTag(page, Origin.StudentPageGenerated, true)
                       {
                           FinalRepresentationCorrectness =
-                              finalRepresentationCorrectnessTag?.RepresentationCorrectness ??
+                              finalRepresentationCorrectnessTag?.FinalRepresentationCorrectness ??
                               Correctness.Unknown,
                           FinalAnswerCorrectness =
                               finalAnswerCorrectnessTag?.FinalAnswerCorrectness ?? Correctness.Unknown

@@ -30,13 +30,13 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>Overall correctness of the final Representations on the page.</summary>
-        public Correctness RepresentationCorrectness
+        public Correctness FinalRepresentationCorrectness
         {
-            get => GetValue<Correctness>(RepresentationCorrectnessProperty);
-            set => SetValue(RepresentationCorrectnessProperty, value);
+            get => GetValue<Correctness>(FinalRepresentationCorrectnessProperty);
+            set => SetValue(FinalRepresentationCorrectnessProperty, value);
         }
 
-        public static readonly PropertyData RepresentationCorrectnessProperty = RegisterProperty(nameof(RepresentationCorrectness), typeof(Correctness), Correctness.Unknown);
+        public static readonly PropertyData FinalRepresentationCorrectnessProperty = RegisterProperty(nameof(FinalRepresentationCorrectness), typeof(Correctness), Correctness.Unanswered);
 
         #endregion // Properties
         
@@ -52,10 +52,11 @@ namespace CLP.Entities
         {
             get
             {
-                var overallCorrectness = Codings.CorrectnessToFriendlyCorrectness(RepresentationCorrectness);
-                var analysisCodes = string.Join("  - ", SpreadSheetCodes);
-                var representations = SpreadSheetCodes.Any() ? $"Representations:\n  - {analysisCodes}" : "No Representations";
-                return $"Overall Correctness: {overallCorrectness}\n{representations}";
+                var overallCorrectness = Codings.CorrectnessToFriendlyCorrectness(FinalRepresentationCorrectness);
+                var representations = SpreadSheetCodes.Any() ? $"Representations:\n  - {string.Join("  - ", SpreadSheetCodes)}" : "No Representations";
+                var analysisCodes = string.Join("\n", QueryCodes.Select(c => c.FormattedValue));
+                var codedSection = QueryCodes.Any() ? $"\nCodes:\n{analysisCodes}" : string.Empty;
+                return $"Correctness of Final Representations on Page: {overallCorrectness}\n{representations}{codedSection}";
             }
         }
 
@@ -77,22 +78,26 @@ namespace CLP.Entities
             if (finalRepresentations.Any() &&
                 finalRepresentations.All(r => r.Correctness == Correctness.Correct))
             {
-                tag.RepresentationCorrectness = Correctness.Correct;
+                tag.FinalRepresentationCorrectness = Correctness.Correct;
             }
             else if (finalRepresentations.Any() &&
                      finalRepresentations.All(r => r.Correctness == Correctness.Incorrect))
             {
-                tag.RepresentationCorrectness = Correctness.Incorrect;
+                tag.FinalRepresentationCorrectness = Correctness.Incorrect;
             }
             else if (finalRepresentations.Any(r => r.Correctness == Correctness.PartiallyCorrect) ||
                      finalRepresentations.Any(r => r.Correctness == Correctness.Correct))
             {
-                tag.RepresentationCorrectness = Correctness.PartiallyCorrect;
+                tag.FinalRepresentationCorrectness = Correctness.PartiallyCorrect;
             }
 
             tag.SpreadSheetCodes = finalRepresentations
-                                .Select(r => $"{r.CodedObject} [{r.CodedID}] {r.RepresentationInformation}, {Codings.CorrectnessToCodedCorrectness(tag.RepresentationCorrectness)}")
+                                .Select(r => $"{r.CodedObject} [{r.CodedID}] {r.RepresentationInformation}, {Codings.CorrectnessToCodedCorrectness(tag.FinalRepresentationCorrectness)}")
                                 .ToList();
+
+            AnalysisCode.AddFinalRepresentationCorrectness(tag, Codings.CorrectnessToCodedCorrectness(tag.FinalRepresentationCorrectness));
+
+            page.AddTag(tag);
 
             return tag;
         }
