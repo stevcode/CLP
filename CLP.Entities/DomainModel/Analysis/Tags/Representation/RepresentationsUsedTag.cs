@@ -1061,10 +1061,10 @@ namespace CLP.Entities
 
                     var firstSkipEventIndex = skipEventGrouping.First().SemanticEventIndex;
                     var lastSkipEventIndex = skipEventGrouping.Last().SemanticEventIndex;
-                    var isSkipPlusArith = IsSkipPlusArith(arrayID, semanticEvents, firstSkipEventIndex, lastSkipEventIndex);
+                    var skipPlusArithCount = SkipPlusArithCount(arrayID, semanticEvents, firstSkipEventIndex, lastSkipEventIndex);
 
                     var bestSideSkipEvent = bestChoice.SemanticEvent as ISemanticEvent;
-                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent, isSkipPlusArith);
+                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent, skipPlusArithCount);
                     if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
                     {
                         usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
@@ -1110,7 +1110,7 @@ namespace CLP.Entities
             }
         }
 
-        private static bool IsSkipPlusArith(string currentArrayID, List<ISemanticEvent> semanticEvents, int firstSkipEventIndex, int lastSkipEventIndex)
+        private static int SkipPlusArithCount(string currentArrayID, List<ISemanticEvent> semanticEvents, int firstSkipEventIndex, int lastSkipEventIndex)
         {
             var skipArithCount = 0;
             var patternStartPoints = new Dictionary<string, string>();
@@ -1154,10 +1154,10 @@ namespace CLP.Entities
                 }
             }
 
-            return skipArithCount > 0;
+            return skipArithCount;
         }
 
-        private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, bool isSkipPlusArith)
+        private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, int skipPlusArithCount)
         {
             if (array == null)
             {
@@ -1182,7 +1182,8 @@ namespace CLP.Entities
             
             var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, rows, columns);
 
-            var plusArithText = isSkipPlusArith ? "+arith" : string.Empty;
+            var isSkipPlusArith = skipPlusArithCount > 0;
+            var plusArithText = isSkipPlusArith ? $"+arith ({skipPlusArithCount})" : string.Empty;
             var skipCodedValue = $"skip{plusArithText} [{formattedSkips}]\n\t{heuristicsResults}";
             return skipCodedValue;
         }
