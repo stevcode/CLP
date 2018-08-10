@@ -4,7 +4,7 @@
     {
         public static void AddFinalAnswerCorrectness(IAnalysis tag, string answerObject, string correctAnswer, string studentAnswer, string codedCorrectness, bool isAnswerManuallyModified)
         {
-            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS);
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS);
             
             if (answerObject == "Final Answer Fill In")
             {
