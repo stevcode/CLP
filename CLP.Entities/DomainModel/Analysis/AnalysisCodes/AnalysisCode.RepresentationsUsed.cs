@@ -125,6 +125,24 @@ namespace CLP.Entities
             tag.QueryCodes.Add(analysisCode);
         }
 
+        public static void AddArrayEquation(IAnalysis tag, UsedRepresentation usedRepresentation)
+        {
+            var arrayEquationInformation = usedRepresentation.AdditionalInformation.FirstOrDefault(i => i.StartsWith("eqn"));
+            if (arrayEquationInformation == null)
+            {
+                return;
+            }
+            
+            var codedID = usedRepresentation.CodedID;
+            var interpretationOnPage = arrayEquationInformation.Substring(4);
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_ARRAY_EQUATION);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CODED_ID, codedID);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_INTERPRETATION, interpretationOnPage);
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
         public static void AddArraySkipStrategies(IAnalysis tag, UsedRepresentation usedRepresentation)
         {
             foreach (var additionalInfo in usedRepresentation.AdditionalInformation.Where(i => i.Contains("skip")))

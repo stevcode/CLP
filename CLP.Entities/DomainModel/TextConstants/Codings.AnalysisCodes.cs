@@ -28,6 +28,8 @@ namespace CLP.Entities
 
         public const string ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES = "NUMBER LINE JUMP ERASURES";
 
+        public const string ANALYSIS_LABEL_ARRAY_EQUATION = "ARRAY EQUATION";
+
         #endregion // Analysis Labels
 
         #region Analysis Short Names
@@ -52,6 +54,8 @@ namespace CLP.Entities
         public const string ANALYSIS_SHORT_NAME_PAGE_DEFINITION = "ANSWER_DEF";
 
         public const string ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES = "NLJE";
+
+        public const string ANALYSIS_SHORT_NAME_ARRAY_EQUATION = "ARR_EQN";
 
         #endregion // Analysis Short Names
 
@@ -96,6 +100,8 @@ namespace CLP.Entities
         public const string CONSTRAINT_COUNT = "COUNT";
 
         public const string CONSTRAINT_OVERALL_CORRECTNESS = "OVERALL_CORRECTNESS";
+
+        public const string CONSTRAINT_INTERPRETATION = "INTERPRETATION";
 
         #endregion // Analysis Constraint Labels
 
@@ -253,6 +259,8 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_PAGE_DEFINITION;
                 case ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES:
                     return ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES;
+                case ANALYSIS_LABEL_ARRAY_EQUATION:
+                    return ANALYSIS_SHORT_NAME_ARRAY_EQUATION;
             }
 
             return "No matching Short Name";
@@ -294,6 +302,8 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_PAGE_DEFINITION;
                 case ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES:
                     return ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES;
+                case ANALYSIS_SHORT_NAME_ARRAY_EQUATION:
+                    return ANALYSIS_LABEL_ARRAY_EQUATION;
             }
 
             return "No matching Label";
@@ -319,7 +329,8 @@ namespace CLP.Entities
                            ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT,
                            ANALYSIS_LABEL_WORD_PROBLEM,
                            ANALYSIS_LABEL_PAGE_DEFINITION,
-                           ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES
+                           ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES,
+                           ANALYSIS_LABEL_ARRAY_EQUATION
                        };
 
             return list;

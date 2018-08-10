@@ -60,6 +60,7 @@ namespace CLP.Entities
                      constraintLabel == Codings.CONSTRAINT_ANSWER_STUDENT_ANSWER ||
                      constraintLabel == Codings.CONSTRAINT_REPRESENTATION_CODED_ID ||
                      constraintLabel == Codings.CONSTRAINT_COUNT ||
+                     constraintLabel == Codings.CONSTRAINT_INTERPRETATION ||
                      constraintLabel == Codings.CONSTRAINT_ANSWER_CHANGE_FROM_INTERPRETATION ||
                      constraintLabel == Codings.CONSTRAINT_ANSWER_CHANGE_TO_INTERPRETATION);
         }

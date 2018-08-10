@@ -308,6 +308,7 @@ namespace CLP.Entities
                     AnalysisCode.AddRepresentationUsed(tag, usedRepresentation);
                     if (usedRepresentation.CodedObject == Codings.OBJECT_ARRAY)
                     {
+                        AnalysisCode.AddArrayEquation(tag, usedRepresentation);
                         AnalysisCode.AddArraySkipStrategies(tag, usedRepresentation);
                         AnalysisCode.AddArrayPartialProductStrategies(tag, usedRepresentation);
                     }
@@ -1079,6 +1080,19 @@ namespace CLP.Entities
                 if (!string.IsNullOrWhiteSpace(bottomSkipCodedValue))
                 {
                     usedRepresentation.AdditionalInformation.Add(bottomSkipCodedValue);
+                }
+
+                var arrayEquationEvent = semanticEvents.LastOrDefault(e => e.ReferencePageObjectID == arrayID &&
+                                                                            e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex &&
+                                                                            e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                                            e.EventType == Codings.EVENT_ARRAY_EQN);
+
+                if (arrayEquationEvent != null)
+                {
+                    var parts = arrayEquationEvent.EventInformation.Split(";");
+                    var interpretationOnPage = parts.Length == 1 ? parts[0] : parts[1].Trim();
+                    
+                    usedRepresentation.AdditionalInformation.Add($"eqn {interpretationOnPage}");
                 }
 
                 #endregion // Basic Representation Info
