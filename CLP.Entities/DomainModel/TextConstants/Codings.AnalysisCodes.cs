@@ -24,6 +24,8 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_WORD_PROBLEM = "WORD PROBLEM";
         public const string ANALYSIS_LABEL_PAGE_DEFINITION = "ANSWER DEFINITION";
 
+        public const string ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES = "NUMBER LINE JUMP ERASURES";
+
         #endregion // Analysis Labels
 
         #region Analysis Short Names
@@ -44,6 +46,8 @@ namespace CLP.Entities
 
         public const string ANALYSIS_SHORT_NAME_WORD_PROBLEM = "WORD_PROBLEM";
         public const string ANALYSIS_SHORT_NAME_PAGE_DEFINITION = "ANSWER_DEF";
+
+        public const string ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES = "NLJE";
 
         #endregion // Analysis Short Names
 
@@ -82,6 +86,8 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_IS_WORD_PROBLEM = "IS_WORD_PROBLEM";
         public const string CONSTRAINT_PROBLEM_TYPE = "PROBLEM_TYPE";
+
+        public const string CONSTRAINT_COUNT = "COUNT";
 
         #endregion // Analysis Constraint Labels
 
@@ -230,6 +236,8 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_WORD_PROBLEM;
                 case ANALYSIS_LABEL_PAGE_DEFINITION:
                     return ANALYSIS_SHORT_NAME_PAGE_DEFINITION;
+                case ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES:
+                    return ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES;
             }
 
             return "No matching Short Name";
@@ -265,6 +273,8 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_WORD_PROBLEM;
                 case ANALYSIS_SHORT_NAME_PAGE_DEFINITION:
                     return ANALYSIS_LABEL_PAGE_DEFINITION;
+                case ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES:
+                    return ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES;
             }
 
             return "No matching Label";
@@ -287,7 +297,8 @@ namespace CLP.Entities
                            ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP,
                            ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT,
                            ANALYSIS_LABEL_WORD_PROBLEM,
-                           ANALYSIS_LABEL_PAGE_DEFINITION
+                           ANALYSIS_LABEL_PAGE_DEFINITION,
+                           ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES
                        };
 
             return list;
@@ -357,6 +368,9 @@ namespace CLP.Entities
                     return "Value";
                 case CONSTRAINT_PROBLEM_TYPE:
                     return "Problem Type";
+
+                case CONSTRAINT_COUNT:
+                    return "Count";
             }
 
             return "No matching Alias";

@@ -58,7 +58,8 @@ namespace CLP.Entities
         {
             return !(constraintLabel == Codings.CONSTRAINT_ANSWER_CORRECT_ANSWER ||
                      constraintLabel == Codings.CONSTRAINT_ANSWER_STUDENT_ANSWER ||
-                     constraintLabel == Codings.CONSTRAINT_REPRESENTATION_CODED_ID);
+                     constraintLabel == Codings.CONSTRAINT_REPRESENTATION_CODED_ID ||
+                     constraintLabel == Codings.CONSTRAINT_COUNT);
         }
 
         private bool GenerateIsOverridingDisplayName(string constraintLabel)

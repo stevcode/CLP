@@ -91,6 +91,20 @@ namespace CLP.Entities
             }
         }
 
+        public static void AddNLJE(RepresentationsUsedTag tag)
+        {
+            var nljeCount = tag.RepresentationsUsed.Count(usedRep => usedRep.AnalysisCodes.Contains(Codings.NUMBER_LINE_NLJE));
+            if (nljeCount <= 0)
+            {
+                return;
+            }
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_COUNT, nljeCount.ToString());
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
         public static void AddArraySkipStrategies(IAnalysis tag, UsedRepresentation usedRepresentation)
         {
             foreach (var additionalInfo in usedRepresentation.AdditionalInformation.Where(i => i.Contains("skip")))

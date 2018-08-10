@@ -165,6 +165,9 @@ namespace CLP.Entities
             pageDef.AddConstraint(Codings.CONSTRAINT_PROBLEM_TYPE);
             conditions.Add(pageDef);
 
+            var nlje = new AnalysisCode(Codings.ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES);
+            conditions.Add(nlje);
+
             return conditions;
         }
 
