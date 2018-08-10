@@ -234,7 +234,6 @@
     <Compile Include="DomainModel\Analysis\Tags\Strategy\CodedRepresentationStrategy.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Strategy\NumberLineStrategyTag.cs" />
     <Compile Include="DomainModel\TextConstants\Codings.SemanticEvents.cs" />
-    <Compile Include="DomainModel\TextConstants\Codings.Tags.cs" />
     <Compile Include="DomainModel\Utility\EditDistance.cs" />
     <Compile Include="DomainModel\Utility\Extentions\DirectoryInfoExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\ColorExtensions.cs" />

@@ -74,9 +74,9 @@ namespace CLP.Entities
 
         public override bool IsSingleValueTag => true;
 
-        public override Category Category => TagCategory;
+        public override Category Category => Category.Correctness;
 
-        public override string FormattedName => TagName;
+        public override string FormattedName => "Overall Correctness";
 
         public override string FormattedValue =>
             $"{Correctness}, {(IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set Automatically" : string.Empty)}";
@@ -127,40 +127,5 @@ namespace CLP.Entities
         }
 
         #endregion // Static Methods
-
-        #region Documentation Generation
-
-        public static string TagName => Codings.TAG_NAME_CORRECTNESS_SUMMARY;
-
-        public static Category TagCategory => Category.Correctness;
-
-        public static List<string> PropertyNames => new List<string>();
-
-        public static Dictionary<string, List<string>> PropertiesAndPossibleValues => new Dictionary<string, List<string>>();
-
-        public static void PopulatePropertyNames()
-        {
-            #region Base
-
-            PropertyNames.Add(Codings.TAG_PROPERTY_NAME_BASE_CATEGORY);
-            PropertiesAndPossibleValues.Add(Codings.TAG_PROPERTY_NAME_BASE_CATEGORY, new List<string>());
-            PropertiesAndPossibleValues[Codings.TAG_PROPERTY_NAME_BASE_CATEGORY].Add(TagCategory.ToDescription());
-
-            #endregion // Base
-        }
-
-        public static string GenerateTagDocumentation()
-        {
-            var properties = string.Empty;
-            foreach (var propertyName in PropertyNames)
-            {
-                var values = string.Join("\n*\t - ", PropertiesAndPossibleValues[propertyName]);
-                properties += $"\n* {propertyName}\n" + $"*\t - {values}\n";
-            }
-
-            return $"*****\n" + $"* Tag Name: {TagName}\n\n" + $"* Properties:\n" + $"{properties}" + $"*****\n\n";
-        }
-
-        #endregion // Documentation Generation
     }
 }
