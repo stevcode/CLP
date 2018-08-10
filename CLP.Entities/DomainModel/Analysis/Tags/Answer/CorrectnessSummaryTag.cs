@@ -132,7 +132,7 @@ namespace CLP.Entities
 
         public static string TagName => Codings.TAG_NAME_CORRECTNESS_SUMMARY;
 
-        public static Category TagCategory => Category.Answer;
+        public static Category TagCategory => Category.Correctness;
 
         public static List<string> PropertyNames => new List<string>();
 

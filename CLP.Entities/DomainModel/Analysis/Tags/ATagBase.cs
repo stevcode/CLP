@@ -29,7 +29,7 @@ namespace CLP.Entities
         [Description("Other Page Information")]
         OtherPageInformation,
         Representation,
-        Answer,
+        Correctness,
         [Description("Meta Data")] MetaData
     }
 

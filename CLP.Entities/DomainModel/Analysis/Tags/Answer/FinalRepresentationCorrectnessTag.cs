@@ -44,7 +44,7 @@ namespace CLP.Entities
 
         public override bool IsSingleValueTag => true;
 
-        public override Category Category => Category.Answer;
+        public override Category Category => Category.Correctness;
 
         public override string FormattedName => "Final Representation Correctness";
 

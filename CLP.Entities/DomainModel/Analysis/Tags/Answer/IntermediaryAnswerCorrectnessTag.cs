@@ -56,7 +56,7 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category => Category.Answer;
+        public override Category Category => Category.Correctness;
 
         public override string FormattedName => "Intermediary Answer Correctness";
 
