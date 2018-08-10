@@ -112,7 +112,7 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH = "NO_ARITH";
         public const string CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH = "PLUS_ARITH";
 
-        public const string CONSTRAINT_VALUE_LOCATION_SIDE = "SIDE";
+        public const string CONSTRAINT_VALUE_LOCATION_RIGHT = "RIGHT";
         public const string CONSTRAINT_VALUE_LOCATION_BOTTOM = "BOTTOM";
 
         public const string CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_GAPS_OR_OVERLAPS = "GAPS_OR_OVERLAPS";

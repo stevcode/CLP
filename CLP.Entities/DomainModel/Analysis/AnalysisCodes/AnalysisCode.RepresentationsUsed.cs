@@ -95,7 +95,7 @@ namespace CLP.Entities
         {
             foreach (var additionalInfo in usedRepresentation.AdditionalInformation.Where(i => i.Contains("skip")))
             {
-                var location = additionalInfo.Contains("bottom") ? Codings.CONSTRAINT_VALUE_LOCATION_BOTTOM : Codings.CONSTRAINT_VALUE_LOCATION_SIDE;
+                var location = additionalInfo.Contains("bottom") ? Codings.CONSTRAINT_VALUE_LOCATION_BOTTOM : Codings.CONSTRAINT_VALUE_LOCATION_RIGHT;
 
                 var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP);
 

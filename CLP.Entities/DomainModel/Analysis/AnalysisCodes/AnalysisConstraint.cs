@@ -157,7 +157,7 @@ namespace CLP.Entities
                     break;
 
                 case Codings.CONSTRAINT_LOCATION:
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_LOCATION_SIDE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_LOCATION_RIGHT);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_LOCATION_BOTTOM);
                     break;
 
