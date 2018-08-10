@@ -988,7 +988,7 @@ namespace CLP.Entities
             CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);
             IntermediaryAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             
-            ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
+            //ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
 
             NumberLineStrategyTag.IdentifyNumberLineStrategies(page, semanticEvents);
         }
