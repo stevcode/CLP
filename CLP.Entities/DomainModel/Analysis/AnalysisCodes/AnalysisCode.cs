@@ -154,6 +154,11 @@ namespace CLP.Entities
             mr2step.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS);
             conditions.Add(mr2step);
 
+            var ma = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_APPROACHES);
+            ma.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_MATCHED_STEP);
+            ma.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME);
+            conditions.Add(ma);
+
             var arrEQN = new AnalysisCode(Codings.ANALYSIS_LABEL_ARRAY_EQUATION);
             conditions.Add(arrEQN);
 

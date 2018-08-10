@@ -158,6 +158,52 @@ namespace CLP.Entities
             }
         }
 
+        public static void AddMultipleApproaches(RepresentationsUsedTag tag)
+        {
+            var sideGroups = tag.RepresentationsUsed.Where(r => !r.AdditionalInformation.Any(i => i.Contains("Deleted by Snap"))).GroupBy(r => r.MatchedRelationSide).ToList();
+            foreach (var sideGroup in sideGroups)
+            {
+                var side = sideGroup.Key;
+                string codedSide;
+                switch (side)
+                {
+                    case Codings.MATCHED_RELATION_LEFT:
+                        codedSide = Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_1;
+                        break;
+                    case Codings.MATCHED_RELATION_RIGHT:
+                        codedSide = Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_2;
+                        break;
+                    case Codings.MATCHED_RELATION_ALTERNATIVE:
+                        codedSide = Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_ALT;
+                        break;
+                    case Codings.MATCHED_RELATION_NONE:
+                        codedSide = Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_NONE;
+                        break;
+                    default:
+                        codedSide = Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_NONE;
+                        break;
+                }
+
+                var typeGroups = sideGroup.GroupBy(r => r.CodedObject).ToList();
+                foreach (var typeGroup in typeGroups)
+                {
+                    if (typeGroup.Count() <= 1)
+                    {
+                        continue;
+                    }
+
+                    var type = typeGroup.Key;
+
+                    var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_APPROACHES);
+                    analysisCode.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_MATCHED_STEP, codedSide);
+                    analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME, type);
+                    analysisCode.AddConstraint(Codings.CONSTRAINT_COUNT, typeGroup.Count().ToString());
+
+                    tag.QueryCodes.Add(analysisCode);
+                }
+            }
+        }
+
         public static void AddNLJE(RepresentationsUsedTag tag)
         {
             var nljeCount = tag.RepresentationsUsed.Count(usedRep => usedRep.AnalysisCodes.Contains(Codings.NUMBER_LINE_NLJE));

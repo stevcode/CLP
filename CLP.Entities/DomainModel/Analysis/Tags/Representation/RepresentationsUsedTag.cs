@@ -322,6 +322,7 @@ namespace CLP.Entities
             }
 
             AnalysisCode.AddMultipleRepresentations1Step(tag);
+            AnalysisCode.AddMultipleApproaches(tag);
             AnalysisCode.AddNLJE(tag);
 
             page.AddTag(tag);

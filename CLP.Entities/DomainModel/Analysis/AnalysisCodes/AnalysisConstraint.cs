@@ -83,6 +83,15 @@ namespace CLP.Entities
             // TODO: Expand
             switch (constraintLabel)
             {
+                case Codings.CONSTRAINT_REPRESENTATION_NAME:
+                    possibleConstraintValues.AddRange(new List<string>
+                                                      {
+                                                          Codings.OBJECT_ARRAY,
+                                                          Codings.OBJECT_NUMBER_LINE,
+                                                          Codings.OBJECT_STAMP,
+                                                          Codings.OBJECT_BINS
+                                                      });
+                    break;
                 case Codings.CONSTRAINT_REPRESENTATION_NAME_LAX:
                     possibleConstraintValues.AddRange(new List<string>
                                                       {
