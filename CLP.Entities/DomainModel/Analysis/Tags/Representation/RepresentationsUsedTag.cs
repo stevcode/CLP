@@ -321,12 +321,7 @@ namespace CLP.Entities
                 AnalysisCode.AddMultipleRepresentations2Step(tag);
             }
 
-            var isMR = IsMR(tag);
-            if (isMR)
-            {
-                AnalysisCode.AddMultipleRepresentations1Step(tag);
-            }
-
+            AnalysisCode.AddMultipleRepresentations1Step(tag);
             AnalysisCode.AddNLJE(tag);
 
             page.AddTag(tag);
@@ -1992,23 +1987,6 @@ namespace CLP.Entities
             {
                 usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
             }
-        }
-
-        public static bool IsMR(RepresentationsUsedTag tag)
-        {
-            var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).Select(r => r.CodedObject).Distinct().ToList();
-            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT)
-                                              .Select(r => r.CodedObject)
-                                              .Distinct()
-                                              .ToList();
-            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE)
-                                                    .Select(r => r.CodedObject)
-                                                    .Distinct()
-                                                    .ToList();
-            var unmatchedRepresentations =
-                tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE).Select(r => r.CodedObject).Distinct().ToList();
-
-            return leftSideRepresentations.Count > 1 || rightSideRepresentations.Count > 1 || alternativeSideRepresentations.Count > 1 || unmatchedRepresentations.Count > 1;
         }
 
         #endregion // Static Methods

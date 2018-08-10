@@ -61,6 +61,7 @@ namespace CLP.Entities
                      constraintLabel == Codings.CONSTRAINT_REPRESENTATION_CODED_ID ||
                      constraintLabel == Codings.CONSTRAINT_COUNT ||
                      constraintLabel == Codings.CONSTRAINT_INTERPRETATION ||
+                     constraintLabel == Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_TYPES ||
                      constraintLabel == Codings.CONSTRAINT_ANSWER_CHANGE_FROM_INTERPRETATION ||
                      constraintLabel == Codings.CONSTRAINT_ANSWER_CHANGE_TO_INTERPRETATION);
         }
@@ -125,6 +126,12 @@ namespace CLP.Entities
                                                       });
                     break;
 
+                case Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_MATCHED_STEP:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_1);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_2);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_ALT);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_NONE);
+                    break;
                 case Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS:
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
