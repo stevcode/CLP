@@ -653,6 +653,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Shortcuts
 
+        public static bool IsForcingVersionZeroAsSubmission = true;
         public void AppendSubmissionsForPage(CLPPage page)
         {
             if (_dataService.CurrentNotebook.Owner.IsStudent)
@@ -671,7 +672,17 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
-                    AppendCollectionOfPagesToStage(studentPage.Submissions);
+                    if (IsForcingVersionZeroAsSubmission)
+                    {
+                        var pages = new ObservableCollection<CLPPage>();
+                        pages.Add(studentPage);
+
+                        AppendCollectionOfPagesToStage(pages);
+                    }
+                    else
+                    {
+                        AppendCollectionOfPagesToStage(studentPage.Submissions);
+                    }
                 }
             }
 

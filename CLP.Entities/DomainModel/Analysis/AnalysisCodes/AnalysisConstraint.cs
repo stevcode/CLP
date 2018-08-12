@@ -58,7 +58,12 @@ namespace CLP.Entities
         {
             return !(constraintLabel == Codings.CONSTRAINT_ANSWER_CORRECT_ANSWER ||
                      constraintLabel == Codings.CONSTRAINT_ANSWER_STUDENT_ANSWER ||
-                     constraintLabel == Codings.CONSTRAINT_REPRESENTATION_CODED_ID);
+                     constraintLabel == Codings.CONSTRAINT_REPRESENTATION_CODED_ID ||
+                     constraintLabel == Codings.CONSTRAINT_COUNT ||
+                     constraintLabel == Codings.CONSTRAINT_INTERPRETATION ||
+                     constraintLabel == Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_TYPES ||
+                     constraintLabel == Codings.CONSTRAINT_ANSWER_CHANGE_FROM_INTERPRETATION ||
+                     constraintLabel == Codings.CONSTRAINT_ANSWER_CHANGE_TO_INTERPRETATION);
         }
 
         private bool GenerateIsOverridingDisplayName(string constraintLabel)
@@ -78,6 +83,15 @@ namespace CLP.Entities
             // TODO: Expand
             switch (constraintLabel)
             {
+                case Codings.CONSTRAINT_REPRESENTATION_NAME:
+                    possibleConstraintValues.AddRange(new List<string>
+                                                      {
+                                                          Codings.OBJECT_ARRAY,
+                                                          Codings.OBJECT_NUMBER_LINE,
+                                                          Codings.OBJECT_STAMP,
+                                                          Codings.OBJECT_BINS
+                                                      });
+                    break;
                 case Codings.CONSTRAINT_REPRESENTATION_NAME_LAX:
                     possibleConstraintValues.AddRange(new List<string>
                                                       {
@@ -97,6 +111,9 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.NOT_APPLICABLE);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_GAPS_OR_OVERLAPS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_SWAPPED);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
                     break;
                 case Codings.CONSTRAINT_REPRESENTATION_FIRST:
@@ -118,6 +135,12 @@ namespace CLP.Entities
                                                       });
                     break;
 
+                case Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_MATCHED_STEP:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_1);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_2);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_ALT);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_NONE);
+                    break;
                 case Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS:
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
@@ -136,6 +159,10 @@ namespace CLP.Entities
                 case Codings.CONSTRAINT_ANSWER_CORRECTNESS:
                     possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
                     break;
+                case Codings.CONSTRAINT_ANSWER_MODIFICATION:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
+                    break;
                 case Codings.CONSTRAINT_ANSWER_CHANGE_FROM:
                     possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
                     break;
@@ -153,7 +180,7 @@ namespace CLP.Entities
                     break;
 
                 case Codings.CONSTRAINT_LOCATION:
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_LOCATION_SIDE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_LOCATION_RIGHT);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_LOCATION_BOTTOM);
                     break;
 
@@ -191,6 +218,10 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_EQUIVALENCE);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_OTHER);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_NONE);
+                    break;
+
+                case Codings.CONSTRAINT_OVERALL_CORRECTNESS:
+                    possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
                     break;
             }
 

@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner
 {
     public partial class ConversionService
     {
-        public const bool IS_LARGE_CACHE = true;
+        public const bool IS_LARGE_CACHE = false;
         public const bool IS_ANONYMIZED_CACHE = true;
         public const bool IS_CONVERTING_SUBMISSIONS = true;
 
@@ -77,6 +77,16 @@ namespace Classroom_Learning_Partner
                     var page = ASerializableBase.FromXmlFile<CLPPage>(pageFilePath);
 
                     pages.Add(page);
+
+                    if (!PageNumberToIDMap.ContainsKey(page.PageNumber))
+                    {
+                        PageNumberToIDMap.Add(page.PageNumber, page.ID);
+                    }
+
+                    if (!PageIDToNumberMap.ContainsKey(page.ID))
+                    {
+                        PageIDToNumberMap.Add(page.ID, page.PageNumber);
+                    }
                 }
 
                 var submissionsFolderPath = Path.Combine(notebookFolderPath, "submissions");
@@ -107,23 +117,23 @@ namespace Classroom_Learning_Partner
 
             SaveImagesToZip(zipPath, imagesFolderPath);
 
-            //var classesDirInfo = new DirectoryInfo(classesFolderPath);
-            //var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
-            //var i = 1;
-            //foreach (var session in sessions)
-            //{
-            //    session.SessionTitle = $"Class {i}";
-            //    i++;
-            //}
+            var classesDirInfo = new DirectoryInfo(classesFolderPath);
+            var sessions = classesDirInfo.EnumerateFiles("period;*.xml").Select(file => file.FullName).Select(ConvertCacheAnnClassPeriod).OrderBy(s => s.StartTime).ToList();
+            var i = 1;
+            foreach (var session in sessions)
+            {
+                session.SessionTitle = $"Class {i}";
+                i++;
+            }
 
-            //SaveSessionsToZip(zipPath, sessions, authorNotebook);
+            SaveSessionsToZip(zipPath, sessions, authorNotebook);
 
             CLogger.AppendToLog($"Finished Conversion of Ann's Cache.");
 
-            //if (!IS_LARGE_CACHE && IS_ANONYMIZED_CACHE)
-            //{
-            //    AnonymizationFixesForAssessmentCache();
-            //}
+            if (!IS_LARGE_CACHE && IS_ANONYMIZED_CACHE)
+            {
+                AnonymizationFixesForAssessmentCache();
+            }
         }
 
         public static void AnonymizationFixesForAssessmentCache()
@@ -144,6 +154,7 @@ namespace Classroom_Learning_Partner
 
             foreach (var notebook in allNotebooks.Where(n => n.Owner.IsStudent))
             {
+                CLogger.AppendToLog($"Loading {notebook.Owner.DisplayName}'s notebook.");
                 DataService.LoadPagesIntoNotebook(notebook,
                                                   new List<int>
                                                   {
@@ -153,6 +164,7 @@ namespace Classroom_Learning_Partner
                 var page = notebook.Pages.First();
                 var submissions = new List<CLPPage>();
                 submissions.AddRange(page.Submissions);
+                CLogger.AppendToLog($"Removing {notebook.Owner.DisplayName}'s page 1 submissions.");
                 using (var zip = ZipFile.Read(AssessmentZipFilePath))
                 {
                     foreach (var submission in submissions)
@@ -163,6 +175,8 @@ namespace Classroom_Learning_Partner
                     zip.Save();
                 }
 
+                CLogger.AppendToLog($"Submissions removed.");
+
                 var replacementPage = authorPage.CopyForNewOwner(notebook.Owner);
                 var replacementEntries = new List<DataService.ZipEntrySaver>
                               {
@@ -170,11 +184,14 @@ namespace Classroom_Learning_Partner
                               };
 
                 DataService.SaveZipEntries(AssessmentZipFilePath, replacementEntries);
+                CLogger.AppendToLog($"New Page 1 saved.");
             }
 
             #endregion // Anonymize Page 1
 
             #region Specific fix for inked student name
+
+            CLogger.AppendToLog($"Starting Page 3 fix.");
 
             var specificStudentNotebook = allNotebooks.First(n => n.Owner.ID == "_3ll1DzkbU6LPZVShajTWg");
             specificStudentNotebook.Pages.Clear();
@@ -218,7 +235,7 @@ namespace Classroom_Learning_Partner
                 }
 
                 page.History.RefreshHistoryIndexes();
-                HistoryAnalysis.GenerateSemanticEvents(page);
+                //HistoryAnalysis.GenerateSemanticEvents(page);
                 //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
             }
 

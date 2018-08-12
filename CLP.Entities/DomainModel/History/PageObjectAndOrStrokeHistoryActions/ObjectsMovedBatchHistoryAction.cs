@@ -91,8 +91,8 @@ namespace CLP.Entities
             {
                 var pageObjectsMoved = PageObjectIDs.Keys.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
 
-                var objectsMoved = pageObjectsMoved.Any() ? $" Moved {string.Join(",", pageObjectsMoved.Select(p => p.FormattedName))}." : string.Empty;
-                var strokesMoved = StrokeIDs.Keys.Any() ? StrokeIDs.Keys.Count == 1 ? " Moved 1 stroke." : $" Moved {StrokeIDs.Keys.Count} strokes." : string.Empty;
+                var objectsMoved = pageObjectsMoved.Any() ? $"Moved {string.Join(",", pageObjectsMoved.Select(p => p.FormattedName))}. " : string.Empty;
+                var strokesMoved = StrokeIDs.Keys.Any() ? StrokeIDs.Keys.Count == 1 ? "Moved 1 stroke." : $"Moved {StrokeIDs.Keys.Count} strokes." : string.Empty;
 
                 return $"{objectsMoved}{strokesMoved}";
             }

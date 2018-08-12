@@ -308,6 +308,7 @@ namespace CLP.Entities
                     AnalysisCode.AddRepresentationUsed(tag, usedRepresentation);
                     if (usedRepresentation.CodedObject == Codings.OBJECT_ARRAY)
                     {
+                        AnalysisCode.AddArrayEquation(tag, usedRepresentation);
                         AnalysisCode.AddArraySkipStrategies(tag, usedRepresentation);
                         AnalysisCode.AddArrayPartialProductStrategies(tag, usedRepresentation);
                     }
@@ -320,11 +321,9 @@ namespace CLP.Entities
                 AnalysisCode.AddMultipleRepresentations2Step(tag);
             }
 
-            var isMR = IsMR(tag);
-            if (isMR)
-            {
-                AnalysisCode.AddMultipleRepresentations1Step(tag);
-            }
+            AnalysisCode.AddMultipleRepresentations1Step(tag);
+            AnalysisCode.AddMultipleApproaches(tag);
+            AnalysisCode.AddNLJE(tag);
 
             page.AddTag(tag);
             return tag;
@@ -1058,10 +1057,10 @@ namespace CLP.Entities
 
                     var firstSkipEventIndex = skipEventGrouping.First().SemanticEventIndex;
                     var lastSkipEventIndex = skipEventGrouping.Last().SemanticEventIndex;
-                    var isSkipPlusArith = IsSkipPlusArith(arrayID, semanticEvents, firstSkipEventIndex, lastSkipEventIndex);
+                    var skipPlusArithCount = SkipPlusArithCount(arrayID, semanticEvents, firstSkipEventIndex, lastSkipEventIndex);
 
                     var bestSideSkipEvent = bestChoice.SemanticEvent as ISemanticEvent;
-                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent, isSkipPlusArith);
+                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent, skipPlusArithCount);
                     if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
                     {
                         usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
@@ -1079,6 +1078,19 @@ namespace CLP.Entities
                     usedRepresentation.AdditionalInformation.Add(bottomSkipCodedValue);
                 }
 
+                var arrayEquationEvent = semanticEvents.LastOrDefault(e => e.ReferencePageObjectID == arrayID &&
+                                                                            e.SemanticEventIndex >= patternPoint.StartSemanticEventIndex &&
+                                                                            e.SemanticEventIndex <= patternPoint.EndSemanticEventIndex &&
+                                                                            e.EventType == Codings.EVENT_ARRAY_EQN);
+
+                if (arrayEquationEvent != null)
+                {
+                    var parts = arrayEquationEvent.EventInformation.Split(";");
+                    var interpretationOnPage = parts.Length == 1 ? parts[0] : parts[1].Trim();
+                    
+                    usedRepresentation.AdditionalInformation.Add($"eqn {interpretationOnPage}");
+                }
+
                 #endregion // Basic Representation Info
 
                 #region Representation Correctness
@@ -1094,7 +1106,7 @@ namespace CLP.Entities
             }
         }
 
-        private static bool IsSkipPlusArith(string currentArrayID, List<ISemanticEvent> semanticEvents, int firstSkipEventIndex, int lastSkipEventIndex)
+        private static int SkipPlusArithCount(string currentArrayID, List<ISemanticEvent> semanticEvents, int firstSkipEventIndex, int lastSkipEventIndex)
         {
             var skipArithCount = 0;
             var patternStartPoints = new Dictionary<string, string>();
@@ -1138,10 +1150,10 @@ namespace CLP.Entities
                 }
             }
 
-            return skipArithCount > 0;
+            return skipArithCount;
         }
 
-        private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, bool isSkipPlusArith)
+        private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, int skipPlusArithCount)
         {
             if (array == null)
             {
@@ -1166,7 +1178,8 @@ namespace CLP.Entities
             
             var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, rows, columns);
 
-            var plusArithText = isSkipPlusArith ? "+arith" : string.Empty;
+            var isSkipPlusArith = skipPlusArithCount > 0;
+            var plusArithText = isSkipPlusArith ? $"+arith ({skipPlusArithCount})" : string.Empty;
             var skipCodedValue = $"skip{plusArithText} [{formattedSkips}]\n\t{heuristicsResults}";
             return skipCodedValue;
         }
@@ -1975,23 +1988,6 @@ namespace CLP.Entities
             {
                 usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_SWAPPED;
             }
-        }
-
-        public static bool IsMR(RepresentationsUsedTag tag)
-        {
-            var leftSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_LEFT).Select(r => r.CodedObject).Distinct().ToList();
-            var rightSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_RIGHT)
-                                              .Select(r => r.CodedObject)
-                                              .Distinct()
-                                              .ToList();
-            var alternativeSideRepresentations = tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_ALTERNATIVE)
-                                                    .Select(r => r.CodedObject)
-                                                    .Distinct()
-                                                    .ToList();
-            var unmatchedRepresentations =
-                tag.RepresentationsUsed.Where(r => r.MatchedRelationSide == Codings.MATCHED_RELATION_NONE).Select(r => r.CodedObject).Distinct().ToList();
-
-            return leftSideRepresentations.Count > 1 || rightSideRepresentations.Count > 1 || alternativeSideRepresentations.Count > 1 || unmatchedRepresentations.Count > 1;
         }
 
         #endregion // Static Methods

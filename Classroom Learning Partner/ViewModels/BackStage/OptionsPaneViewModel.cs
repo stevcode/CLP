@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.Entities;
+using Ionic.Zip;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -53,6 +55,133 @@ namespace Classroom_Learning_Partner.ViewModels
             AnalyzeCurrentPageAndSubmissionsCommand = new Command(OnAnalyzeCurrentPageAndSubmissionsCommandExecute);
             RegenerateTagsCommand = new Command(OnRegenerateTagsCommandExecute);
             ForceWordProblemTagsCommand = new Command(OnForceWordProblemTagsCommandExecute);
+            ToggleSubmissionModeCommand = new Command(OnToggleSubmissionModeCommandExecute);
+            FindIllsCommand = new Command(OnFindIllsCommandExecute);
+            DeletePagesCommand = new Command(OnDeletePagesCommandExecute);
+        }
+
+        public Command DeletePagesCommand { get; private set; }
+
+        private void OnDeletePagesCommandExecute()
+        {
+            var pageNumbersToDelete = new List<int>
+                                      {
+                                          113,
+                                          114,
+                                          132,
+                                          133,
+                                          134,
+                                          135,
+                                          136,
+                                          137,
+                                          151,
+                                          172,
+                                          173,
+                                          174,
+                                          176,
+                                          177,
+                                          178,
+                                          179,
+                                          180,
+                                          181,
+                                          215,
+                                          225,
+                                          226,
+                                          227,
+                                          230,
+                                          231,
+                                          240,
+                                          241,
+                                          242,
+                                          243,
+                                          244,
+                                          245,
+                                          246,
+                                          247,
+                                          248,
+                                          249,
+                                          305,
+                                          368
+                                      };
+
+            var zipEntryFullPaths = new List<string>();
+            foreach (var notebook in _dataService.LoadedNotebooks)
+            {
+                var pagesToDelete = new List<CLPPage>();
+                foreach (var page in notebook.Pages)
+                {
+                    if (pageNumbersToDelete.Contains(page.PageNumber))
+                    {
+                        pagesToDelete.Add(page);
+                    }
+                }
+
+                foreach (var pageToDelete in pagesToDelete)
+                {
+                    notebook.Pages.Remove(pageToDelete);
+                    zipEntryFullPaths.Add(pageToDelete.GetZipEntryFullPath(notebook));
+                    foreach (var submission in pageToDelete.Submissions)
+                    {
+                        zipEntryFullPaths.Add(submission.GetZipEntryFullPath(notebook));
+                    }
+                }
+            }
+
+            var zipContainerFilePath = _dataService.LoadedNotebooks.First().ContainerZipFilePath;
+            using (var zip = ZipFile.Read(zipContainerFilePath))
+            {
+                foreach (var zipEntryFullPath in zipEntryFullPaths)
+                {
+                    zip.RemoveEntry(zipEntryFullPath);
+                }
+
+                zip.Save();
+            }
+
+            MessageBox.Show("Finished deleting pages.");
+        }
+
+        public Command ToggleSubmissionModeCommand { get; private set; }
+
+        private void OnToggleSubmissionModeCommandExecute()
+        {
+            StagingPanelViewModel.IsForcingVersionZeroAsSubmission = !StagingPanelViewModel.IsForcingVersionZeroAsSubmission;
+            var text = StagingPanelViewModel.IsForcingVersionZeroAsSubmission
+                           ? "Shown submissions will now display Version 0."
+                           : "Shown submissions will now be actual submissions.";
+
+            MessageBox.Show(text);
+        }
+
+        public Command FindIllsCommand { get; private set; }
+
+        private void OnFindIllsCommandExecute()
+        {
+            const string FOLDER_NAME = "CLP Reports";
+            var folderPath = Path.Combine(DataService.DesktopFolderPath, FOLDER_NAME);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"Pages with ILL in Semantic Events.{FILE_EXTENSION}";
+            var filePath = Path.Combine(folderPath, fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent))
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    if (page.History.SemanticEvents.Any(e => e.CodedValue.Contains("ILL")))
+                    {
+                        File.AppendAllText(filePath, $"{page.Owner.DisplayName}, Page {page.PageNumber}\n");
+                    }
+                }
+            }
         }
 
         /// <summary>Sets the DynamicMainColor of the program to a random color.</summary>
@@ -121,11 +250,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var page in notebook.Pages)
                 {
                     HistoryAnalysis.GenerateSemanticEvents(page);
-                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
-                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }
@@ -144,11 +273,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var page in notebook.Pages.Where(p => p.PageNumber == currentPage.PageNumber))
                 {
                     HistoryAnalysis.GenerateSemanticEvents(page);
-                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
                     foreach (var submission in page.Submissions)
                     {
                         HistoryAnalysis.GenerateSemanticEvents(submission);
-                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }
@@ -160,39 +289,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRegenerateTagsCommandExecute()
         {
-            var authorNotebook = _dataService.LoadedNotebooks.FirstOrDefault(n => n.OwnerID == Person.AUTHOR_ID);
-
             foreach (var notebook in _dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent))
             {
                 foreach (var page in notebook.Pages)
                 {
-                    var existingTags = page.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag) && !(t is MetaDataTag)).ToList();
-                    foreach (var existingTag in existingTags)
-                    {
-                        page.RemoveTag(existingTag);
-                    }
-
                     var indexOfPass3Start =
                         page.History.SemanticEvents.IndexOf(page.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
                     var interpretedInkSemanticEvents = page.History.SemanticEvents.Skip(indexOfPass3Start + 1).ToList();
                     HistoryAnalysis.GenerateTags(page, interpretedInkSemanticEvents);
-                    AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
+                    //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(page);
 
                     foreach (var submission in page.Submissions)
                     {
-                        var existingTagsForSubmission =
-                            submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag) && !(t is MetaDataTag)).ToList();
-                        foreach (var existingTag in existingTagsForSubmission)
-                        {
-                            submission.RemoveTag(existingTag);
-                        }
-
                         var indexOfPass3StartForSubmission = submission.History.SemanticEvents.IndexOf(submission.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
                         var interpretedInkSemanticEventsForSubmission = submission.History.SemanticEvents.Skip(indexOfPass3StartForSubmission + 1).ToList();
                         HistoryAnalysis.GenerateTags(submission, interpretedInkSemanticEventsForSubmission);
-                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
-
-                        AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
+                        //AnalysisPanelViewModel.AnalyzeSkipCountingStatic(submission);
                     }
                 }
             }

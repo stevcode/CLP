@@ -11,9 +11,12 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_REPRESENTATION_ORDER = "REPRESENTATION ORDER";
         public const string ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION = "ANSWER BEFORE REPRESENTATION";
         public const string ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION = "CHANGED ANSWER AFTER REPRESENTATION";
-        public const string ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS = "FILL IN ANSWER CORRECTNESS";
+        public const string ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS = "FINAL ANSWER CORRECTNESS";
+        public const string ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS = "FINAL REPRESENTATION CORRECTNESS";
+        public const string ANALYSIS_LABEL_OVERALL_CORRECTNESS = "OVERALL CORRECTNESS";
         public const string ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP = "MULTIPLE REPRESENTATIONS - 1-STEP";
         public const string ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP = "MULTIPLE REPRESENTATIONS - 2-STEP";
+        public const string ANALYSIS_LABEL_MULTIPLE_APPROACHES = "MULTIPLE APPROACHES";
         
         public const string ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER = "REPRESENTATION AFTER ANSWER";
         public const string ANALYSIS_LABEL_PROBLEM_TYPE = "PROBLEM TYPE";
@@ -24,6 +27,10 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_WORD_PROBLEM = "WORD PROBLEM";
         public const string ANALYSIS_LABEL_PAGE_DEFINITION = "ANSWER DEFINITION";
 
+        public const string ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES = "NUMBER LINE JUMP ERASURES";
+
+        public const string ANALYSIS_LABEL_ARRAY_EQUATION = "ARRAY EQUATION";
+
         #endregion // Analysis Labels
 
         #region Analysis Short Names
@@ -32,9 +39,12 @@ namespace CLP.Entities
         public const string ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER = "REP_ORDER";
         public const string ANALYSIS_SHORT_NAME_ANSWER_BEFORE_REPRESENTATION = "ABR";
         public const string ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION = "CAAR";
-        public const string ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS = "ANS";
+        public const string ANALYSIS_SHORT_NAME_FINAL_ANSWER_CORRECTNESS = "ANS_FINAL";
+        public const string ANALYSIS_SHORT_NAME_FINAL_REPRESENTATION_CORRECTNESS = "REP_FINAL";
+        public const string ANALYSIS_SHORT_NAME_OVERALL_CORRECTNESS = "REP+ANS_FINAL";
         public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP = "MR";
         public const string ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP = "MR2STEP";
+        public const string ANALYSIS_SHORT_NAME_MULTIPLE_APPROACHES = "MA";
         
         public const string ANALYSIS_SHORT_NAME_REPRESENTATION_AFTER_ANSWER = "RAA";
         public const string ANALYSIS_SHORT_NAME_PROBLEM_TYPE = "PROBLEM";
@@ -45,10 +55,15 @@ namespace CLP.Entities
         public const string ANALYSIS_SHORT_NAME_WORD_PROBLEM = "WORD_PROBLEM";
         public const string ANALYSIS_SHORT_NAME_PAGE_DEFINITION = "ANSWER_DEF";
 
+        public const string ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES = "NLJE";
+
+        public const string ANALYSIS_SHORT_NAME_ARRAY_EQUATION = "ARR_EQN";
+
         #endregion // Analysis Short Names
 
         #region Analysis Constraint Labels
 
+        public const string CONSTRAINT_REPRESENTATION_NAME = "REPRESENTATION_NAME";
         public const string CONSTRAINT_REPRESENTATION_NAME_LAX = "REPRESENTATION_NAME_LAX";
         public const string CONSTRAINT_REPRESENTATION_CORRECTNESS = "REPRESENTATION_CORRECTNESS";
         public const string CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON = "REPRESENTATION_CORRECTNESS_REASON";
@@ -56,15 +71,20 @@ namespace CLP.Entities
         public const string CONSTRAINT_REPRESENTATION_FIRST = "REPRESENTATION_NAME_FIRST";
         public const string CONSTRAINT_REPRESENTATION_LAST = "REPRESENTATION_NAME_LAST";
 
+        public const string CONSTRAINT_MULTIPLE_REPRESENTATION_MATCHED_STEP = "MULTIPLE_REPRESENTATION_MATCHED_STEP";
         public const string CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS = "MULTIPLE_REPRESENTATION_CORRECTNESS";
+        public const string CONSTRAINT_MULTIPLE_REPRESENTATION_TYPES = "MULTIPLE_REPRESENTATION_TYPES";
 
         public const string CONSTRAINT_HISTORY_STATUS = "HISTORY_STATUS";
 
         public const string CONSTRAINT_ANSWER_TYPE = "ANSWER_TYPE";
         public const string CONSTRAINT_ANSWER_CORRECTNESS = "ANSWER_CORRECTNESS";
+        public const string CONSTRAINT_ANSWER_MODIFICATION = "ANSWER_MODIFICATION";
         
         public const string CONSTRAINT_ANSWER_CHANGE_FROM = "ANSWER_CHANGE_FROM";
+        public const string CONSTRAINT_ANSWER_CHANGE_FROM_INTERPRETATION = "ANSWER_CHANGE_FROM_INTERPRETATION";
         public const string CONSTRAINT_ANSWER_CHANGE_TO = "ANSWER_CHANGE_TO";
+        public const string CONSTRAINT_ANSWER_CHANGE_TO_INTERPRETATION = "ANSWER_CHANGE_TO_INTERPRETATION";
         public const string CONSTRAINT_ANSWER_OBJECT = "ANSWER_OBJECT";
         public const string CONSTRAINT_ANSWER_CORRECT_ANSWER = "CORRECT_ANSWER";
         public const string CONSTRAINT_ANSWER_STUDENT_ANSWER = "STUDENT_ANSWER";
@@ -82,6 +102,12 @@ namespace CLP.Entities
         public const string CONSTRAINT_IS_WORD_PROBLEM = "IS_WORD_PROBLEM";
         public const string CONSTRAINT_PROBLEM_TYPE = "PROBLEM_TYPE";
 
+        public const string CONSTRAINT_COUNT = "COUNT";
+
+        public const string CONSTRAINT_OVERALL_CORRECTNESS = "OVERALL_CORRECTNESS";
+
+        public const string CONSTRAINT_INTERPRETATION = "INTERPRETATION";
+
         #endregion // Analysis Constraint Labels
 
         #region Analysis Constraint Values
@@ -94,9 +120,14 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY = "INK_ONLY";
         public const string CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE = "NONE";
 
-        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL = "ALL";
-        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME = "SOME";
-        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE = "NONE";
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_1 = "STEP_1";
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_2 = "STEP_2";
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_ALT = "STEP_ALT";
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_MATCHED_STEP_NONE = "STEP_NONE";
+
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL = "ALL_COR";
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME = "SOME_COR";
+        public const string CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE = "NONE_COR";
 
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_FINAL = "FINAL";
         public const string CONSTRAINT_VALUE_HISTORY_STATUS_DELETED = "DELETED";
@@ -111,11 +142,14 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH = "NO_ARITH";
         public const string CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH = "PLUS_ARITH";
 
-        public const string CONSTRAINT_VALUE_LOCATION_SIDE = "SIDE";
+        public const string CONSTRAINT_VALUE_LOCATION_RIGHT = "RIGHT";
         public const string CONSTRAINT_VALUE_LOCATION_BOTTOM = "BOTTOM";
 
         public const string CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_GAPS_OR_OVERLAPS = "GAPS_OR_OVERLAPS";
         public const string CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_SWAPPED = "SWAPPED";
+        public const string CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS = "INCORRECT_JUMPS";
+        public const string CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS = "INCORRECT_DIMENSIONS";
+        public const string CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS = "INCORRECT_GROUPS";
         public const string CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN = "UNKNOWN";
 
         public const string CONSTRAINT_VALUE_STRATEGY_CORRECTNESS_REASON_WRONG_DIMENSION = "WRONG_DIMENSION";
@@ -207,6 +241,8 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_1_STEP;
                 case ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP:
                     return ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP;
+                case ANALYSIS_LABEL_MULTIPLE_APPROACHES:
+                    return ANALYSIS_SHORT_NAME_MULTIPLE_APPROACHES;
                 case ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION:
                     return ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION;
                 case ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION:
@@ -215,8 +251,12 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_REPRESENTATION_AFTER_ANSWER;
                 case ANALYSIS_LABEL_REPRESENTATIONS_USED:
                     return ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED;
-                case ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS:
-                    return ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS;
+                case ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS:
+                    return ANALYSIS_SHORT_NAME_FINAL_ANSWER_CORRECTNESS;
+                case ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
+                    return ANALYSIS_SHORT_NAME_FINAL_REPRESENTATION_CORRECTNESS;
+                case ANALYSIS_LABEL_OVERALL_CORRECTNESS:
+                    return ANALYSIS_SHORT_NAME_OVERALL_CORRECTNESS;
                 case ANALYSIS_LABEL_PROBLEM_TYPE:
                     return ANALYSIS_SHORT_NAME_PROBLEM_TYPE;
                 case ANALYSIS_LABEL_REPRESENTATION_ORDER:
@@ -229,6 +269,10 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_WORD_PROBLEM;
                 case ANALYSIS_LABEL_PAGE_DEFINITION:
                     return ANALYSIS_SHORT_NAME_PAGE_DEFINITION;
+                case ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES:
+                    return ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES;
+                case ANALYSIS_LABEL_ARRAY_EQUATION:
+                    return ANALYSIS_SHORT_NAME_ARRAY_EQUATION;
             }
 
             return "No matching Short Name";
@@ -242,6 +286,8 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP;
                 case ANALYSIS_SHORT_NAME_MULTIPLE_REPRESENTATIONS_2_STEP:
                     return ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP;
+                case ANALYSIS_SHORT_NAME_MULTIPLE_APPROACHES:
+                    return ANALYSIS_LABEL_MULTIPLE_APPROACHES;
                 case ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION:
                     return ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION;
                 case ANALYSIS_SHORT_NAME_ANSWER_BEFORE_REPRESENTATION:
@@ -250,8 +296,12 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER;
                 case ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED:
                     return ANALYSIS_LABEL_REPRESENTATIONS_USED;
-                case ANALYSIS_SHORT_NAME_FILL_IN_ANSWER_CORRECTNESS:
-                    return ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS;
+                case ANALYSIS_SHORT_NAME_FINAL_ANSWER_CORRECTNESS:
+                    return ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS;
+                case ANALYSIS_SHORT_NAME_FINAL_REPRESENTATION_CORRECTNESS:
+                    return ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS;
+                case ANALYSIS_SHORT_NAME_OVERALL_CORRECTNESS:
+                    return ANALYSIS_LABEL_OVERALL_CORRECTNESS;
                 case ANALYSIS_SHORT_NAME_PROBLEM_TYPE:
                     return ANALYSIS_LABEL_PROBLEM_TYPE;
                 case ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER:
@@ -264,6 +314,10 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_WORD_PROBLEM;
                 case ANALYSIS_SHORT_NAME_PAGE_DEFINITION:
                     return ANALYSIS_LABEL_PAGE_DEFINITION;
+                case ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES:
+                    return ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES;
+                case ANALYSIS_SHORT_NAME_ARRAY_EQUATION:
+                    return ANALYSIS_LABEL_ARRAY_EQUATION;
             }
 
             return "No matching Label";
@@ -275,18 +329,23 @@ namespace CLP.Entities
                        {
                            ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP,
                            ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP,
+                           ANALYSIS_LABEL_MULTIPLE_APPROACHES,
                            ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION,
                            ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION,
                            //ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER,
                            ANALYSIS_LABEL_REPRESENTATIONS_USED,
                            //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
-                           ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS,
+                           ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS,
+                           ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS,
+                           ANALYSIS_LABEL_OVERALL_CORRECTNESS,
                            //ANALYSIS_LABEL_PROBLEM_TYPE,
                            ANALYSIS_LABEL_REPRESENTATION_ORDER,
                            ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP,
                            ANALYSIS_LABEL_STRATEGY_ARRAY_PARTIAL_PRODUCT,
                            ANALYSIS_LABEL_WORD_PROBLEM,
-                           ANALYSIS_LABEL_PAGE_DEFINITION
+                           ANALYSIS_LABEL_PAGE_DEFINITION,
+                           ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES,
+                           ANALYSIS_LABEL_ARRAY_EQUATION
                        };
 
             return list;
@@ -304,6 +363,8 @@ namespace CLP.Entities
         {
             switch (label)
             {
+                case CONSTRAINT_REPRESENTATION_NAME:
+                    return "Type";
                 case CONSTRAINT_REPRESENTATION_NAME_LAX:
                     return "Type";
                 case CONSTRAINT_REPRESENTATION_CORRECTNESS:
@@ -317,6 +378,8 @@ namespace CLP.Entities
                 case CONSTRAINT_REPRESENTATION_LAST:
                     return "Last";
 
+                case CONSTRAINT_MULTIPLE_REPRESENTATION_MATCHED_STEP:
+                    return "Matched Step";
                 case CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS:
                     return "Correctness";
 
@@ -327,6 +390,8 @@ namespace CLP.Entities
                     return "Answer Type";
                 case CONSTRAINT_ANSWER_CORRECTNESS:
                     return "Correctness";
+                case CONSTRAINT_ANSWER_MODIFICATION:
+                    return "Manually Modified";
                 case CONSTRAINT_ANSWER_CHANGE_FROM:
                     return "Changed From";
                 case CONSTRAINT_ANSWER_CHANGE_TO:
@@ -354,6 +419,12 @@ namespace CLP.Entities
                     return "Value";
                 case CONSTRAINT_PROBLEM_TYPE:
                     return "Problem Type";
+
+                case CONSTRAINT_COUNT:
+                    return "Count";
+
+                case CONSTRAINT_OVERALL_CORRECTNESS:
+                    return "Correctness";
             }
 
             return "No matching Alias";

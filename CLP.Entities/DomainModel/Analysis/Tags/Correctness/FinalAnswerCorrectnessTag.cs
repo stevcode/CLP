@@ -67,7 +67,7 @@ namespace CLP.Entities
 
         public override bool IsSingleValueTag => true;
 
-        public override Category Category => Category.Answer;
+        public override Category Category => Category.Correctness;
 
         public override string FormattedName => "Final Answer Correctness";
 
@@ -106,6 +106,7 @@ namespace CLP.Entities
                                                                               : true));
 
             var tag = new FinalAnswerCorrectnessTag(page, Origin.StudentPageGenerated);
+            var isAnswerManuallyModified = false;
             if (lastFinalAnswerEvent == null)
             {
                 IPageObject finalAnswerPageObject = page.PageObjects.OfType<MultipleChoice>().FirstOrDefault();
@@ -144,16 +145,18 @@ namespace CLP.Entities
 
                 tag.FinalAnswerPageObjectType = Codings.FriendlyObjects[lastFinalAnswerEvent.CodedObject];
                 tag.CorrectAnswer = lastFinalAnswerEvent.CodedObjectID;
-                tag.StudentAnswer = Codings.GetFinalAnswerEventContent(lastFinalAnswerEvent);
+                tag.StudentAnswer = Codings.GetFinalAnswerEventStudentAnswer(lastFinalAnswerEvent);
                 var codedCorrectness = Codings.GetFinalAnswerEventCorrectness(lastFinalAnswerEvent);
                 tag.FinalAnswerCorrectness = Codings.CodedCorrectnessToCorrectness(codedCorrectness);
+                isAnswerManuallyModified = lastFinalAnswerEvent.IsManuallyModified;
             }
 
             AnalysisCode.AddFinalAnswerCorrectness(tag,
                                                    tag.FinalAnswerPageObjectType,
                                                    tag.CorrectAnswer,
                                                    tag.StudentAnswer,
-                                                   Codings.CorrectnessToCodedCorrectness(tag.FinalAnswerCorrectness));
+                                                   Codings.CorrectnessToCodedCorrectness(tag.FinalAnswerCorrectness),
+                                                   isAnswerManuallyModified);
             page.AddTag(tag);
 
             return tag;

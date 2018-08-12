@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Xml.Linq;
 using Catel;
 using Catel.Collections;
 using Catel.Data;
@@ -25,16 +24,21 @@ namespace Classroom_Learning_Partner.ViewModels
         StudentName,
         PageNumber,
         RepresentationType,
-        OverallCorrectness
+        OverallCorrectness,
+        ClusterName,
+        ClusterSize
     }
 
     public class QueryPanelViewModel : APanelBaseViewModel
     {
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StudentNameGroup = new PropertyGroupDescription("StudentName");
+        private static readonly PropertyGroupDescription ClusterNameGroup = new PropertyGroupDescription("ClusterName");
 
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
         private static readonly SortDescription StudentNameAscendingSort = new SortDescription("StudentName", ListSortDirection.Ascending);
+        private static readonly SortDescription ClusterNameAscendingSort = new SortDescription("ClusterName", ListSortDirection.Ascending);
+        private static readonly SortDescription ClusterSizeDescendingSort = new SortDescription("ClusterSize", ListSortDirection.Descending);
 
         private readonly IDataService _dataService;
         private readonly IQueryService _queryService;
@@ -149,22 +153,38 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SavedQueriesProperty = RegisterProperty(nameof(SavedQueries), typeof(Queries), null);
 
-        public ObservableCollection<QueryService.QueryResult> QueryResults
+        public ObservableCollection<QueryResult> QueryResults
         {
-            get => GetValue<ObservableCollection<QueryService.QueryResult>>(QueryResultsProperty);
+            get => GetValue<ObservableCollection<QueryResult>>(QueryResultsProperty);
             set => SetValue(QueryResultsProperty, value);
         }
 
         public static readonly PropertyData QueryResultsProperty =
-            RegisterProperty(nameof(QueryResults), typeof(ObservableCollection<QueryService.QueryResult>), () => new ObservableCollection<QueryService.QueryResult>());
+            RegisterProperty(nameof(QueryResults), typeof(ObservableCollection<QueryResult>), () => new ObservableCollection<QueryResult>());
 
-        public QueryService.QueryResult SelectedQueryResult
+        public QueryResult SelectedQueryResult
         {
-            get => GetValue<QueryService.QueryResult>(SelectedQueryResultProperty);
+            get => GetValue<QueryResult>(SelectedQueryResultProperty);
             set => SetValue(SelectedQueryResultProperty, value);
         }
 
-        public static readonly PropertyData SelectedQueryResultProperty = RegisterProperty(nameof(SelectedQueryResult), typeof(QueryService.QueryResult), null);
+        public static readonly PropertyData SelectedQueryResultProperty = RegisterProperty(nameof(SelectedQueryResult), typeof(QueryResult), null);
+
+        public bool IsGeneratingReportOnQuery
+        {
+            get => GetValue<bool>(IsGeneratingReportOnQueryProperty);
+            set => SetValue(IsGeneratingReportOnQueryProperty, value);
+        }
+
+        public static readonly PropertyData IsGeneratingReportOnQueryProperty = RegisterProperty(nameof(IsGeneratingReportOnQuery), typeof(bool), false);
+
+        public string PagesFilter
+        {
+            get => GetValue<string>(PagesFilterProperty);
+            set => SetValue(PagesFilterProperty, value);
+        }
+
+        public static readonly PropertyData PagesFilterProperty = RegisterProperty(nameof(PagesFilter), typeof(string), string.Empty);
 
         #endregion // Bindings
 
@@ -201,6 +221,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 var pageNumbers = DataService.GetAllPageNumbersInNotebook(zip, _queryService.NotebookToQuery);
                 _queryService.PageNumbersToQuery = pageNumbers;
             }
+
+            PagesFilter = RangeHelper.ParseIntNumbersToString(_queryService.PageNumbersToQuery.OrderBy(i => i), true, true);
         }
 
         #endregion // Methods
@@ -222,7 +244,8 @@ namespace Classroom_Learning_Partner.ViewModels
             NewQueryCommand = new Command(OnNewQueryCommandExecute);
             
             RunQueryCommand = new Command(OnRunQueryCommandExecute);
-            SetCurrentPageCommand = new Command<QueryService.QueryResult>(OnSetCurrentPageCommandExecute);
+            ClusterCommand = new Command(OnClusterCommandExecute);
+            SetCurrentPageCommand = new Command<QueryResult>(OnSetCurrentPageCommandExecute);
         }
 
         public Command SetANDConditionalCommand { get; private set; }
@@ -265,7 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var textInputViewModel = new TextInputViewModel
                                      {
                                          TextPrompt = "Enter page range or leave blank for all pages.",
-                                         InputText = RangeHelper.ParseIntNumbersToString(_queryService.PageNumbersToQuery, true, true)
+                                         InputText = RangeHelper.ParseIntNumbersToString(_queryService.PageNumbersToQuery.OrderBy(i => i), true, true)
                                      };
             var textInputView = new TextInputView(textInputViewModel);
             textInputView.ShowDialog();
@@ -286,6 +309,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _queryService.PageNumbersToQuery = pageNumbersToOpen;
+            PagesFilter = textInputViewModel.InputText;
         }
 
         public Command SaveQueryCommand { get; private set; }
@@ -384,11 +408,69 @@ namespace Classroom_Learning_Partner.ViewModels
                 MessageBox.Show("No results found.");
             }
             QueryResults.AddRange(queryResults);
+
+            if (CurrentGroupType == GroupTypes.ClusterName ||
+                CurrentGroupType == GroupTypes.ClusterSize)
+            {
+                CurrentGroupType = GroupTypes.StudentName;
+            }
+
+            if (!IsGeneratingReportOnQuery)
+            {
+                return;
+            }
+
+            const string FOLDER_NAME = "CLP Reports";
+            var folderPath = Path.Combine(DataService.DesktopFolderPath, FOLDER_NAME);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"Query Report - {DateTime.Now:yy.MM.dd-h.mm.ss}.{FILE_EXTENSION}";
+            var filePath = Path.Combine(folderPath, fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            File.AppendAllText(filePath, "*****QUERY REPORT*****\n\n");
+            File.AppendAllText(filePath, $"Query: {codeToQuery.LongFormattedValue}\n\n");
+
+            foreach (var queryResult in QueryResults.OrderBy(qr => qr.StudentName).ThenBy(qr => qr.PageNumber))
+            {
+                File.AppendAllText(filePath, $"{queryResult.FormattedValue}\n\n");
+            }
         }
 
-        public Command<QueryService.QueryResult> SetCurrentPageCommand { get; private set; }
+        public Command ClusterCommand { get; private set; }
 
-        private void OnSetCurrentPageCommandExecute(QueryService.QueryResult queryResult)
+        private void OnClusterCommandExecute()
+        {
+            var queryablePages = QueryResults.Select(qr => qr.Page).ToList();
+            if (!queryablePages.Any())
+            {
+                queryablePages = _queryService.QueryablePages.Where(qp => _queryService.PageNumbersToQuery.Contains(qp.PageNameComposite.PageNumber)).ToList();
+            }
+
+            var queryResults = _queryService.Cluster(queryablePages);
+            queryResults = queryResults.OrderBy(q => q.PageNumber).ThenBy(q => q.StudentName).ToList();
+
+            QueryResults.Clear();
+            QueryResults.AddRange(queryResults);
+
+            if (CurrentGroupType == GroupTypes.ClusterName)
+            {
+                return;
+            }
+
+            CurrentGroupType = GroupTypes.ClusterSize;
+        }
+
+        public Command<QueryResult> SetCurrentPageCommand { get; private set; }
+
+        private void OnSetCurrentPageCommandExecute(QueryResult queryResult)
         {
             var page = _dataService.GetPageByCompositeID(queryResult.Page.PageNameComposite, queryResult.Page.StudentID);
             if (page == null)
@@ -413,6 +495,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 case GroupTypes.PageNumber:
                     ApplySortAndGroupByPageNumber();
                     break;
+                case GroupTypes.ClusterName:
+                    ApplySortAndGroupByClusterName();
+                    break;
+                case GroupTypes.ClusterSize:
+                    ApplySortAndGroupByClusterSize();
+                    break;
                 default:
                     ApplySortAndGroupByName();
                     break;
@@ -435,6 +523,28 @@ namespace Classroom_Learning_Partner.ViewModels
             GroupedQueryResults.SortDescriptions.Clear();
 
             GroupedQueryResults.GroupDescriptions.Add(PageNumberGroup);
+            GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
+            GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
+        }
+
+        public void ApplySortAndGroupByClusterName()
+        {
+            GroupedQueryResults.GroupDescriptions.Clear();
+            GroupedQueryResults.SortDescriptions.Clear();
+
+            GroupedQueryResults.GroupDescriptions.Add(ClusterNameGroup);
+            GroupedQueryResults.SortDescriptions.Add(ClusterNameAscendingSort);
+            GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
+            GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
+        }
+
+        public void ApplySortAndGroupByClusterSize()
+        {
+            GroupedQueryResults.GroupDescriptions.Clear();
+            GroupedQueryResults.SortDescriptions.Clear();
+
+            GroupedQueryResults.GroupDescriptions.Add(ClusterNameGroup);
+            GroupedQueryResults.SortDescriptions.Add(ClusterSizeDescendingSort);
             GroupedQueryResults.SortDescriptions.Add(PageNumberAscendingSort);
             GroupedQueryResults.SortDescriptions.Add(StudentNameAscendingSort);
         }

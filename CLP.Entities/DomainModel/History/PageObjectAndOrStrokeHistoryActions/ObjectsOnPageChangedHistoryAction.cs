@@ -174,11 +174,11 @@ namespace CLP.Entities
                 var pageObjectsAdded = PageObjectsAdded;
                 var pageObjectsRemoved = PageObjectsRemoved;
 
-                var objectsAdded = pageObjectsAdded.Any() ? $" Added {string.Join(",", pageObjectsAdded.Select(p => p.FormattedName))}." : string.Empty;
-                var objectsRemoved = pageObjectsRemoved.Any() ? $" Removed {string.Join(",", pageObjectsRemoved.Select(p => p.FormattedName))}." : string.Empty;
+                var objectsAdded = pageObjectsAdded.Any() ? $"Added {string.Join(",", pageObjectsAdded.Select(p => p.FormattedName))}. " : string.Empty;
+                var objectsRemoved = pageObjectsRemoved.Any() ? $"Removed {string.Join(",", pageObjectsRemoved.Select(p => p.FormattedName))}. " : string.Empty;
 
-                var strokesAdded = StrokeIDsAdded.Any() ? StrokeIDsAdded.Count == 1 ? " Added 1 stroke." : $" Added {StrokeIDsAdded.Count} strokes." : string.Empty;
-                var strokesRemoved = StrokeIDsRemoved.Any() ? StrokeIDsRemoved.Count == 1 ? " Removed 1 stroke." : $" Removed {StrokeIDsRemoved.Count} strokes." : string.Empty;
+                var strokesAdded = StrokeIDsAdded.Any() ? StrokeIDsAdded.Count == 1 ? "Added 1 stroke." : $" Added {StrokeIDsAdded.Count} strokes. " : string.Empty;
+                var strokesRemoved = StrokeIDsRemoved.Any() ? StrokeIDsRemoved.Count == 1 ? "Removed 1 stroke." : $" Removed {StrokeIDsRemoved.Count} strokes." : string.Empty;
 
                 return $"{objectsAdded}{objectsRemoved}{strokesAdded}{strokesRemoved}";
             }

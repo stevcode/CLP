@@ -125,7 +125,9 @@ namespace CLP.Entities
             return semanticEvent.CodedObject == OBJECT_FILL_IN || semanticEvent.CodedObject == OBJECT_INTERMEDIARY_FILL_IN || semanticEvent.CodedObject == OBJECT_MULTIPLE_CHOICE;
         }
 
-        public static string GetFinalAnswerEventContent(ISemanticEvent semanticEvent)
+        // For MC, the bubble the student filled in
+        // For FI, the interpretation of the strokes on the page, inside the interpretation region, at that point in history
+        public static string GetFinalAnswerEventStudentAnswer(ISemanticEvent semanticEvent)
         {
             if (!IsFinalAnswerEvent(semanticEvent))
             {
@@ -163,6 +165,13 @@ namespace CLP.Entities
                    semanticEvent.CodedObject == OBJECT_STAMP ||
                    semanticEvent.CodedObject == OBJECT_STAMPED_OBJECT ||
                    semanticEvent.CodedObject == OBJECT_BINS;
+        }
+
+        public static bool IsMultipleChoiceEventAnErase(ISemanticEvent semanticEvent)
+        {
+            return semanticEvent.EventType == EVENT_MULTIPLE_CHOICE_ERASE ||
+                   semanticEvent.EventType == EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL ||
+                   semanticEvent.EventType == EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE;
         }
 
         #endregion // Methods

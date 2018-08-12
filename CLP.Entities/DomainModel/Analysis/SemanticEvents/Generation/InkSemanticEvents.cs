@@ -948,7 +948,6 @@ namespace CLP.Entities
 
             var previousStroke = previousStrokes.First();
             var isPreviousStrokeInvisiblySmall = previousStroke.IsInvisiblySmall();
-            var isPreviousStrokeHighlighter = previousStroke.DrawingAttributes.IsHighlighter;
 
             var historyActionBuffer = new List<IHistoryAction>
                                       {
@@ -968,11 +967,8 @@ namespace CLP.Entities
 
                 var currentStroke = currentStrokes.First();
                 var isCurrentStrokeInvisiblySmall = currentStroke.IsInvisiblySmall();
-                var isCurrentStrokeHighlighter = currentStroke.DrawingAttributes.IsHighlighter;
 
-                var isBreakCondition = isPreviousInkAdd != isCurrentInkAdd ||
-                                       isPreviousStrokeInvisiblySmall != isCurrentStrokeInvisiblySmall ||
-                                       isPreviousStrokeHighlighter != isCurrentStrokeHighlighter;
+                var isBreakCondition = isPreviousInkAdd != isCurrentInkAdd || isPreviousStrokeInvisiblySmall != isCurrentStrokeInvisiblySmall;
                 if (isBreakCondition)
                 {
                     var processedInkEvent = ProcessANSFIChangeHistoryActionBuffer(page,
@@ -1016,7 +1012,7 @@ namespace CLP.Entities
                                       ? historyActionBuffer.Cast<FillInAnswerChangedHistoryAction>().SelectMany(h => h.StrokesAdded).ToList()
                                       : historyActionBuffer.Cast<FillInAnswerChangedHistoryAction>().SelectMany(h => h.StrokesRemoved).ToList();
 
-            if (isPreviousStrokeInvisiblySmall || previousStroke.DrawingAttributes.IsHighlighter)
+            if (isPreviousStrokeInvisiblySmall)
             {
                 var ignoreCluster = InkClusters.FirstOrDefault(c => c.ClusterType == InkCluster.ClusterTypes.Ignore);
                 if (ignoreCluster == null)

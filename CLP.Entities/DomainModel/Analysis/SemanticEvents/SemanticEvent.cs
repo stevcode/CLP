@@ -13,6 +13,7 @@ namespace CLP.Entities
         #region Constants
 
         private const string META_REFERENCE_PAGE_OBJECT_ID = "REFERENCE_PAGE_OBJECT_ID";
+        private const string META_IS_MANUALLY_MODIFIED = "IS_MANUALLY_MODIFIED";
 
         #endregion // Constants
 
@@ -175,7 +176,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData MetaDataProperty = RegisterProperty("MetaData", typeof(Dictionary<string, string>), () => new Dictionary<string, string>());
 
-        /// <summary> Used if the CodedObject acts upon another PageObject. </summary>
+        /// <summary>Used if the CodedObject acts upon another PageObject. </summary>
         public string ReferencePageObjectID
         {
             get => MetaData.ContainsKey(META_REFERENCE_PAGE_OBJECT_ID) ? MetaData[META_REFERENCE_PAGE_OBJECT_ID] : null;
@@ -193,6 +194,24 @@ namespace CLP.Entities
                 else
                 {
                     MetaData[META_REFERENCE_PAGE_OBJECT_ID] = value;
+                }
+            }
+        }
+
+        /// <summary>An indicator that some value of the Semantic Event was changed manually by a researcher or instructor.</summary>
+        public bool IsManuallyModified
+        {
+            get => MetaData.ContainsKey(META_IS_MANUALLY_MODIFIED);
+            set
+            {
+                if (value && !MetaData.ContainsKey(META_IS_MANUALLY_MODIFIED))
+                {
+                    MetaData.Add(META_IS_MANUALLY_MODIFIED, "TRUE");
+                }
+
+                if (!value && MetaData.ContainsKey(META_IS_MANUALLY_MODIFIED))
+                {
+                    MetaData.Remove(META_IS_MANUALLY_MODIFIED);
                 }
             }
         }

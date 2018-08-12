@@ -162,7 +162,7 @@
     <Compile Include="DomainModel\Obsolete Code\StaticAnalysisRoutines\PageObjectAnalysis\NumberLineAnalysis.cs" />
     <Compile Include="DomainModel\Obsolete Code\PageAnalysis.cs" />
     <Compile Include="DomainModel\Obsolete Code\StaticAnalysisRoutines\PageObjectAnalysis\StampAnalysis.cs" />
-    <Compile Include="DomainModel\Analysis\Tags\Answer\FinalAnswerCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Analysis\Tags\Correctness\FinalAnswerCorrectnessTag.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArrayRemovedHistoryAction.cs" />
     <Compile Include="DomainModel\History\DivisionTemplateHistoryActions\DivisionTemplateArraySnappedInHistoryAction.cs" />
     <Compile Include="DomainModel\History\IHistoryBatch.cs" />
@@ -193,7 +193,7 @@
     <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
     <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />
     <Compile Include="DomainModel\Strokes\StrokePathDTO.cs" />
-    <Compile Include="DomainModel\Analysis\Tags\Answer\IntermediaryAnswerCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Analysis\Tags\Correctness\IntermediaryAnswerCorrectnessTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Definition\AdditionRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Definition\DivisionRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Definition\EquivalenceRelationDefinitionTag.cs" />
@@ -212,7 +212,7 @@
     <Compile Include="DomainModel\Obsolete Code\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\IAnalysis.cs" />
     <Compile Include="DomainModel\Analysis\Tags\MetaDataTag.cs" />
-    <Compile Include="DomainModel\Analysis\Tags\Answer\CorrectnessSummaryTag.cs" />
+    <Compile Include="DomainModel\Analysis\Tags\Correctness\CorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Obsolete Code\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Obsolete Code\DivisionTemplate\DivisionTemplateDeletedTag.cs" />
     <Compile Include="DomainModel\Obsolete Code\DivisionTemplate\DivisionTemplateRepresentationCorrectnessTag.cs" />
@@ -220,7 +220,7 @@
     <Compile Include="DomainModel\Analysis\Tags\ITag.cs" />
     <Compile Include="DomainModel\Obsolete Code\HighlightedObjectTypesOnPageTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Representation\AnswerRepresentationSequenceTag.cs" />
-    <Compile Include="DomainModel\Analysis\Tags\Answer\FinalRepresentationCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Analysis\Tags\Correctness\FinalRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Representation\RepresentationsUsedTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\OtherPageInformation\DottedTag.cs" />
     <Compile Include="DomainModel\Analysis\Tags\OtherPageInformation\StarredTag.cs" />
@@ -234,7 +234,6 @@
     <Compile Include="DomainModel\Analysis\Tags\Strategy\CodedRepresentationStrategy.cs" />
     <Compile Include="DomainModel\Analysis\Tags\Strategy\NumberLineStrategyTag.cs" />
     <Compile Include="DomainModel\TextConstants\Codings.SemanticEvents.cs" />
-    <Compile Include="DomainModel\TextConstants\Codings.Tags.cs" />
     <Compile Include="DomainModel\Utility\EditDistance.cs" />
     <Compile Include="DomainModel\Utility\Extentions\DirectoryInfoExtensions.cs" />
     <Compile Include="DomainModel\Utility\Extentions\ColorExtensions.cs" />

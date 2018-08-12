@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Ink;
 using Catel;
 using Catel.Collections;
+using Catel.Runtime.Serialization.Binary;
 
 namespace CLP.Entities
 {
@@ -150,6 +151,27 @@ namespace CLP.Entities
 
         private static void FixANSFIHistoryActions(CLPPage page)
         {
+            #region Adjust Interpretation Regions
+
+            switch (page.ID)
+            {
+                case "yzvpdIROIEOFrndOASGjvA": // Page 9 Assessment
+                {
+                    var interpretationRegion = page.PageObjects.OfType<InterpretationRegion>().First();
+                    interpretationRegion.Height = 100.0;
+                }
+                    break;
+                case "QHJ7pFHY3ECr8u6bSFRCkA": // Page 12 Assessment
+                {
+                    var interpretationRegion = page.PageObjects.OfType<InterpretationRegion>().First();
+                    interpretationRegion.Height = 170.3069;
+                    interpretationRegion.YPosition = 614.9809;
+                }
+                    break;
+            }
+
+            #endregion // Adjust Interpretation Regions
+
             var strokeChangedHistoryActions = page.History.UndoActions.OfType<ObjectsOnPageChangedHistoryAction>().Where(h => h.IsUsingStrokes).OrderBy(h => h.HistoryActionIndex).ToList();
 
             foreach (var strokeChangedHistoryAction in strokeChangedHistoryActions)
@@ -180,6 +202,7 @@ namespace CLP.Entities
 
                 #region Check for Interpretation Region Fill-In
 
+                var isOverInterpretationRegion = false;
                 foreach (var interpretationRegion in page.PageObjects.OfType<InterpretationRegion>())
                 {
                     var isStrokeOver = interpretationRegion.IsStrokeOverPageObject(strokeChanged);
@@ -187,6 +210,8 @@ namespace CLP.Entities
                     {
                         continue;
                     }
+
+                    isOverInterpretationRegion = true;
 
                     var strokesAdded = new List<Stroke>();
                     var strokesRemoved = new List<Stroke>();
@@ -208,6 +233,7 @@ namespace CLP.Entities
                                                                                                 strokesRemoved);
 
                     fillInAnswerChangedHistoryAction.HistoryActionIndex = strokeChangedHistoryAction.HistoryActionIndex;
+                    fillInAnswerChangedHistoryAction.CachedFormattedValue = fillInAnswerChangedHistoryAction.FormattedValue;
 
                     var indexToReplace = page.History.UndoActions.IndexOf(strokeChangedHistoryAction);
                     page.History.UndoActions[indexToReplace] = fillInAnswerChangedHistoryAction;
@@ -216,6 +242,113 @@ namespace CLP.Entities
                 }
 
                 #endregion // Check for Interpretation Region Fill-In
+
+                #region Check for Multiple Choice
+
+                if (isOverInterpretationRegion)
+                {
+                    continue;
+                }
+
+                foreach (var multipleChoice in page.PageObjects.OfType<MultipleChoice>())
+                {
+                    var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(strokeChanged);
+                    if (choiceBubbleStrokeIsOver == null)
+                    {
+                        continue;
+                    }
+
+                    var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
+                    var strokesOverBubble = multipleChoice.StrokesOverChoiceBubble(choiceBubbleStrokeIsOver);
+
+                    const int THRESHOLD = 80;
+                    var status = ChoiceBubbleStatuses.PartiallyFilledIn;
+                    var isStatusSet = false;
+                    if (isAdd)
+                    {
+                        var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                        if (totalStrokeLength >= THRESHOLD)
+                        {
+                            status = ChoiceBubbleStatuses.AdditionalFilledIn;
+                        }
+                        else
+                        {
+                            totalStrokeLength += strokeChanged.StylusPoints.Count;
+                            if (totalStrokeLength >= THRESHOLD)
+                            {
+                                status = ChoiceBubbleStatuses.FilledIn;
+                                choiceBubbleStrokeIsOver.IsFilledIn = true;
+                            }
+                            else
+                            {
+                                status = ChoiceBubbleStatuses.PartiallyFilledIn;
+                            }
+                        }
+                        isStatusSet = true;
+                    }
+                    else
+                    {
+                        var isRemovedStrokeOverBubble = strokesOverBubble.FirstOrDefault(s => s.GetStrokeID() == strokeChanged.GetStrokeID()) != null;
+                        if (!isRemovedStrokeOverBubble)
+                        {
+                            // TODO: Log error
+                            continue;
+                        }
+                        var otherStrokes = strokesOverBubble.Where(s => s.GetStrokeID() != strokeChanged.GetStrokeID()).ToList();
+                        var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                        var otherStrokesStrokeLength = otherStrokes.Sum(s => s.StylusPoints.Count);
+
+                        if (totalStrokeLength < THRESHOLD)
+                        {
+                            status = ChoiceBubbleStatuses.ErasedPartiallyFilledIn;
+                        }
+                        else
+                        {
+                            if (otherStrokesStrokeLength < THRESHOLD)
+                            {
+                                status = ChoiceBubbleStatuses.CompletelyErased;
+                                choiceBubbleStrokeIsOver.IsFilledIn = false;
+                            }
+                            else
+                            {
+                                status = ChoiceBubbleStatuses.IncompletelyErased;
+                            }
+                        }
+                        isStatusSet = true;
+                    }
+
+                    if (!isStatusSet ||
+                        index == -1)
+                    {
+                        continue;
+                    }
+
+                    var strokesAdded = new List<Stroke>();
+                    var strokesRemoved = new List<Stroke>();
+
+                    if (isAdd)
+                    {
+                        strokesAdded.Add(strokeChanged);
+                    }
+                    else
+                    {
+                        strokesRemoved.Add(strokeChanged);
+                    }
+
+                    multipleChoice.ChangeAcceptedStrokes(strokesAdded, strokesRemoved);
+                    var multipleChoiceBubbleStatusChangedHistoryAction =
+                        new MultipleChoiceBubbleStatusChangedHistoryAction(page, page.Owner, multipleChoice, index, status, strokesAdded, strokesRemoved);
+
+                    multipleChoiceBubbleStatusChangedHistoryAction.HistoryActionIndex = strokeChangedHistoryAction.HistoryActionIndex;
+                    multipleChoiceBubbleStatusChangedHistoryAction.CachedFormattedValue = multipleChoiceBubbleStatusChangedHistoryAction.FormattedValue;
+
+                    var indexToReplace = page.History.UndoActions.IndexOf(strokeChangedHistoryAction);
+                    page.History.UndoActions[indexToReplace] = multipleChoiceBubbleStatusChangedHistoryAction;
+
+                    break;
+                }
+
+                #endregion // Check for Multiple Choice
             }
         }
 
@@ -829,8 +962,23 @@ namespace CLP.Entities
 
         #region Last Pass: Tag Generation
 
-        public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents)
+        public static void GenerateTags(CLPPage page, List<ISemanticEvent> semanticEvents, bool isRemovingExistingTags = true)
         {
+            if (isRemovingExistingTags)
+            {
+                var existingTags = page.Tags.Where(t => t.Category != Category.Definition).ToList();
+                foreach (var existingTag in existingTags)
+                {
+                    if (existingTag is MetaDataTag metaDataTag &&
+                        metaDataTag.TagName == MetaDataTag.NAME_WORD_PROBLEM)
+                    {
+                        continue;
+                    }
+
+                    page.RemoveTag(existingTag);
+                }
+            }
+
             ProblemInformationTag.AttemptTagGeneration(page);
             AnswerRepresentationSequenceTag.AttemptTagGeneration(page, semanticEvents);
 
@@ -840,7 +988,7 @@ namespace CLP.Entities
             CorrectnessSummaryTag.AttemptTagGeneration(page, representationCorrectness, finalAnswerCorrectness);
             IntermediaryAnswerCorrectnessTag.AttemptTagGeneration(page, semanticEvents);
             
-            ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
+            //ArrayStrategyTag.IdentifyArrayStrategies(page, semanticEvents);
 
             NumberLineStrategyTag.IdentifyNumberLineStrategies(page, semanticEvents);
         }

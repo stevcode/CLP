@@ -201,7 +201,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     StagingPanel.IsVisible = true;
                     StagingPanel.AppendCollectionOfPagesToStage(page.Submissions,
                                                                 x => x.Tags.FirstOrDefault(t => t is CorrectnessSummaryTag &&
-                                                                                                ((CorrectnessSummaryTag)t).Correctness == Correctness.Correct) !=
+                                                                                                ((CorrectnessSummaryTag)t).OverallCorrectness == Correctness.Correct) !=
                                                                      null);
 
                     //TODO: keep CurrentSort and skip this if already sorted that way.
@@ -211,7 +211,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     StagingPanel.IsVisible = true;
                     StagingPanel.AppendCollectionOfPagesToStage(page.Submissions,
                                                                 x => x.Tags.FirstOrDefault(t => t is CorrectnessSummaryTag &&
-                                                                                                ((CorrectnessSummaryTag)t).Correctness == Correctness.Incorrect) !=
+                                                                                                ((CorrectnessSummaryTag)t).OverallCorrectness == Correctness.Incorrect) !=
                                                                      null);
 
                     //TODO: keep CurrentSort and skip this if already sorted that way.

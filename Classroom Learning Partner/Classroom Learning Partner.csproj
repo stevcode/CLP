@@ -254,7 +254,9 @@
     <Compile Include="Services\Interfaces\IWindowManagerService.cs" />
     <Compile Include="Services\NetworkService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
-    <Compile Include="Services\QueryService.cs" />
+    <Compile Include="Services\Query\QueryablePage.cs" />
+    <Compile Include="Services\Query\QueryResult.cs" />
+    <Compile Include="Services\Query\QueryService.cs" />
     <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\TestService.cs" />
     <Compile Include="Services\WindowManagerService.cs" />
@@ -278,6 +280,7 @@
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassRosterViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\SemanticEventEditorViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\Tags\MetaDataTagsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SessionsViewModel.cs" />
@@ -355,6 +358,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\ClassRosterView.xaml.cs">
       <DependentUpon>ClassRosterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\SemanticEventEditorView.xaml.cs">
+      <DependentUpon>SemanticEventEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\Tags\MetaDataTagsView.xaml.cs">
       <DependentUpon>MetaDataTagsView.xaml</DependentUpon>
@@ -640,6 +646,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\ClassRosterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\SemanticEventEditorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

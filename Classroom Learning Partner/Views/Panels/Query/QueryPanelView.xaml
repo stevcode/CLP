@@ -387,8 +387,14 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
                     <Button Grid.Column="0"
+                            Grid.Row="0"
                             HorizontalAlignment="Center"
                             Height="32"
                             Width="125"
@@ -396,6 +402,7 @@
                             Command="{Binding SaveQueryCommand}" />
 
                     <Button Grid.Column="1"
+                            Grid.Row="0"
                             HorizontalAlignment="Center"
                             Height="32"
                             Width="125"
@@ -403,11 +410,22 @@
                             Command="{Binding NewQueryCommand}" />
 
                     <Button Grid.Column="2"
+                            Grid.Row="0"
                             HorizontalAlignment="Center"
                             Height="32"
                             Width="125"
                             Content="Run Query"
                             Command="{Binding RunQueryCommand}" />
+
+                    <StackPanel Grid.Column="2"
+                                Grid.Row="1"
+                                Orientation="Horizontal">
+
+                        <CheckBox IsChecked="{Binding IsGeneratingReportOnQuery}" />
+                        
+                        <TextBlock Text="  Generate Report on Run Query?" />
+
+                    </StackPanel>
 
                 </Grid>
 
@@ -536,10 +554,41 @@
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0"
+                    <Grid Grid.Row="0">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0"
+                                    Orientation="Horizontal">
+
+                            <Button Height="20"
+                                    Width="75"
+                                    Margin="10 0"
+                                    Content="Pages"
+                                    Command="{Binding SelectPageRangeCommand}" />
+
+                            <TextBlock Text="{Binding PagesFilter}"
+                                       Margin="10 0" />
+
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                HorizontalAlignment="Center"
+                                Height="20"
+                                Width="75"
+                                Content="Cluster"
+                                Command="{Binding ClusterCommand}" />
+
+                    </Grid>
+
+                    <Grid Grid.Row="1"
                           Margin="5,15">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -562,7 +611,7 @@
 
                     </Grid>
 
-                    <ListBox Grid.Row="1"
+                    <ListBox Grid.Row="2"
                              ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
                              ItemsSource="{Binding GroupedQueryResults.View, IsAsync=True}"
                              SelectedValue="{Binding SelectedQueryResult, Mode=OneWay}"

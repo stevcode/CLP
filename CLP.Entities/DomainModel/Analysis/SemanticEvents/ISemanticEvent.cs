@@ -22,6 +22,7 @@ namespace CLP.Entities
         // Meta Data
         Dictionary<string, string> MetaData { get; set; }
         string ReferencePageObjectID { get; set; }
+        bool IsManuallyModified { get; set; }
 
         // Backing
         List<string> HistoryActionIDs { get; set; }

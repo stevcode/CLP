@@ -131,18 +131,36 @@ namespace CLP.Entities
             caar.AddConstraint(Codings.CONSTRAINT_ANSWER_CHANGE_TO);
             conditions.Add(caar);
 
-            var finalAnswer = new AnalysisCode(Codings.ANALYSIS_LABEL_FILL_IN_ANSWER_CORRECTNESS);
-            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_OBJECT);
-            finalAnswer.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
-            conditions.Add(finalAnswer);
+            var finalAnswerCorrectness = new AnalysisCode(Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS);
+            finalAnswerCorrectness.AddConstraint(Codings.CONSTRAINT_ANSWER_OBJECT);
+            finalAnswerCorrectness.AddConstraint(Codings.CONSTRAINT_ANSWER_CORRECTNESS);
+            finalAnswerCorrectness.AddConstraint(Codings.CONSTRAINT_ANSWER_MODIFICATION);
+            conditions.Add(finalAnswerCorrectness);
+
+            var finalRepresentationCorrectness = new AnalysisCode(Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS);
+            finalRepresentationCorrectness.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS);
+            conditions.Add(finalRepresentationCorrectness);
+
+            var overallCorrectness = new AnalysisCode(Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS);
+            overallCorrectness.AddConstraint(Codings.CONSTRAINT_OVERALL_CORRECTNESS);
+            conditions.Add(overallCorrectness);
 
             var mr = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_1_STEP);
+            mr.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_MATCHED_STEP);
             mr.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS);
             conditions.Add(mr);
 
             var mr2step = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP);
             mr2step.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_CORRECTNESS);
             conditions.Add(mr2step);
+
+            var ma = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_APPROACHES);
+            ma.AddConstraint(Codings.CONSTRAINT_MULTIPLE_REPRESENTATION_MATCHED_STEP);
+            ma.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME);
+            conditions.Add(ma);
+
+            var arrEQN = new AnalysisCode(Codings.ANALYSIS_LABEL_ARRAY_EQUATION);
+            conditions.Add(arrEQN);
 
             var arrSkip = new AnalysisCode(Codings.ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP);
             arrSkip.AddConstraint(Codings.CONSTRAINT_ARITH_STATUS);
@@ -163,6 +181,9 @@ namespace CLP.Entities
             var pageDef = new AnalysisCode(Codings.ANALYSIS_LABEL_PAGE_DEFINITION);
             pageDef.AddConstraint(Codings.CONSTRAINT_PROBLEM_TYPE);
             conditions.Add(pageDef);
+
+            var nlje = new AnalysisCode(Codings.ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES);
+            conditions.Add(nlje);
 
             return conditions;
         }

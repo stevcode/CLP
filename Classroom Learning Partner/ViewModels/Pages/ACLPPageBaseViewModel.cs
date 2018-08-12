@@ -243,7 +243,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 var correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessSummaryTag) as CorrectnessSummaryTag;
-                return correctnessTag == null ? Correctness.Unknown : correctnessTag.Correctness;
+                return correctnessTag == null ? Correctness.Unknown : correctnessTag.OverallCorrectness;
             }
             set
             {
@@ -330,15 +330,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (History.RedoActions.Any())
-            {
-                InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                InkStrokes.Add(e.Removed);
-                InkStrokes.Remove(e.Added);
-                MessageBox.Show("Sorry, you need to play all the way to the end and then write.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                return;
-            }
+            // TODO: Remove temporarily for manual stroke adding fix
+            //if (History.RedoActions.Any())
+            //{
+            //    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            //    InkStrokes.Add(e.Removed);
+            //    InkStrokes.Remove(e.Added);
+            //    MessageBox.Show("Sorry, you need to play all the way to the end and then write.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            //    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+            //    return;
+            //}
 
             StrokesChanged(e);
 

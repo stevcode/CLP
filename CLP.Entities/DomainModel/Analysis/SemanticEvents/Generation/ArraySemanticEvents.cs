@@ -706,7 +706,7 @@ namespace CLP.Entities
                                             CodedObject = Codings.OBJECT_ARRAY,
                                             EventType = Codings.EVENT_ARRAY_EQN,
                                             CodedObjectID = codedID,
-                                            EventInformation = $"\"{interpretation}\"",
+                                            EventInformation = $"\"{interpretation}\"; \"{interpretation}\"",
                                             ReferencePageObjectID = referenceArrayID
                                         };
 

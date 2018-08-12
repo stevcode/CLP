@@ -856,12 +856,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var tBackground = new Thread(() =>
                                          {
                                              var submission = currentPage.NextVersionCopy();
-                                             var existingTags = submission.Tags.Where(t => t.Category != Category.Definition && !(t is TempArraySkipCountingTag)).ToList();
-                                             foreach (var tempArraySkipCountingTag in existingTags)
-                                             {
-                                                 submission.RemoveTag(tempArraySkipCountingTag);
-                                             }
-
                                              HistoryAnalysis.GenerateSemanticEvents(submission);
 
                                              UIHelper.RunOnUI(() => currentPage.Submissions.Add(submission));

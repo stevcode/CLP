@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Xml.Linq;
-using Catel;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
+using CLP.MachineAnalysis;
 using Ionic.Zip;
 using Ionic.Zlib;
 
@@ -11,51 +13,6 @@ namespace Classroom_Learning_Partner.Services
 {
     public class QueryService : IQueryService
     {
-        #region Nested Classes
-
-        public class QueryablePage
-        {
-            public QueryablePage()
-            {
-                MatchingAnalysisCodes = new List<IAnalysisCode>();
-                AllAnalysisCodes = new List<IAnalysisCode>();
-            }
-
-            public string CacheFilePath { get; set; }
-            public string StudentID { get; set; }
-            public string StudentName { get; set; }
-            public CLPPage.NameComposite PageNameComposite { get; set; }
-            public List<IAnalysisCode> MatchingAnalysisCodes { get; set; }
-            public List<IAnalysisCode> AllAnalysisCodes { get; set; }
-
-            public string FormattedValue
-            {
-                get { return $"Page {PageNameComposite.PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingAnalysisCodes.Select(q => q.FormattedValue))}"; }
-            }
-        }
-
-        public class QueryResult
-        {
-            public QueryResult(QueryablePage page)
-            {
-                Page = page;
-                MatchingQueryCodes = new List<IAnalysisCode>();
-            }
-
-            public QueryablePage Page { get; set; }
-            public List<IAnalysisCode> MatchingQueryCodes { get; set; }
-
-            public int PageNumber => Page.PageNameComposite.PageNumber;
-            public string StudentName => Page.StudentName;
-
-            public string FormattedValue
-            {
-                get { return $"Page {PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingQueryCodes.Select(q => q.FormattedValue))}"; }
-            }
-        }
-
-        #endregion // Nested Classes
-
         #region Constructor
 
         public QueryService()
@@ -170,17 +127,202 @@ namespace Classroom_Learning_Partner.Services
                     continue;
                 }
 
-                var queryResult = new QueryResult(queryablePage);
-                queryResult.MatchingQueryCodes = queryablePage.AllAnalysisCodes.ToList();
+                var queryResult = new QueryResult(queryablePage)
+                                  {
+                                      AnalysisCodes = queryablePage.AllAnalysisCodes.Select(c => new AnalysisCodeContainer(c)).ToList()
+                                  };
                 queryResults.Add(queryResult);
             }
 
             return queryResults;
         }
 
+        public List<QueryResult> Cluster(List<QueryablePage> queryablePages)
+        {
+            if (NotebookToQuery == null)
+            {
+                return new List<QueryResult>();
+            }
+
+            const int MAX_EPSILON = 1000;
+            const int MINIMUM_PAGES_IN_CLUSTER = 1;
+
+            double DistanceEquation(QueryablePage p1, QueryablePage p2) => Math.Sqrt(p1.Distance(p2));
+            var optics = new OPTICS<QueryablePage>(MAX_EPSILON, MINIMUM_PAGES_IN_CLUSTER, queryablePages, DistanceEquation);
+            optics.BuildReachability();
+            var reachabilityDistances = optics.ReachabilityDistances().ToList();
+
+            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            var plotView = new OPTICSReachabilityPlotView()
+                           {
+                               Owner = Application.Current.MainWindow,
+                               WindowStartupLocation = WindowStartupLocation.Manual,
+                               Reachability = normalizedReachabilityPlot
+                           };
+            plotView.Show();
+
+            var clusteringEpsilon = QueryablePage.GetClusteringEpsilon();
+
+            var currentCluster = new List<QueryablePage>();
+            var allClusteredQueryablePages = new List<QueryablePage>();
+            var firstQueryablePageIndex = (int)reachabilityDistances[0].OriginalIndex;
+            var firstQueryablePage = queryablePages[firstQueryablePageIndex];
+            currentCluster.Add(firstQueryablePage);
+            allClusteredQueryablePages.Add(firstQueryablePage);
+
+            var clusters = new List<List<QueryablePage>>();
+
+            for (var i = 1; i < reachabilityDistances.Count; i++)
+            {
+                var queryablePageIndex = (int)reachabilityDistances[i].OriginalIndex;
+                var queryablePage = queryablePages[queryablePageIndex];
+
+                // Epsilon cluster decision.
+                var currentReachabilityDistance = reachabilityDistances[i].ReachabilityDistance;
+                if (currentReachabilityDistance < clusteringEpsilon)
+                {
+                    currentCluster.Add(queryablePage);
+                    allClusteredQueryablePages.Add(queryablePage);
+                    continue;
+                }
+
+                var fullCluster = currentCluster.ToList();
+                currentCluster.Clear();
+                currentCluster.Add(queryablePage);
+                allClusteredQueryablePages.Add(queryablePage);
+                clusters.Add(fullCluster);
+            }
+
+            if (currentCluster.Any())
+            {
+                var finalCluster = currentCluster.ToList();
+                clusters.Add(finalCluster);
+            }
+
+            var anomaliesCluster = queryablePages.Where(qp => !allClusteredQueryablePages.Contains(qp)).ToList();
+
+            var queryResults = new List<QueryResult>();
+            foreach (var queryablePage in anomaliesCluster)
+            {
+                var queryResult = new QueryResult(queryablePage)
+                                  {
+                                      AnalysisCodes = queryablePage.AllAnalysisCodes.Select(c => new AnalysisCodeContainer(c)).ToList(),
+                                      ClusterName = "Anomalies"
+                                  };
+                queryResults.Add(queryResult);
+            }
+
+            var clusterCount = 1;
+            foreach (var cluster in clusters)
+            {
+                foreach (var queryablePage in cluster)
+                {
+                    var queryResult = new QueryResult(queryablePage)
+                                      {
+                                          AnalysisCodes = queryablePage.AllAnalysisCodes.Select(c => new AnalysisCodeContainer(c)).ToList(),
+                                          ClusterName = cluster.Count == 1 ? "OUTLIERS" : $"Cluster {clusterCount:D3}",
+                                          ClusterSize = cluster.Count
+                                      };
+
+                    queryResults.Add(queryResult);
+                }
+
+                if (cluster.Count != 1)
+                {
+                    clusterCount++;
+                }
+            }
+
+            FindDominantSharedCodes(queryResults);
+            
+            return queryResults;
+        }
+
         #endregion // IQueryService Implementation
 
         #region Methods
+
+        private void FindDominantSharedCodes(List<QueryResult> results)
+        {
+            foreach (var group in results.GroupBy(r => r.ClusterName).Where(g => g.Key != "OUTLIERS"))
+            {
+                var sizes = new Dictionary<int, List<AnalysisCodeContainer>>();
+
+                var queryResults = group.ToList();
+                for (var i = 0; i < queryResults.Count - 1; i++)
+                {
+                    var result1 = queryResults[i];
+                    for (var j = i + 1; j < queryResults.Count; j++)
+                    {
+                        var result2 = queryResults[j];
+
+                        foreach (var analysisCodeContainer1 in result1.AnalysisCodes)
+                        {
+                            foreach (var analysisCodeContainer2 in result2.AnalysisCodes)
+                            {
+                                var size = CompareAnalysisCodes(analysisCodeContainer1.Code, analysisCodeContainer2.Code);
+                                if (!sizes.ContainsKey(size))
+                                {
+                                    sizes.Add(size, new List<AnalysisCodeContainer>());
+                                }
+
+                                if (!sizes[size].Contains(analysisCodeContainer1))
+                                {
+                                    sizes[size].Add(analysisCodeContainer1);
+                                }
+
+                                if (!sizes[size].Contains(analysisCodeContainer2))
+                                {
+                                    sizes[size].Add(analysisCodeContainer2);
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                if (sizes.Keys.Count == 0)
+                {
+                    continue;
+                }
+
+                var largestSize = sizes.Keys.Max();
+                if (largestSize <= 0)
+                {
+                    continue;
+                }
+
+                foreach (var analysisCodeContainer in sizes[largestSize])
+                {
+                    analysisCodeContainer.IsDominantSharedCode = true;
+                }
+            }
+        }
+
+        private int CompareAnalysisCodes(IAnalysisCode code1, IAnalysisCode code2)
+        {
+            var matchingConstraintCount = 0;
+            foreach (var constraint1 in code1.Constraints)
+            {
+                foreach (var constraint2 in code1.Constraints)
+                {
+                    if (constraint1.IsQueryable &&
+                        constraint2.IsQueryable &&
+                        constraint1.ConstraintLabel == constraint2.ConstraintLabel &&
+                        constraint1.ConstraintValue == constraint2.ConstraintValue)
+                    {
+                        matchingConstraintCount++;
+                    }
+                }
+            }
+
+            if (code1.AnalysisCodeLabel == code2.AnalysisCodeLabel)
+            {
+                matchingConstraintCount *= 2;
+            }
+
+            return matchingConstraintCount;
+        }
 
         private List<XDocument> GetAllPageXDocumentsFromCache(string cacheFilePath)
         {
@@ -310,6 +452,5 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Methods
-
     }
 }

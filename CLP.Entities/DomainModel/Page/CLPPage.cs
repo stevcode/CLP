@@ -388,7 +388,7 @@ namespace CLP.Entities
                     return "Unknown";
                 }
 
-                switch (correctnessTag.Correctness)
+                switch (correctnessTag.OverallCorrectness)
                 {
                     case Entities.Correctness.Correct:
                         return "COR";

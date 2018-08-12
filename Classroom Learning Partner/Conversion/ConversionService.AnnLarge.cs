@@ -3076,6 +3076,9 @@ namespace Classroom_Learning_Partner
             newHistoryAction.StrokeIDsAdded = historyItem.StrokeIDsAdded;
             newHistoryAction.StrokeIDsRemoved = historyItem.StrokeIDsRemoved;
 
+            var strokeAcceptersOnPage = newPage.PageObjects.OfType<IStrokeAccepter>().ToList();
+            strokeAcceptersOnPage.AddRange(newPage.History.TrashedPageObjects.OfType<IStrokeAccepter>().ToList());
+
             // Single Add        
             if (newHistoryAction.StrokeIDsAdded.Count == 1 &&
                 !newHistoryAction.StrokeIDsRemoved.Any())
@@ -3098,6 +3101,24 @@ namespace Classroom_Learning_Partner
                     var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(addedStroke);
                     if (choiceBubbleStrokeIsOver != null)
                     {
+                        foreach (var strokeAccepter in strokeAcceptersOnPage)
+                        {
+                            if (strokeAccepter == multipleChoice)
+                            {
+                                continue;
+                            }
+
+                            if (strokeAccepter.AcceptedStrokeParentIDs.Contains(strokeID))
+                            {
+                                strokeAccepter.AcceptedStrokeParentIDs.Remove(strokeID);
+                            }
+
+                            if (strokeAccepter.AcceptedStrokes.Contains(addedStroke))
+                            {
+                                strokeAccepter.AcceptedStrokes.Remove(addedStroke);
+                            }
+                        }
+
                         var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                         multipleChoice.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
                         var multipleChoiceBubbleStatusChangedHistoryAction = new MultipleChoiceBubbleStatusChangedHistoryAction(newPage,
@@ -3166,6 +3187,24 @@ namespace Classroom_Learning_Partner
                     if (!isStrokeOver)
                     {
                         continue;
+                    }
+
+                    foreach (var strokeAccepter in strokeAcceptersOnPage)
+                    {
+                        if (strokeAccepter == interpretationRegion)
+                        {
+                            continue;
+                        }
+
+                        if (strokeAccepter.AcceptedStrokeParentIDs.Contains(strokeID))
+                        {
+                            strokeAccepter.AcceptedStrokeParentIDs.Remove(strokeID);
+                        }
+
+                        if (strokeAccepter.AcceptedStrokes.Contains(addedStroke))
+                        {
+                            strokeAccepter.AcceptedStrokes.Remove(addedStroke);
+                        }
                     }
 
                     interpretationRegion.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
@@ -3306,6 +3345,24 @@ namespace Classroom_Learning_Partner
                         var choiceBubbleStrokeIsOver = multipleChoice.ChoiceBubbleStrokeIsOver(removedStroke);
                         if (choiceBubbleStrokeIsOver != null)
                         {
+                            foreach (var strokeAccepter in strokeAcceptersOnPage)
+                            {
+                                if (strokeAccepter == multipleChoice)
+                                {
+                                    continue;
+                                }
+
+                                if (strokeAccepter.AcceptedStrokeParentIDs.Contains(strokeID))
+                                {
+                                    strokeAccepter.AcceptedStrokeParentIDs.Remove(strokeID);
+                                }
+
+                                if (strokeAccepter.AcceptedStrokes.Contains(removedStroke))
+                                {
+                                    strokeAccepter.AcceptedStrokes.Remove(removedStroke);
+                                }
+                            }
+
                             var index = multipleChoice.ChoiceBubbles.IndexOf(choiceBubbleStrokeIsOver);
                             multipleChoice.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
                             var multipleChoiceBubbleStatusChangedHistoryAction = new MultipleChoiceBubbleStatusChangedHistoryAction(newPage,
@@ -3376,6 +3433,24 @@ namespace Classroom_Learning_Partner
                         if (!isStrokeOver)
                         {
                             continue;
+                        }
+
+                        foreach (var strokeAccepter in strokeAcceptersOnPage)
+                        {
+                            if (strokeAccepter == interpretationRegion)
+                            {
+                                continue;
+                            }
+
+                            if (strokeAccepter.AcceptedStrokeParentIDs.Contains(strokeID))
+                            {
+                                strokeAccepter.AcceptedStrokeParentIDs.Remove(strokeID);
+                            }
+
+                            if (strokeAccepter.AcceptedStrokes.Contains(removedStroke))
+                            {
+                                strokeAccepter.AcceptedStrokes.Remove(removedStroke);
+                            }
                         }
 
                         interpretationRegion.ChangeAcceptedStrokes(newHistoryAction.StrokesAdded, newHistoryAction.StrokesRemoved);
@@ -3636,6 +3711,29 @@ namespace Classroom_Learning_Partner
 
         public static void AddAssessmentRelationDefinitionTags(CLPPage newPage)
         {
+            #region Add Word Problem Meta Data Tag
+
+            if (newPage.PageNumber != 1)
+            {
+                var wordProblemPages = new List<int>
+                                       {
+                                           5,
+                                           6,
+                                           10,
+                                           11,
+                                           12,
+                                           13
+                                       };
+
+                var wordProblemValue = wordProblemPages.Contains(newPage.PageNumber) ? MetaDataTag.VALUE_TRUE : MetaDataTag.VALUE_FALSE;
+                var wordProblemTag = new MetaDataTag(newPage, Origin.Author, MetaDataTag.NAME_WORD_PROBLEM, wordProblemValue);
+
+                newPage.AddTag(wordProblemTag);
+            }
+
+            #endregion // Add Word Problem Meta Data Tag
+
+
             switch (newPage.PageNumber)
             {
                 case 2:
@@ -3672,6 +3770,25 @@ namespace Classroom_Learning_Partner
                     newPage.AddTag(equivTag);
                     break;
                 }
+                case 3:
+                    var pageDef = new MultiplicationRelationDefinitionTag(newPage, Origin.Author)
+                                  {
+                                      RelationType = MultiplicationRelationDefinitionTag.RelationTypes.Commutativity,
+                                      Product = 63.0
+                                  };
+                    var firstFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                      {
+                                          NumericValue = 9.0
+                                      };
+                    var secondFactor = new NumericValueDefinitionTag(newPage, Origin.Author)
+                                       {
+                                           NumericValue = 7.0
+                                       };
+                    pageDef.Factors.Add(firstFactor);
+                    pageDef.Factors.Add(secondFactor);
+
+                    newPage.AddTag(pageDef);
+                    break;
                 case 4:
                 {
                     var firstFactorL = new NumericValueDefinitionTag(newPage, Origin.Author);
