@@ -43,6 +43,7 @@ namespace CLP.Entities
         public const string EVENT_ARRAY_SNAP = "snap";
         public const string EVENT_ARRAY_SKIP = "skip";
         public const string EVENT_ARRAY_SKIP_ERASE = "skip erase";
+        public const string EVENT_ARRAY_SKIP_PLUS_ARITH = "skip +arith";
         public const string EVENT_ARRAY_EQN = "eqn";
         public const string EVENT_ARRAY_EQN_ERASE = "eqn erase";
         public const string EVENT_ARRAY_COUNT_LINE = "count line";
