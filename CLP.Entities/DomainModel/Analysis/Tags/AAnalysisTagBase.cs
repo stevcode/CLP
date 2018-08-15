@@ -51,7 +51,7 @@ namespace CLP.Entities
         {
             get
             {
-                return ParentPage.History.SemanticEvents.Where(h => SemanticEventIDs.Contains(h.ID)).OrderBy(h => h.SemanticPassNumber).ThenBy(h => h.SemanticEventIndex).ToList();
+                return ParentPage.History.SemanticEventPasses.FirstOrDefault(p => p.PassNumber == 3)?.SemanticEvents.Where(e => SemanticEventIDs.Contains(e.ID)).OrderBy(e =>e .SemanticEventIndex).ToList();
             }
         }
 

@@ -24,65 +24,16 @@ namespace CLP.Entities
             FixANSFIHistoryActions(page);
 
             // First Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
-                                            {
-                                                CodedObject = "\tPASS",
-                                                CodedObjectID = "1",
-                                                EventInformation = "Initialization",
-                                                SemanticEventIndex = -1
-                                            });
-
             var initialSemanticEvents = GenerateInitialSemanticEvents(page);
-            var eventIndex = 0;
-            foreach (var initialSemanticEvent in initialSemanticEvents)
-            {
-                initialSemanticEvent.SemanticPassNumber = 1;
-                initialSemanticEvent.SemanticEventIndex = eventIndex;
-                eventIndex++;
-            }
-
-            page.History.SemanticEvents.AddRange(initialSemanticEvents);
+            page.History.SemanticEventPasses.Add(new SemanticEventPass("Initialization", 1,  initialSemanticEvents));
 
             // Second Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
-                                            {
-                                                CodedObject = "\tPASS",
-                                                CodedObjectID = "2",
-                                                EventInformation = "Ink Clustering",
-                                                SemanticEventIndex = -2
-                                            });
-
             var clusteredInkSemanticEvents = ClusterInkSemanticEvents(page, initialSemanticEvents);
-            eventIndex = 0;
-            foreach (var initialSemanticEvent in clusteredInkSemanticEvents)
-            {
-                initialSemanticEvent.SemanticPassNumber = 2;
-                initialSemanticEvent.SemanticEventIndex = eventIndex;
-                eventIndex++;
-            }
-
-            page.History.SemanticEvents.AddRange(clusteredInkSemanticEvents);
+            page.History.SemanticEventPasses.Add(new SemanticEventPass("Ink Clustering", 2, clusteredInkSemanticEvents));
 
             // Third Pass
-            page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
-                                            {
-                                                CodedObject = "\tPASS",
-                                                CodedObjectID = "3",
-                                                EventInformation = "Ink Interpretation",
-                                                SemanticEventIndex = -3
-                                            });
-
             var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
-            eventIndex = 0;
-            // BUG: Previous passes just pass by reference the Semantic Event if it's not transformed, this means the PassNumber is copied over.
-            foreach (var initialSemanticEvent in interpretedInkSemanticEvents)
-            {
-                initialSemanticEvent.SemanticPassNumber = 3;
-                initialSemanticEvent.SemanticEventIndex = eventIndex;
-                eventIndex++;
-            }
-
-            page.History.SemanticEvents.AddRange(interpretedInkSemanticEvents);
+            page.History.SemanticEventPasses.Add(new SemanticEventPass("Ink Interpretation", 3, interpretedInkSemanticEvents));
 
             // Fourth Pass
             //page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
@@ -976,7 +927,7 @@ namespace CLP.Entities
 
                 if (buffer.Any())
                 {
-                    semanticEvent.SemanticEvents.AddRange(buffer);
+  //                  semanticEvent.SemanticEvents.AddRange(buffer);
                     buffer.Clear();
                 }
 
@@ -987,7 +938,7 @@ namespace CLP.Entities
             if (buffer.Any() &&
                 mostRecentSemanticEvent != null)
             {
-                mostRecentSemanticEvent.SemanticEvents.AddRange(buffer);
+  //              mostRecentSemanticEvent.SemanticEvents.AddRange(buffer);
                 buffer.Clear();
             }
 

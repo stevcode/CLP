@@ -142,11 +142,21 @@ namespace CLP.Entities
         /// <summary>List of all the ISemanticEvents analysis generates.</summary>
         public ObservableCollection<ISemanticEvent> SemanticEvents
         {
-            get { return GetValue<ObservableCollection<ISemanticEvent>>(SemanticEventsProperty); }
-            set { SetValue(SemanticEventsProperty, value); }
+            get
+            {
+                var passThree = SemanticEventPasses.FirstOrDefault(p => p.PassNumber == 3);
+                return passThree == null ? new ObservableCollection<ISemanticEvent>() : passThree.SemanticEvents;
+            }
         }
 
-        public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(ObservableCollection<ISemanticEvent>), () => new ObservableCollection<ISemanticEvent>());
+        public ObservableCollection<SemanticEventPass> SemanticEventPasses
+        {
+            get => GetValue<ObservableCollection<SemanticEventPass>>(SemanticEventPassesProperty);
+            set => SetValue(SemanticEventPassesProperty, value);
+        }
+
+        public static readonly PropertyData SemanticEventPassesProperty =
+            RegisterProperty(nameof(SemanticEventPasses), typeof(ObservableCollection<SemanticEventPass>), () => new ObservableCollection<SemanticEventPass>());
 
         #endregion //SemanticEvents
 

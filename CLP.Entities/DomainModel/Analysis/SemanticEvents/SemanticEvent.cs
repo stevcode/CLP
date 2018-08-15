@@ -29,30 +29,24 @@ namespace CLP.Entities
                    new List<IHistoryAction>
                    {
                        historyAction
-                   },
-                   new List<ISemanticEvent>()) { }
-
-        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyActions)
-            : this(parentPage, historyActions, new List<ISemanticEvent>()) { }
-
-        public SemanticEvent(CLPPage parentPage, ISemanticEvent semanticEvent)
-            : this(parentPage,
-                   new List<IHistoryAction>(),
-                   new List<ISemanticEvent>
-                   {
-                       semanticEvent
                    }) { }
 
-        public SemanticEvent(CLPPage parentPage, List<ISemanticEvent> semanticEvents)
-            : this(parentPage, new List<IHistoryAction>(), semanticEvents) { }
-
-        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyActions, List<ISemanticEvent> semanticEvents)
+        public SemanticEvent(CLPPage parentPage, List<IHistoryAction> historyActions)
             : this()
         {
             ParentPage = parentPage;
-            HistoryActionIDs = historyActions.Select(h => h.ID).ToList();
-            SemanticEvents = semanticEvents;
+            HistoryActionIDs = historyActions.OrderBy(h => h.HistoryActionIndex).Select(h => h.ID).ToList();
         }
+
+        public SemanticEvent(CLPPage parentPage, ISemanticEvent semanticEvent)
+            : this(parentPage,
+                  new List<ISemanticEvent>
+                  {
+                      semanticEvent
+                  }) { }
+
+        public SemanticEvent(CLPPage parentPage, List<ISemanticEvent> semanticEvents)
+            : this(parentPage, semanticEvents.SelectMany(e => e.HistoryActions).ToList()) {}
 
         #endregion //Constructors
 
@@ -68,15 +62,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), string.Empty);
-
-        /// <summary>The pass the semantic event is part of.</summary>
-        public int SemanticPassNumber
-        {
-            get => GetValue<int>(SemanticPassNumberProperty);
-            set => SetValue(SemanticPassNumberProperty, value);
-        }
-
-        public static readonly PropertyData SemanticPassNumberProperty = RegisterProperty("SemanticPassNumber", typeof(int), -1);
 
         /// <summary>Location of the <see cref="ISemanticEvent" /> in the list of <see cref="ISemanticEvent" />s.</summary>
         public int SemanticEventIndex
@@ -229,15 +214,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof(List<string>), () => new List<string>());
 
-        /// <summary>List of any SemanticEvents that make up this SemanticEvent.</summary>
-        public List<ISemanticEvent> SemanticEvents
-        {
-            get => GetValue<List<ISemanticEvent>>(SemanticEventsProperty);
-            set => SetValue(SemanticEventsProperty, value);
-        }
-
-        public static readonly PropertyData SemanticEventsProperty = RegisterProperty("SemanticEvents", typeof(List<ISemanticEvent>), () => new List<ISemanticEvent>());
-
         /// <summary>The <see cref="ISemanticEvent" />'s parent <see cref="CLPPage" />.</summary>
         [XmlIgnore]
         [ExcludeFromSerialization]
@@ -253,33 +229,9 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public IHistoryAction FirstHistoryAction
-        {
-            get
-            {
-                if (HistoryActions.Any())
-                {
-                    return HistoryActions.First();
-                }
+        public IHistoryAction FirstHistoryAction => HistoryActions.First();
 
-                var firstSemanticEvent = SemanticEvents.FirstOrDefault();
-                return firstSemanticEvent?.FirstHistoryAction;
-            }
-        }
-
-        public IHistoryAction LastHistoryAction
-        {
-            get
-            {
-                if (HistoryActions.Any())
-                {
-                    return HistoryActions.Last();
-                }
-
-                var lastSemanticEvent = SemanticEvents.LastOrDefault();
-                return lastSemanticEvent?.LastHistoryAction;
-            }
-        }
+        public IHistoryAction LastHistoryAction => HistoryActions.Last();
 
         /// <summary>List of the HistoryActions that make up this SemanticEvent.</summary>
         public List<IHistoryAction> HistoryActions
@@ -321,18 +273,37 @@ namespace CLP.Entities
 
         public bool ContainsHistoryActionID(string historyActionID)
         {
-            if (!HistoryActionIDs.Any() &&
-                !SemanticEvents.Any())
+            return HistoryActionIDs.Any() && HistoryActionIDs.Contains(historyActionID);
+        }
+
+        public ISemanticEvent CreateCopy(bool isPureCopy = false)
+        {
+            var copy = new SemanticEvent
+                       {
+                           SemanticEventIndex = SemanticEventIndex,
+                           CachedCodedValue = CachedCodedValue,
+                           CodedObject = CodedObject,
+                           CodedObjectID = CodedObjectID,
+                           CodedObjectIDIncrement = CodedObjectIDIncrement,
+                           CodedObjectSubID = CodedObjectSubID,
+                           CodedObjectSubIDIncrement = CodedObjectSubIDIncrement,
+                           EventType = EventType,
+                           EventInformation = EventInformation,
+                           HistoryActionIDs = HistoryActionIDs.ToList(),
+                           ParentPage = ParentPage
+                       };
+
+            if (isPureCopy)
             {
-                return false;
+                copy.ID = ID;
             }
 
-            if (HistoryActionIDs.Any())
+            foreach (var key in MetaData.Keys)
             {
-                return HistoryActionIDs.Contains(historyActionID);
+                copy.MetaData.Add(key, MetaData[key]);
             }
 
-            return SemanticEvents.Any(e => e.ContainsHistoryActionID(historyActionID));
+            return copy;
         }
 
         #endregion // Methods
@@ -383,7 +354,7 @@ namespace CLP.Entities
         {
             var codedObject = Codings.OBJECT_ERROR;
             var codedID = "Event";
-            var incrementID = string.Join(", ", semanticEvents.Select(h => $"{h.SemanticPassNumber}.{h.SemanticEventIndex}"));
+            var incrementID = string.Join(", ", semanticEvents.Select(h => $"{h.SemanticEventIndex}"));
 
             var semanticEvent = new SemanticEvent(page, semanticEvents)
                                 {
