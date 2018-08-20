@@ -25,38 +25,26 @@ namespace CLP.Entities
 
             // First Pass
             var initialSemanticEvents = GenerateInitialSemanticEvents(page);
-            page.History.SemanticEventPasses.Add(new SemanticEventPass("Initialization", 1,  initialSemanticEvents));
+            SemanticEvent.SetPassNameAndNumber("Initialization", 1, initialSemanticEvents);
+            page.History.SemanticEvents.AddRange(initialSemanticEvents);
 
             // Second Pass
             var clusteredInkSemanticEvents = ClusterInkSemanticEvents(page, initialSemanticEvents);
-            page.History.SemanticEventPasses.Add(new SemanticEventPass("Ink Clustering", 2, clusteredInkSemanticEvents));
+            SemanticEvent.SetPassNameAndNumber("Ink Clustering", 2, clusteredInkSemanticEvents);
+            page.History.SemanticEvents.AddRange(clusteredInkSemanticEvents);
 
             // Third Pass
             var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
-            page.History.SemanticEventPasses.Add(new SemanticEventPass("Ink Interpretation", 3, interpretedInkSemanticEvents));
+            SemanticEvent.SetPassNameAndNumber("Ink Interpretation", 3, interpretedInkSemanticEvents);
+            page.History.SemanticEvents.AddRange(interpretedInkSemanticEvents);
 
-            // Fourth Pass
-            //page.History.SemanticEvents.Add(new SemanticEvent(page, new List<IHistoryAction>())
-            //                                {
-            //                                    CodedObject = "\tPASS",
-            //                                    CodedObjectID = "4",
-            //                                    EventInformation = "Ink Interpretation",
-            //                                    SemanticEventIndex = -4
-            //                                });
-
-            //var interpretedInkSemanticEvents = InterpretInkSemanticEvents(page, clusteredInkSemanticEvents);
-            //eventIndex = 0;
-            //foreach (var initialSemanticEvent in interpretedInkSemanticEvents)
-            //{
-            //    initialSemanticEvent.SemanticPassNumber = 3;
-            //    initialSemanticEvent.SemanticEventIndex = eventIndex;
-            //    eventIndex++;
-            //}
-
-            //page.History.SemanticEvents.AddRange(interpretedInkSemanticEvents);
-
-            // Last Pass
+            // Tag Generation Pass
             GenerateTags(page, interpretedInkSemanticEvents);
+
+            // Fourth Pass (could run concurrent to Tag Generation Pass)
+            var refinedSemanticEvents = RefineSemanticEvents(page, interpretedInkSemanticEvents);
+            SemanticEvent.SetPassNameAndNumber("Refinement", 4, refinedSemanticEvents);
+            page.History.SemanticEvents.AddRange(refinedSemanticEvents);
 
             #region Logging
 
@@ -802,7 +790,7 @@ namespace CLP.Entities
                 }
                 else
                 {
-                    processedEvents.Add(semanticEvent);
+                    processedEvents.Add(semanticEvent.CreateCopy());
                 }
             }
 
@@ -836,7 +824,7 @@ namespace CLP.Entities
                 }
                 else
                 {
-                    allInterpretedSemanticEvents.Add(semanticEvent);
+                    allInterpretedSemanticEvents.Add(semanticEvent.CreateCopy());
                 }
             }
 
@@ -898,7 +886,7 @@ namespace CLP.Entities
 
             if (!allInterpretedEvents.Any())
             {
-                allInterpretedEvents.Add(semanticEvent);
+                allInterpretedEvents.Add(semanticEvent.CreateCopy());
             }
 
             return allInterpretedEvents;
@@ -910,13 +898,15 @@ namespace CLP.Entities
 
         public static List<ISemanticEvent> RefineSemanticEvents(CLPPage page, List<ISemanticEvent> semanticEvents)
         {
+            var copiedSemanticEvents = semanticEvents.Select(e => e.CreateCopy()).ToList();
+
             var buffer = new List<ISemanticEvent>();
             ISemanticEvent mostRecentSemanticEvent = null;
 
             #region Collapse INK ignore Events
 
             var collapsedInkIgnoreEvents = new List<ISemanticEvent>();
-            foreach (var semanticEvent in semanticEvents)
+            foreach (var semanticEvent in copiedSemanticEvents)
             {
                 if (semanticEvent.CodedObject == Codings.OBJECT_INK &&
                     semanticEvent.EventType == Codings.EVENT_INK_IGNORE)
@@ -927,7 +917,8 @@ namespace CLP.Entities
 
                 if (buffer.Any())
                 {
-  //                  semanticEvent.SemanticEvents.AddRange(buffer);
+                    var historyActionIDs = buffer.SelectMany(e => e.HistoryActionIDs).ToList();
+                    semanticEvent.HistoryActionIDs.AddRange(historyActionIDs);
                     buffer.Clear();
                 }
 
@@ -938,7 +929,8 @@ namespace CLP.Entities
             if (buffer.Any() &&
                 mostRecentSemanticEvent != null)
             {
-  //              mostRecentSemanticEvent.SemanticEvents.AddRange(buffer);
+                var historyActionIDs = buffer.SelectMany(e => e.HistoryActionIDs).ToList();
+                mostRecentSemanticEvent.HistoryActionIDs.AddRange(historyActionIDs);
                 buffer.Clear();
             }
 
@@ -1073,26 +1065,26 @@ namespace CLP.Entities
             var collapsedSkipPlusArithEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in collapsedAnsEraseEvents)
             {
-                if (semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP ||
-                    semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP_ERASE)
-                {
-                    buffer.Add(semanticEvent);
-                    continue;
-                }
+                //if (semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP ||
+                //    semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP_ERASE)
+                //{
+                //    buffer.Add(semanticEvent);
+                //    continue;
+                //}
 
-                if (semanticEvent.CodedObject == Codings.OBJECT_ARITH &&
-                    buffer.Any())
-                {
-                    buffer.Add(semanticEvent);
-                    continue;
-                }
+                //if (semanticEvent.CodedObject == Codings.OBJECT_ARITH &&
+                //    buffer.Any())
+                //{
+                //    buffer.Add(semanticEvent);
+                //    continue;
+                //}
 
-                if (buffer.Any())
-                {
-                    var arithCount = buffer.Count(e => e.CodedObject == Codings.OBJECT_ARITH);
-                    var eventType = $"{Codings.EVENT_ARRAY_SKIP_PLUS_ARITH} ({arithCount})";
+                //if (buffer.Any())
+                //{
+                //    var arithCount = buffer.Count(e => e.CodedObject == Codings.OBJECT_ARITH);
+                //    var eventType = $"{Codings.EVENT_ARRAY_SKIP_PLUS_ARITH} ({arithCount})";
 
-                }
+                //}
 
                 collapsedSkipPlusArithEvents.Add(semanticEvent);
             }

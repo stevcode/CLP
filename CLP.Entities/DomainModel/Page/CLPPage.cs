@@ -794,12 +794,9 @@ namespace CLP.Entities
             {
                 historyAction.ParentPage = this;
             }
-            foreach (var semanticEventPass in History.SemanticEventPasses)
+            foreach (var semanticEvent in History.SemanticEvents)
             {
-                foreach (var semanticEvent in semanticEventPass.SemanticEvents)
-                {
-                    semanticEvent.ParentPage = this;
-                }
+                semanticEvent.ParentPage = this;
             }
             foreach (var pageObject in PageObjects.OfType<IStrokeAccepter>())
             {

@@ -883,7 +883,7 @@ namespace CLP.Entities
                                             CodedObject = Codings.OBJECT_ARITH,
                                             EventType = Codings.EVENT_ARITH_ADD,
                                             CodedObjectID = inkEvent.CodedObjectID,
-                                            EventInformation = $"\"{interpretation}\""
+                                            EventInformation = $"\"{interpretation}\"; \"{interpretation}\""
                                         };
 
                     return semanticEvent;

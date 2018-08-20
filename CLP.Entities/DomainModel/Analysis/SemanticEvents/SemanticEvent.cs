@@ -72,6 +72,24 @@ namespace CLP.Entities
 
         public static readonly PropertyData SemanticEventIndexProperty = RegisterProperty("SemanticEventIndex", typeof(int), -1);
 
+        /// <summary>Pass number the event belongs to.</summary>
+        public int SemanticPassNumber
+        {
+            get => GetValue<int>(SemanticPassNumberProperty);
+            set => SetValue(SemanticPassNumberProperty, value);
+        }
+
+        public static readonly PropertyData SemanticPassNumberProperty = RegisterProperty(nameof(SemanticPassNumber), typeof(int), 0);
+
+        /// <summary>Pass name the event belongs to.</summary>
+        public string SemanticPassName
+        {
+            get => GetValue<string>(SemanticPassNameProperty);
+            set => SetValue(SemanticPassNameProperty, value);
+        }
+
+        public static readonly PropertyData SemanticPassNameProperty = RegisterProperty(nameof(SemanticPassName), typeof(string), string.Empty);
+
         /// <summary>Cached value of CodedValue with correct page state.</summary>
         public string CachedCodedValue
         {
@@ -366,6 +384,18 @@ namespace CLP.Entities
                                 };
 
             return semanticEvent;
+        }
+
+        public static void SetPassNameAndNumber(string passName, int passNumber, IEnumerable<ISemanticEvent> semanticEvents)
+        {
+            var eventIndex = 0;
+            foreach (var semanticEvent in semanticEvents)
+            {
+                semanticEvent.SemanticPassName = passName;
+                semanticEvent.SemanticPassNumber = passNumber;
+                semanticEvent.SemanticEventIndex = eventIndex;
+                eventIndex++;
+            }
         }
 
         #endregion // Static Methods

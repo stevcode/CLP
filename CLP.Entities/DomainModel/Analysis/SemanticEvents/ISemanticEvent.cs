@@ -7,6 +7,8 @@ namespace CLP.Entities
         // ID
         string ID { get; set; }
         int SemanticEventIndex { get; set; }
+        int SemanticPassNumber { get; set; }
+        string SemanticPassName { get; set; }
         string CachedCodedValue { get; set; }
 
         // Coded Portion
