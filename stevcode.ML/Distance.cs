@@ -19,5 +19,19 @@ namespace stevcode.ML
 
             return isFastDistance ? total : Math.Sqrt(total);
         }
+
+        public static double ManhattanDistance(List<double> a, List<double> b)
+        {
+            return a.Select((t, i) => Math.Abs(t - b[i])).Sum();
+        }
+
+        /// <summary>
+        /// Calculates the similarity between 2 points using distance.
+        /// Returns a value between 0 and 1 where 1 means they are identical
+        /// </summary>
+        public static double Similarity(double distance)
+        {
+            return 1 / (1 + distance);
+        }
     }
 }
