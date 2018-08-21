@@ -1,0 +1,10 @@
+﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.GraphView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://schemas.catelproject.com"
+                  Title="Queryable Page Distances"
+                  ShowInTaskbar="False">
+    <Grid>
+
+    </Grid>
+</catel:DataWindow>

@@ -359,6 +359,9 @@
     <Compile Include="Views\Modal Windows\ClassRosterView.xaml.cs">
       <DependentUpon>ClassRosterView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\GraphView.xaml.cs">
+      <DependentUpon>GraphView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\SemanticEventEditorView.xaml.cs">
       <DependentUpon>SemanticEventEditorView.xaml</DependentUpon>
     </Compile>
@@ -646,6 +649,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\ClassRosterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\GraphView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
