@@ -1057,6 +1057,10 @@
       <Project>{0858c710-af53-4049-b98e-cfe3638d1228}</Project>
       <Name>ServiceModelEx</Name>
     </ProjectReference>
+    <ProjectReference Include="..\stevcode.ML\stevcode.ML.csproj">
+      <Project>{e2f290ce-9430-4ef6-abc8-4dd0aff45d12}</Project>
+      <Name>stevcode.ML</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Unused\Undo.png" />

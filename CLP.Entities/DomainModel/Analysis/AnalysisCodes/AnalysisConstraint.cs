@@ -72,7 +72,7 @@ namespace CLP.Entities
                    constraintLabel == Codings.CONSTRAINT_ANSWER_OBJECT;
         }
 
-        private List<string> GeneratePossibleConstraintValues(string constraintLabel)
+        public static List<string> GeneratePossibleConstraintValues(string constraintLabel)
         {
             var possibleConstraintValues = new List<string>
                                            {

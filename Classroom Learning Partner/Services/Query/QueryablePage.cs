@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CLP.Entities;
+using stevcode.ML;
 
 namespace Classroom_Learning_Partner.Services
 {
@@ -20,6 +21,11 @@ namespace Classroom_Learning_Partner.Services
         public CLPPage.NameComposite PageNameComposite { get; set; }
         public List<IAnalysisCode> MatchingAnalysisCodes { get; set; }
         public List<IAnalysisCode> AllAnalysisCodes { get; set; }
+
+        public double StudentActionDistance { get; set; }
+        public double AnalysisDistance { get; set; }
+        public double ProblemStructureDistance { get; set; }
+        public bool IsPositionCached { get; set; }
 
         public string FormattedValue
         {
@@ -51,6 +57,22 @@ namespace Classroom_Learning_Partner.Services
                         var analysisCodeTypes = AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
                         var analysisCodeTypesOther = otherPage.AllAnalysisCodes.Select(c => c.AnalysisCodeLabel).Distinct().ToList();
                         distance += Math.Abs(analysisCodeTypes.Count - analysisCodeTypesOther.Count);
+                        break;
+                    case "V4_MANHATTAN_3":
+                        CalculatePosition();
+                        var a = new List<double>
+                                {
+                                    StudentActionDistance,
+                                    AnalysisDistance,
+                                    ProblemStructureDistance
+                                };
+                        var b = new List<double>
+                                {
+                                    otherPage.StudentActionDistance,
+                                    otherPage.AnalysisDistance,
+                                    otherPage.ProblemStructureDistance
+                                };
+                        distance = stevcode.ML.Distance.ManhattanDistance(a, b);
                         break;
             }
 
@@ -296,5 +318,46 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Distance New
+
+        #region Better Distance
+
+        public void CalculatePosition()
+        {
+            if (IsPositionCached)
+            {
+                return;
+            }
+
+            foreach (var code in AllAnalysisCodes)
+            {
+                var labelWeight = GetLabelWeight(code.AnalysisCodeLabel);
+                foreach (var constraint in code.Constraints.Where(c => c.IsQueryable))
+                {
+                    var constraintWeight = GetConstraintWeight(code.AnalysisCodeLabel, constraint.ConstraintLabel);
+                    var possibleConstraintValues = AnalysisConstraint.GeneratePossibleConstraintValues(constraint.ConstraintLabel);
+                    var index = possibleConstraintValues.IndexOf(constraint.ConstraintValue);
+                    switch (code.AnalysisCodeLabel)
+                    {
+                        case Codings.ANALYSIS_LABEL_WORD_PROBLEM:
+                        case Codings.ANALYSIS_LABEL_PAGE_DEFINITION:
+                            ProblemStructureDistance += labelWeight + index * constraintWeight;
+                            break;
+                        case Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED:
+                        case Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS:
+                        case Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
+                        case Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS:
+                            StudentActionDistance += labelWeight + index * constraintWeight;
+                            break;
+                        default:
+                            AnalysisDistance += labelWeight + index * constraintWeight;
+                            break;
+                    }
+                }
+            }
+
+            IsPositionCached = true;
+        }
+
+        #endregion // Better Distance
     }
 }
