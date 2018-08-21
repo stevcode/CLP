@@ -280,6 +280,7 @@
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassRosterViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\GraphViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SemanticEventEditorViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\Tags\MetaDataTagsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />

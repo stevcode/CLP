@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
+using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using CLP.MachineAnalysis;
@@ -160,6 +161,37 @@ namespace Classroom_Learning_Partner.Services
                                Reachability = normalizedReachabilityPlot
                            };
             plotView.Show();
+
+            #region Calculate Ranges
+
+            var xMax = 0.0;
+            var yMax = 0.0;
+            var zMax = 0.0;
+            var xMin = double.MaxValue;
+            var yMin = double.MaxValue;
+            var zMin = double.MaxValue;
+            foreach (var queryablePage in QueryablePages)
+            {
+                xMax = Math.Max(xMax, queryablePage.StudentActionDistance);
+                yMax = Math.Max(yMax, queryablePage.AnalysisDistance);
+                zMax = Math.Max(zMax, queryablePage.ProblemStructureDistance);
+
+                xMin = Math.Min(xMin, queryablePage.StudentActionDistance);
+                yMin = Math.Min(yMin, queryablePage.AnalysisDistance);
+                zMin = Math.Min(zMin, queryablePage.ProblemStructureDistance);
+            }
+
+            CLogger.AppendToLog($"***Current Range***\n" + $"Student Action: {xMin} - {xMax}\n" + $"AnalysisDistance: {yMin} - {yMax}\n" + $"Problem Structure: {zMin} - {zMax}");
+
+            #endregion // Calculate Ranges
+
+            #region Scatter Plot Pages
+
+            var graphViewModel = new GraphViewModel(QueryablePages);
+            var graphView = new GraphView(graphViewModel);
+            graphView.ShowDialog();
+
+            #endregion // Scatter Plot Pages
 
             var clusteringEpsilon = QueryablePage.GetClusteringEpsilon();
 

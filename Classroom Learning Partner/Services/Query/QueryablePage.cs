@@ -29,7 +29,7 @@ namespace Classroom_Learning_Partner.Services
 
         public string FormattedValue
         {
-            get { return $"Page {PageNameComposite.PageNumber}, {StudentName}\n - {string.Join("\n - ", MatchingAnalysisCodes.Select(q => q.FormattedValue))}"; }
+            get { return $"Page {PageNameComposite.PageNumber}, {StudentName}\n - {string.Join("\n - ", AllAnalysisCodes.Select(q => q.FormattedValue))}"; }
         }
 
         #region Methods
@@ -360,20 +360,5 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion // Better Distance
-
-        private static double X { get; set; }
-        private static double Y { get; set; }
-        private static double Z { get; set; }
-        public static void UpdateRanges(QueryablePage a, QueryablePage b)
-        {
-            var newX = Math.Max(a.StudentActionDistance, b.StudentActionDistance);
-            var newY = Math.Max(a.AnalysisDistance, b.AnalysisDistance);
-            var newZ = Math.Max(a.ProblemStructureDistance, b.ProblemStructureDistance);
-            X = Math.Max(X, newX);
-            Y = Math.Max(Y, newY);
-            Z = Math.Max(Z, newZ);
-
-            CLogger.AppendToLog($"***Current Range***\n" + $"Student Action: {X}\n" + $"AnalysisDistance: {Y}\n" + $"Problem Structure: {Z}");
-        }
     }
 }

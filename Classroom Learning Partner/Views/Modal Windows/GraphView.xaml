@@ -4,7 +4,161 @@
                   xmlns:catel="http://schemas.catelproject.com"
                   Title="Queryable Page Distances"
                   ShowInTaskbar="False">
-    <Grid>
+    <Window.Resources>
+        <Style x:Key="PlotPointContainerStyle">
+            <Setter Property="Canvas.Left"
+                    Value="{Binding StudentActionDistance}" />
+            <Setter Property="Canvas.Top"
+                    Value="{Binding AnalysisDistance}" />
+            <Setter Property="Canvas.ZIndex"
+                    Value="{Binding ProblemStructureDistance}" />
+        </Style>
+    </Window.Resources>
+    <!--x: -10 to 200 (Student Action)   +10, then *5
+        y: -10 to 50 (Analysis)   +10, then *5 (then 300 - x to flip?)
+        z: 4,5,6,7 (Problem Structure)
+    -->
 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" 
+                    Orientation="Horizontal">
+
+            <CheckBox x:Name="Index4"
+                      Margin="20" />
+
+            <CheckBox x:Name="Index5"
+                      Margin="20" />
+
+            <CheckBox x:Name="Index6"
+                      Margin="20" />
+
+            <CheckBox x:Name="Index7"
+                      Margin="20" />
+
+        </StackPanel>
+
+        <ItemsControl Grid.Row="1"
+                      ItemsSource="{Binding PlotPoints}"
+                      ItemContainerStyle="{StaticResource PlotPointContainerStyle}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Background="Transparent"
+                            x:Name="chartCanvas"
+                            MouseMove="ChartCanvas_OnMouseMove"
+                            Width="1050"
+                            Height="300" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse Height="8"
+                             Width="8"
+                             Fill="Transparent">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Visibility"
+                                        Value="Collapsed" />
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ProblemStructureDistance}"
+                                                 Value="4">
+                                        <Setter Property="Stroke"
+                                                Value="Red" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding ProblemStructureDistance}"
+                                                 Value="5">
+                                        <Setter Property="Stroke"
+                                                Value="Orange" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding ProblemStructureDistance}"
+                                                 Value="6">
+                                        <Setter Property="Stroke"
+                                                Value="Green" />
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding ProblemStructureDistance}"
+                                                 Value="7">
+                                        <Setter Property="Stroke"
+                                                Value="Blue" />
+                                    </DataTrigger>
+                                    
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="4" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index4}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="5" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index5}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="6" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index6}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="7" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index7}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
+                                </Style.Triggers>
+
+                            </Style>
+                        </Ellipse.Style>
+                        
+                        <Ellipse.ToolTip>
+                            <ToolTip>
+                                <TextBlock Text="{Binding FormattedValue}" />
+                            </ToolTip>
+                        </Ellipse.ToolTip>
+                    </Ellipse>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+        </ItemsControl>
     </Grid>
 </catel:DataWindow>
