@@ -387,6 +387,11 @@ namespace Classroom_Learning_Partner.Services
 
         public void CalculatePosition()
         {
+            if (IsPositionCached)
+            {
+                return;
+            }
+
             var problemStructure = new List<Tuple<string,double>>();
             var studentActions = new List<Tuple<string, double>>();
             var analysis = new List<Tuple<string, double>>();
@@ -445,6 +450,8 @@ namespace Classroom_Learning_Partner.Services
             var problemStructureFormat = $"Problem Structure Distance ({ProblemStructureDistance}):{string.Join("", problemStructure.Select(t => $"\n\t- {t.Item1}: {t.Item2}"))}";
 
             FormattedDistance = $"{studentActionsFormat}\n\n{analysisFormat}\n\n{problemStructureFormat}";
+
+            IsPositionCached = true;
         }
 
         #endregion // Better Distance

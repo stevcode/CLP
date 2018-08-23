@@ -148,6 +148,11 @@ namespace Classroom_Learning_Partner.Services
             const int MAX_EPSILON = 1000;
             const int MINIMUM_PAGES_IN_CLUSTER = 1;
 
+            foreach (var queryablePage in queryablePages)
+            {
+                queryablePage.IsPositionCached = false;
+            }
+
             double DistanceEquation(QueryablePage p1, QueryablePage p2) => Math.Sqrt(p1.Distance(p2));
             var optics = new OPTICS<QueryablePage>(MAX_EPSILON, MINIMUM_PAGES_IN_CLUSTER, queryablePages, DistanceEquation);
             optics.BuildReachability();
