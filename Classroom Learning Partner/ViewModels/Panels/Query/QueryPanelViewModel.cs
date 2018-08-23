@@ -480,7 +480,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             const string FILE_EXTENSION = "txt";
-            var fileName = $"Cluster Report - {DateTime.Now:yy.MM.dd-h.mm.ss}.{FILE_EXTENSION}";
+            var timeNow = DateTime.Now;
+            var fileName = $"Cluster Report - {timeNow:yy.MM.dd-h.mm.ss}.{FILE_EXTENSION}";
             var filePath = Path.Combine(folderPath, fileName);
             if (File.Exists(filePath))
             {
@@ -496,6 +497,26 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var queryResult in queryGroup.OrderBy(p => p.PageNumber))
                 {
                     File.AppendAllText(filePath, $"{queryResult.FormattedValue}\n\n");
+                }
+            }
+
+            var fileName2 = $"Cluster Report (Distances) - {timeNow:yy.MM.dd-h.mm.ss}.{FILE_EXTENSION}";
+            var filePath2 = Path.Combine(folderPath, fileName2);
+            if (File.Exists(filePath2))
+            {
+                File.Delete(filePath2);
+            }
+
+            File.AppendAllText(filePath2, "*****CLUSTER REPORT (DISTANCES)*****\n\n");
+
+            foreach (var queryGroup in QueryResults.GroupBy(qr => qr.ClusterName).OrderBy(g => g.Key))
+            {
+                var clusterName = queryGroup.Key;
+                File.AppendAllText(filePath2, $"Cluster Name: {clusterName}\n\n");
+                foreach (var queryResult in queryGroup.OrderBy(p => p.PageNumber))
+                {
+                    File.AppendAllText(filePath2, $"{queryResult.StudentName}, Page {queryResult.PageNumber}");
+                    File.AppendAllText(filePath2, $"{queryResult.Page.FormattedDistance}\n\n");
                 }
             }
         }
