@@ -8,6 +8,8 @@
         public const string CORRECTNESS_CODED_ILLEGIBLE = "ILL";
         public const string CORRECTNESS_CODED_UNANSWERED = "UNANSWERED";
         public const string CORRECTNESS_CODED_UNKNOWN = "UNKNOWN";
+        public const string CORRECTNESS_CODED_NOT_COR = "NOT_COR";
+        public const string CORRECTNESS_CODED_PAR_OR_INC = "PAR_OR_INC";
 
         public const string ANSWER_UNDEFINED = "UNDEFINED";
 

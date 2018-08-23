@@ -80,6 +80,8 @@ namespace CLP.Entities
                                            };
 
             var codedCorrectnessValues = Enum<Correctness>.GetValues().Select(Codings.CorrectnessToCodedCorrectness).ToList();
+            codedCorrectnessValues.Add(Codings.CORRECTNESS_CODED_NOT_COR);
+            codedCorrectnessValues.Add(Codings.CORRECTNESS_CODED_PAR_OR_INC);
             // TODO: Expand
             switch (constraintLabel)
             {

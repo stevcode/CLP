@@ -446,6 +446,23 @@ namespace Classroom_Learning_Partner.Services
                         continue;
                     }
 
+                    if (queryConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_NOT_COR &&
+                        (analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_PARTIAL ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_INCORRECT ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_ILLEGIBLE ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_UNANSWERED ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_UNKNOWN))
+                    {
+                        continue;
+                    }
+
+                    if (queryConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_PAR_OR_INC &&
+                        (analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_PARTIAL ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_INCORRECT))
+                    {
+                        continue;
+                    }
+
                     isAMatch = false;
                     break;
                 }
