@@ -92,7 +92,7 @@ namespace CLP.Entities
             }
 
             tag.SpreadSheetCodes = finalRepresentations
-                                .Select(r => $"{r.CodedObject} [{r.CodedID}] {r.RepresentationInformation}, {Codings.CorrectnessToCodedCorrectness(tag.FinalRepresentationCorrectness)}")
+                                .Select(r => $"{r.CodedObject} [{r.CodedID}] {r.RepresentationInformation}, {Codings.CorrectnessToCodedCorrectness(r.Correctness)}")
                                 .ToList();
 
             AnalysisCode.AddFinalRepresentationCorrectness(tag, Codings.CorrectnessToCodedCorrectness(tag.FinalRepresentationCorrectness));
