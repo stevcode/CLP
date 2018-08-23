@@ -466,6 +466,38 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             CurrentGroupType = GroupTypes.ClusterSize;
+
+            if (!IsGeneratingReportOnQuery)
+            {
+                return;
+            }
+
+            const string FOLDER_NAME = "CLP Reports";
+            var folderPath = Path.Combine(DataService.DesktopFolderPath, FOLDER_NAME);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"Cluster Report - {DateTime.Now:yy.MM.dd-h.mm.ss}.{FILE_EXTENSION}";
+            var filePath = Path.Combine(folderPath, fileName);
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            File.AppendAllText(filePath, "*****CLUSTER REPORT*****\n\n");
+
+            foreach (var queryGroup in QueryResults.GroupBy(qr => qr.ClusterName).OrderBy(g => g.Key))
+            {
+                var clusterName = queryGroup.Key;
+                File.AppendAllText(filePath, $"Cluster Name: {clusterName}\n\n");
+                foreach (var queryResult in queryGroup.OrderBy(p => p.PageNumber))
+                {
+                    File.AppendAllText(filePath, $"{queryResult.FormattedValue}\n\n");
+                }
+            }
         }
 
         public Command<QueryResult> SetCurrentPageCommand { get; private set; }

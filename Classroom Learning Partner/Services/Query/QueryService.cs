@@ -189,7 +189,7 @@ namespace Classroom_Learning_Partner.Services
 
             var graphViewModel = new GraphViewModel(QueryablePages);
             var graphView = new GraphView(graphViewModel);
-            graphView.ShowDialog();
+            graphView.Show();
 
             #endregion // Scatter Plot Pages
 
