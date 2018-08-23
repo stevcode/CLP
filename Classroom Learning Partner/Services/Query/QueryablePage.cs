@@ -32,6 +32,8 @@ namespace Classroom_Learning_Partner.Services
             get { return $"Page {PageNameComposite.PageNumber}, {StudentName}\n - {string.Join("\n - ", AllAnalysisCodes.Select(q => q.FormattedValue))}"; }
         }
 
+        public string FormattedDistance { get; set; }
+
         #region Methods
 
         public double Distance(QueryablePage otherPage)
@@ -246,24 +248,50 @@ namespace Classroom_Learning_Partner.Services
             var filePath = Path.Combine(DataService.DesktopFolderPath, fileName);
             if (!File.Exists(filePath))
             {
-                var allAnalysisCodes = AnalysisCode.GenerateAvailableQueryConditions();
-                foreach (var code in allAnalysisCodes)
-                {
-                    var shortName = Codings.AnalysisLabelToShortName(code.AnalysisCodeLabel);
-                    File.AppendAllText(filePath, $"{shortName};1.0\n");
-                    foreach (var constraint in code.Constraints)
-                    {
-                        var constraintFriendlyName = Codings.ConstraintLabelToShortName(constraint.ConstraintLabel);
-                        File.AppendAllText(filePath, $"{shortName}-{constraintFriendlyName};1.0\n");
-                    }
-                }
+                PopulateWeightsInSettingsFile_V4_MANHATTAN_3(filePath);
 
                 File.AppendAllText(filePath, "CLUSTERING_EPSILON;0.33\n");
 
-                File.AppendAllText(filePath, "ANY");
+                File.AppendAllText(filePath, "V4_MANHATTAN_3");
             }
 
             return File.ReadLines(filePath).Last(l => !string.IsNullOrWhiteSpace(l)).Trim();
+        }
+
+        private static void PopulateWeightsInSettingsFile_V3(string filePath)
+        {
+            var allAnalysisCodes = AnalysisCode.GenerateAvailableQueryConditions();
+            foreach (var code in allAnalysisCodes)
+            {
+                var shortName = Codings.AnalysisLabelToShortName(code.AnalysisCodeLabel);
+                File.AppendAllText(filePath, $"{shortName};1.0\n");
+                foreach (var constraint in code.Constraints)
+                {
+                    var constraintFriendlyName = Codings.ConstraintLabelToShortName(constraint.ConstraintLabel);
+                    File.AppendAllText(filePath, $"{shortName}-{constraintFriendlyName};1.0\n");
+                }
+            }
+        }
+
+        private static void PopulateWeightsInSettingsFile_V4_MANHATTAN_3(string filePath)
+        {
+            var allAnalysisCodes = AnalysisCode.GenerateAvailableQueryConditions();
+            foreach (var code in allAnalysisCodes)
+            {
+                var shortName = Codings.AnalysisLabelToShortName(code.AnalysisCodeLabel);
+                File.AppendAllText(filePath, $"{shortName};1.0\n");
+                foreach (var constraint in code.Constraints)
+                {
+                    var constraintIndex = 1.0;
+                    var possibleValues = AnalysisConstraint.GeneratePossibleConstraintValues(constraint.ConstraintLabel);
+                    foreach (var possibleValue in possibleValues.Where(v => v != Codings.CONSTRAINT_VALUE_ANY))
+                    {
+                        var constraintFriendlyName = Codings.ConstraintLabelToShortName(constraint.ConstraintLabel);
+                        File.AppendAllText(filePath, $"{shortName}-{constraintFriendlyName}-{possibleValue};{constraintIndex}\n");
+                        constraintIndex++;
+                    }
+                }
+            }
         }
 
         private static double GetLabelWeight(string analysisCodeLabel)
@@ -313,6 +341,30 @@ namespace Classroom_Learning_Partner.Services
             return (double)weight;
         }
 
+        private static double GetConstraintValueWeight(string analysisCodeLabel, string constraintLabel, string constraintValue)
+        {
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"CLP Constraint Cluster Settings.{FILE_EXTENSION}";
+            var filePath = Path.Combine(DataService.DesktopFolderPath, fileName);
+
+            var analysisCodeShortName = Codings.AnalysisLabelToShortName(analysisCodeLabel);
+            var constraintShortName = Codings.ConstraintLabelToShortName(constraintLabel);
+            var weightLine = File.ReadLines(filePath).FirstOrDefault(l => l.Contains($"{analysisCodeShortName}-{constraintShortName}-{constraintValue};"));
+            if (weightLine is null)
+            {
+                return 1.0;
+            }
+
+            var weightParts = weightLine.Trim().Split(";");
+            var weight = weightParts[1].ToDouble();
+            if (weight is null)
+            {
+                return 1.0;
+            }
+
+            return (double)weight;
+        }
+
         public static double GetClusteringEpsilon()
         {
             return GetLabelWeight("CLUSTERING_EPSILON");
@@ -324,39 +376,64 @@ namespace Classroom_Learning_Partner.Services
 
         public void CalculatePosition()
         {
-            if (IsPositionCached)
-            {
-                return;
-            }
+            var problemStructure = new List<Tuple<string,double>>();
+            var studentActions = new List<Tuple<string, double>>();
+            var analysis = new List<Tuple<string, double>>();
 
             foreach (var code in AllAnalysisCodes)
             {
                 var labelWeight = GetLabelWeight(code.AnalysisCodeLabel);
+
+                switch (code.AnalysisCodeLabel)
+                {
+                    case Codings.ANALYSIS_LABEL_WORD_PROBLEM:
+                    case Codings.ANALYSIS_LABEL_PAGE_DEFINITION:
+                        problemStructure.Add(new Tuple<string, double>(code.AnalysisCodeShortName, labelWeight));
+                        break;
+                    case Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED:
+                    case Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS:
+                    case Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
+                    case Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS:
+                        studentActions.Add(new Tuple<string, double>(code.AnalysisCodeShortName,labelWeight));
+                        break;
+                    default:
+                        analysis.Add(new Tuple<string, double>(code.AnalysisCodeShortName, labelWeight));
+                        break;
+                }
+                
                 foreach (var constraint in code.Constraints.Where(c => c.IsQueryable))
                 {
-                    var constraintWeight = GetConstraintWeight(code.AnalysisCodeLabel, constraint.ConstraintLabel);
-                    var possibleConstraintValues = AnalysisConstraint.GeneratePossibleConstraintValues(constraint.ConstraintLabel);
-                    var index = possibleConstraintValues.IndexOf(constraint.ConstraintValue);
+                    var constraintFriendlyName = Codings.ConstraintLabelToShortName(constraint.ConstraintLabel);
+                    var constraintWeight = GetConstraintValueWeight(code.AnalysisCodeLabel, constraint.ConstraintLabel, constraint.ConstraintValue);
                     switch (code.AnalysisCodeLabel)
                     {
                         case Codings.ANALYSIS_LABEL_WORD_PROBLEM:
                         case Codings.ANALYSIS_LABEL_PAGE_DEFINITION:
-                            ProblemStructureDistance += labelWeight + index * constraintWeight;
+                            problemStructure.Add(new Tuple<string, double>($"{code.AnalysisCodeShortName}-{constraintFriendlyName}-{constraint.ConstraintValue}", constraintWeight));
                             break;
                         case Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED:
                         case Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS:
                         case Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
                         case Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS:
-                            StudentActionDistance += labelWeight + index * constraintWeight;
+                            studentActions.Add(new Tuple<string, double>($"{code.AnalysisCodeShortName}-{constraintFriendlyName}-{constraint.ConstraintValue}", constraintWeight));
                             break;
                         default:
-                            AnalysisDistance += labelWeight + index * constraintWeight;
+                            analysis.Add(new Tuple<string, double>($"{code.AnalysisCodeShortName}-{constraintFriendlyName}-{constraint.ConstraintValue}", constraintWeight));
                             break;
                     }
                 }
             }
 
-            IsPositionCached = true;
+            StudentActionDistance = studentActions.Select(t => t.Item2).Sum();
+            var studentActionsFormat = $"Student Actions Distance ({StudentActionDistance}):{string.Join("", studentActions.Select(t => $"\n\t- {t.Item1}: {t.Item2}"))}";
+
+            AnalysisDistance = analysis.Select(t => t.Item2).Sum();
+            var analysisFormat = $"Analysis Distance ({AnalysisDistance}):{string.Join("", analysis.Select(t => $"\n\t- {t.Item1}: {t.Item2}"))}";
+
+            ProblemStructureDistance = problemStructure.Select(t => t.Item2).Sum();
+            var problemStructureFormat = $"Problem Structure Distance ({ProblemStructureDistance}):{string.Join("", problemStructure.Select(t => $"\n\t- {t.Item1}: {t.Item2}"))}";
+
+            FormattedDistance = $"{studentActionsFormat}\n\n{analysisFormat}\n\n{problemStructureFormat}";
         }
 
         #endregion // Better Distance

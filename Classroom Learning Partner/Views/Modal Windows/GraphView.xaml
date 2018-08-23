@@ -27,16 +27,39 @@
         <StackPanel Grid.Row="0" 
                     Orientation="Horizontal">
 
+            <CheckBox x:Name="Index0"
+                      IsChecked="True"
+                      Margin="20" />
+
+            <CheckBox x:Name="Index1"
+                      IsChecked="True"
+                      Margin="20" />
+            <CheckBox x:Name="Index2"
+                      IsChecked="True"
+                      Margin="20" />
+
+            <CheckBox x:Name="Index3"
+                      IsChecked="True"
+                      Margin="20" />
+
             <CheckBox x:Name="Index4"
+                      IsChecked="True"
                       Margin="20" />
 
             <CheckBox x:Name="Index5"
+                      IsChecked="True"
                       Margin="20" />
 
             <CheckBox x:Name="Index6"
+                      IsChecked="True"
                       Margin="20" />
 
             <CheckBox x:Name="Index7"
+                      IsChecked="True"
+                      Margin="20" />
+
+            <CheckBox x:Name="Index8"
+                      IsChecked="True"
                       Margin="20" />
 
         </StackPanel>
@@ -91,7 +114,59 @@
                                         <Setter Property="Stroke"
                                                 Value="Blue" />
                                     </DataTrigger>
-                                    
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="0" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index4}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="1" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index4}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="2" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index4}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="3" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index4}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
                                             <Condition Binding="{Binding ProblemStructureDistance}"
@@ -135,6 +210,19 @@
                                         <MultiDataTrigger.Conditions>
                                             <Condition Binding="{Binding ProblemStructureDistance}"
                                                        Value="7" />
+                                            <Condition Binding="{Binding IsChecked, ElementName=Index7}"
+                                                       Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <MultiDataTrigger.Setters>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger.Setters>
+                                    </MultiDataTrigger>
+
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding ProblemStructureDistance}"
+                                                       Value="8" />
                                             <Condition Binding="{Binding IsChecked, ElementName=Index7}"
                                                        Value="True" />
                                         </MultiDataTrigger.Conditions>

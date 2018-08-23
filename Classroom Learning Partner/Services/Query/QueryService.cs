@@ -188,7 +188,11 @@ namespace Classroom_Learning_Partner.Services
             #region Scatter Plot Pages
 
             var graphViewModel = new GraphViewModel(QueryablePages);
-            var graphView = new GraphView(graphViewModel);
+            var graphView = new GraphView(graphViewModel)
+                            {
+                                Owner = Application.Current.MainWindow,
+                                WindowStartupLocation = WindowStartupLocation.Manual
+                            };
             graphView.Show();
 
             #endregion // Scatter Plot Pages

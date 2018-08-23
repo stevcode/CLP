@@ -215,10 +215,11 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
                     break;
                 case Codings.CONSTRAINT_PROBLEM_TYPE:
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_MULTIPLICATION);
+                    
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_DIVISION);
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_EQUIVALENCE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_MULTIPLICATION);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_OTHER);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_EQUIVALENCE);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_NONE);
                     break;
 

@@ -707,6 +707,9 @@
                                                     CommandParameter="{Binding}" />
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
+                                        <Rectangle.ToolTip>
+                                            <TextBlock Text="{Binding Page.FormattedDistance}" />
+                                        </Rectangle.ToolTip>
                                     </Rectangle>
 
                                 </Grid>
