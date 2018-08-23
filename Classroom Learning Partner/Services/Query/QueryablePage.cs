@@ -279,14 +279,25 @@ namespace Classroom_Learning_Partner.Services
             foreach (var code in allAnalysisCodes)
             {
                 var shortName = Codings.AnalysisLabelToShortName(code.AnalysisCodeLabel);
-                File.AppendAllText(filePath, $"{shortName};1.0\n");
+
+                File.AppendAllText(filePath, code.AnalysisCodeLabel == Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED ? $"{shortName};0.0\n" : $"{shortName};1.0\n");
+
                 foreach (var constraint in code.Constraints)
                 {
+                    if (constraint.ConstraintLabel == Codings.CONSTRAINT_ANSWER_MODIFICATION)
+                    {
+                        continue;
+                    }
+
                     var constraintIndex = 1.0;
                     var possibleValues = AnalysisConstraint.GeneratePossibleConstraintValues(constraint.ConstraintLabel);
                     foreach (var possibleValue in possibleValues.Where(v => v != Codings.CONSTRAINT_VALUE_ANY))
                     {
                         var constraintFriendlyName = Codings.ConstraintLabelToShortName(constraint.ConstraintLabel);
+                        if (code.AnalysisCodeLabel == Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED)
+                        {
+                            constraintIndex = 0.0;
+                        }
                         File.AppendAllText(filePath, $"{shortName}-{constraintFriendlyName}-{possibleValue};{constraintIndex}\n");
                         constraintIndex++;
                     }

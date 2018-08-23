@@ -80,6 +80,30 @@ namespace CLP.Entities
             tag.QueryCodes.Add(analysisCode);
         }
 
+        public static void AddRepresentationsUsedSummary(RepresentationsUsedTag tag)
+        {
+            var typeCount = tag.RepresentationsUsed.Select(r => r.CodedObject).Distinct().Count();
+            var repCount = tag.RepresentationsUsed.Count;
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY);
+            if (tag.RepresentationsUsed.All(r => r.Correctness == Correctness.Correct))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
+            }
+            else if (tag.RepresentationsUsed.All(r => r.Correctness == Correctness.Incorrect))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE);
+            }
+            else
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
+            }
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_TYPE_COUNT, typeCount.ToString());
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_COUNT, repCount.ToString());
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
         public static void AddMultipleRepresentations2Step(RepresentationsUsedTag tag)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP);

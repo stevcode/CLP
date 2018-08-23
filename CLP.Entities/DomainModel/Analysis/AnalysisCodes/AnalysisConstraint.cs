@@ -226,6 +226,19 @@ namespace CLP.Entities
                 case Codings.CONSTRAINT_OVERALL_CORRECTNESS:
                     possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
                     break;
+
+                case Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE);
+                    break;
+                case Codings.CONSTRAINT_REPRESENTATION_TYPE_COUNT:
+                    possibleConstraintValues.AddRange(Enumerable.Range(0,6).Select(n => n.ToString()));
+                    break;
+
+                case Codings.CONSTRAINT_REPRESENTATION_COUNT:
+                    possibleConstraintValues.AddRange(Enumerable.Range(0, 31).Select(n => n.ToString()));
+                    break;
             }
 
             return possibleConstraintValues;

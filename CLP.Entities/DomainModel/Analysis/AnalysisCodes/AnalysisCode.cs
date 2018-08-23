@@ -116,6 +116,12 @@ namespace CLP.Entities
             repsUsed.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON);
             conditions.Add(repsUsed);
 
+            var repsUsedSummary = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY);
+            repsUsedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS);
+            repsUsedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_TYPE_COUNT);
+            repsUsedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_COUNT);
+            conditions.Add(repsUsedSummary);
+
             var repOrder = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_ORDER);
             repOrder.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_FIRST);
             repOrder.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_LAST);
