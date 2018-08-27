@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner.Services
                 foreach (var analysisCodeContainer in AnalysisCodes)
                 {
                     codes += analysisCodeContainer.IsDominantSharedCode
-                                 ? $"\n - ****{analysisCodeContainer.Code.FormattedValue}"
+                                 ? $"\n - **{analysisCodeContainer.Code.FormattedValue}"
                                  : $"\n - {analysisCodeContainer.Code.FormattedValue}";
                 }
 

@@ -471,6 +471,68 @@ namespace Classroom_Learning_Partner.Services
             IsPositionCached = true;
         }
 
+        public double GetProblemStructureDistanceContribution(IAnalysisCode code)
+        {
+            if (code.AnalysisCodeLabel != Codings.ANALYSIS_LABEL_WORD_PROBLEM &&
+                code.AnalysisCodeLabel != Codings.ANALYSIS_LABEL_PAGE_DEFINITION)
+            {
+                return 0.0;
+            }
+
+            return 0.0;
+
+            //var labelWeight = GetLabelWeight(code.AnalysisCodeLabel);
+
+            //switch (code.AnalysisCodeLabel)
+            //{
+            //    case Codings.ANALYSIS_LABEL_WORD_PROBLEM:
+            //    case Codings.ANALYSIS_LABEL_PAGE_DEFINITION:
+            //        problemStructure.Add(new Tuple<string, double>(code.AnalysisCodeShortName, labelWeight));
+            //        break;
+            //    case Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED:
+            //    case Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS:
+            //    case Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
+            //    case Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS:
+            //        studentActions.Add(new Tuple<string, double>(code.AnalysisCodeShortName, labelWeight));
+            //        break;
+            //    default:
+            //        analysis.Add(new Tuple<string, double>(code.AnalysisCodeShortName, labelWeight));
+            //        break;
+            //}
+
+            //foreach (var constraint in code.Constraints.Where(c => c.IsQueryable))
+            //{
+            //    var constraintFriendlyName = Codings.ConstraintLabelToShortName(constraint.ConstraintLabel);
+            //    var constraintWeight = GetConstraintValueWeight(code.AnalysisCodeLabel, constraint.ConstraintLabel, constraint.ConstraintValue);
+            //    switch (code.AnalysisCodeLabel)
+            //    {
+            //        case Codings.ANALYSIS_LABEL_WORD_PROBLEM:
+            //        case Codings.ANALYSIS_LABEL_PAGE_DEFINITION:
+            //            problemStructure.Add(new Tuple<string, double>($"{code.AnalysisCodeShortName}-{constraintFriendlyName}-{constraint.ConstraintValue}",
+            //                                                           constraintWeight));
+            //            break;
+            //        case Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED:
+            //        case Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS:
+            //        case Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
+            //        case Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS:
+            //            studentActions.Add(new Tuple<string, double>($"{code.AnalysisCodeShortName}-{constraintFriendlyName}-{constraint.ConstraintValue}", constraintWeight));
+            //            break;
+            //        default:
+            //            analysis.Add(new Tuple<string, double>($"{code.AnalysisCodeShortName}-{constraintFriendlyName}-{constraint.ConstraintValue}", constraintWeight));
+            //            break;
+            //    }
+            //}
+        }
+
+        public double GetAnalysisDistanceContribution(IAnalysisCode code)
+        {
+            return 0.0; }
+
+        public double GetStudentActionDistanceContribution(IAnalysisCode code)
+        {
+            return 0.0;
+        }
+
         #endregion // Better Distance
     }
 }

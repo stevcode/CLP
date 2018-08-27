@@ -290,36 +290,10 @@ namespace Classroom_Learning_Partner.Services
                 var sizes = new Dictionary<int, List<AnalysisCodeContainer>>();
 
                 var queryResults = group.ToList();
-                for (var i = 0; i < queryResults.Count - 1; i++)
+                var analysisLabels = queryResults.SelectMany(qr => qr.AnalysisCodes.Select(c => c.Code.AnalysisCodeLabel)).Distinct().ToList();
+                foreach (var analysisLabel in analysisLabels)
                 {
-                    var result1 = queryResults[i];
-                    for (var j = i + 1; j < queryResults.Count; j++)
-                    {
-                        var result2 = queryResults[j];
-
-                        foreach (var analysisCodeContainer1 in result1.AnalysisCodes)
-                        {
-                            foreach (var analysisCodeContainer2 in result2.AnalysisCodes)
-                            {
-                                var size = CompareAnalysisCodes(analysisCodeContainer1.Code, analysisCodeContainer2.Code);
-                                if (!sizes.ContainsKey(size))
-                                {
-                                    sizes.Add(size, new List<AnalysisCodeContainer>());
-                                }
-
-                                if (!sizes[size].Contains(analysisCodeContainer1))
-                                {
-                                    sizes[size].Add(analysisCodeContainer1);
-                                }
-
-                                if (!sizes[size].Contains(analysisCodeContainer2))
-                                {
-                                    sizes[size].Add(analysisCodeContainer2);
-                                }
-                            }
-                        }
-
-                    }
+                    
                 }
 
                 if (sizes.Keys.Count == 0)
