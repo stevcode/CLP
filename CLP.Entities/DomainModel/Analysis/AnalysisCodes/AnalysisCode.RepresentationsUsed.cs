@@ -119,14 +119,14 @@ namespace CLP.Entities
         {
             var incorrectnessReasons = new List<string>
                                        {
-                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN_GROUPS,
-                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS,
-                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS,
-                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS
+                                           Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS,
+                                           Codings.PARTIAL_REASON_GAPS,
+                                           Codings.PARTIAL_REASON_OVERLAPS,
+                                           Codings.PARTIAL_REASON_SWAPPED
                                        };
 
-            var isFinalInc = tag.RepresentationsUsed.Any(r => incorrectnessReasons.Contains(r.CorrectnessReason) && r.IsFinalRepresentation);
-            var isAnyInc = tag.RepresentationsUsed.Any(r => incorrectnessReasons.Contains(r.CorrectnessReason));
+            var isFinalInc = tag.RepresentationsUsed.Any(r => !incorrectnessReasons.Contains(r.CorrectnessReason) && r.IsFinalRepresentation);
+            var isAnyInc = tag.RepresentationsUsed.Any(r => !incorrectnessReasons.Contains(r.CorrectnessReason));
 
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_INCORRECTNESS_REASONS);
 
