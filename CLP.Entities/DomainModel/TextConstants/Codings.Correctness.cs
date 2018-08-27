@@ -21,6 +21,8 @@
         public const string PARTIAL_REASON_UNKNOWN = "UNKNOWN";
         public const string PARTIAL_REASON_SWAPPED = "SWAPPED";
         public const string PARTIAL_REASON_GAPS_AND_OVERLAPS = "GAPS AND OVERLAPS";
+        public const string PARTIAL_REASON_GAPS = "GAPS";
+        public const string PARTIAL_REASON_OVERLAPS = "OVERLAPS";
 
         #region Conversion Methods
 

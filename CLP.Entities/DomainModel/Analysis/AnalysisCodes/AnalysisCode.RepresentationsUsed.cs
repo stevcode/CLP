@@ -44,7 +44,9 @@ namespace CLP.Entities
             }
             else
             {
-                if (usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS)
+                if (usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS ||
+                    usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_GAPS ||
+                    usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_OVERLAPS)
                 {
                     analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_GAPS_OR_OVERLAPS);
                 }

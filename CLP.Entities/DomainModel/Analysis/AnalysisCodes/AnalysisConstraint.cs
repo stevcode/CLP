@@ -116,6 +116,7 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN_GROUPS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
                     break;
                 case Codings.CONSTRAINT_REPRESENTATION_FIRST:
