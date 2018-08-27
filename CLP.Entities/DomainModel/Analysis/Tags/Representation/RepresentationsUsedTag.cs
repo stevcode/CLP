@@ -620,7 +620,7 @@ namespace CLP.Entities
                                                      CodedID = "5",
                                                      IsInteractedWith = true,
                                                      IsUsed = true,
-                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     Correctness = Correctness.Incorrect,
                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
                                                  };
                         tag.RepresentationsUsed.Add(usedRepresentation);
@@ -632,7 +632,7 @@ namespace CLP.Entities
                                                       CodedID = "4",
                                                       IsInteractedWith = true,
                                                       IsUsed = true,
-                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      Correctness = Correctness.Incorrect,
                                                       MatchedRelationSide = Codings.MATCHED_RELATION_NONE
                                                   };
                         tag.RepresentationsUsed.Add(usedRepresentation2);
