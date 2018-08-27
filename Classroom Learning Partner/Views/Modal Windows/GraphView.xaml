@@ -90,6 +90,9 @@
                                 <Setter Property="Visibility"
                                         Value="Collapsed" />
 
+                                <Setter Property="Stroke"
+                                        Value="Black" />
+
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding ProblemStructureDistance}"
                                                  Value="4">
