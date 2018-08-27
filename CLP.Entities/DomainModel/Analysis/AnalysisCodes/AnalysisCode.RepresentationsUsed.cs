@@ -27,7 +27,7 @@ namespace CLP.Entities
             tag.QueryCodes.Add(analysisCode);
         }
 
-        public static void AddRepresentationUsed(IAnalysis tag, UsedRepresentation usedRepresentation)
+        public static void AddRepresentationUsed(RepresentationsUsedTag tag, UsedRepresentation usedRepresentation)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME_LAX, usedRepresentation.CodedObject);
@@ -69,8 +69,17 @@ namespace CLP.Entities
                         case Codings.OBJECT_STAMP:
                         case Codings.OBJECT_STAMPED_OBJECT:
                         case Codings.OBJECT_BINS:
-                            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
-                                                       Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
+                            if (tag.ParentPage.OwnerID == "eO9HFRoY-0aLtcL2iA5-tQ" &&
+                                tag.ParentPage.PageNumber == 11)
+                            {
+                                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
+                                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN_GROUPS);
+                            }
+                            else
+                            {
+                                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
+                                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
+                            }
                             break;
                         default:
                             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
