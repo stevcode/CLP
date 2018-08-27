@@ -84,7 +84,8 @@
                 <DataTemplate>
                     <Ellipse Height="8"
                              Width="8"
-                             Fill="Transparent">
+                             Fill="Transparent"
+                             ToolTipService.ShowDuration="120000">
                         <Ellipse.Style>
                             <Style TargetType="Ellipse">
                                 <Setter Property="Visibility"

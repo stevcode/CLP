@@ -694,7 +694,7 @@
                                                HorizontalAlignment="Stretch"
                                                VerticalAlignment="Stretch" />
 
-                                    <Rectangle
+                                    <Rectangle ToolTipService.ShowDuration="120000"
                                         Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={converters:ItemSelectedToColorConverter}}"
                                         StrokeThickness="0"
                                         HorizontalAlignment="Stretch"
