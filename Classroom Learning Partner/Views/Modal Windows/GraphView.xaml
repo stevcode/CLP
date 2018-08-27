@@ -81,53 +81,58 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     
-                    <Grid Height="8"
-                          Width="8">
+                    <Viewbox Width="15"
+                             Height="15">
+                        <Grid Height="20"
+                          Width="20"
+                          Background="Transparent">
 
-                        <Label Content="{Binding NumberOfPages}">
-                            <Label.Style>
-                                <Style TargetType="Label">
-                                    <Setter Property="Foreground"
-                                            Value="Black" />
-                                    
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsPartOfCurrentCluster}"
-                                                     Value="True">
-                                            <Setter Property="Foreground"
-                                                    Value="Red" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Label.Style>
-                        </Label>
-
-                        <Ellipse Height="8"
-                                 Width="8"
-                                 Fill="Transparent">
-                            <Ellipse.Style>
-                                <Style TargetType="Ellipse">
-                                    <Setter Property="Stroke"
+                            <TextBlock Text="{Binding NumberOfPages}"
+                                       HorizontalAlignment="Center"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground"
                                             Value="Black" />
 
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsPartOfCurrentCluster}"
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPartOfCurrentCluster}"
                                                      Value="True">
-                                            <Setter Property="Stroke"
+                                                <Setter Property="Foreground"
                                                     Value="Red" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Ellipse.Style>
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseUp">
-                                    <catel:EventToCommand Command="{Binding DataContext.SetFormattedValueCommand, ElementName=ScatterPlot}"
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <Ellipse Fill="Transparent">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Stroke"
+                                            Value="Black" />
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPartOfCurrentCluster}"
+                                                     Value="True">
+                                                <Setter Property="Stroke"
+                                                    Value="Red" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseUp">
+                                        <catel:EventToCommand Command="{Binding DataContext.SetFormattedValueCommand, ElementName=ScatterPlot}"
                                                           PassEventArgsToCommand="False"
                                                           CommandParameter="{Binding}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </Ellipse>
-                    </Grid>
-                    
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Ellipse>
+
+                        </Grid>
+                    </Viewbox>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
 
