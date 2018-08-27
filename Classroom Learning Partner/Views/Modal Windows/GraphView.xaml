@@ -81,8 +81,8 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     
-                    <Viewbox Width="15"
-                             Height="15">
+                    <Viewbox Width="35"
+                             Height="35">
                         <Grid Height="20"
                           Width="20"
                           Background="Transparent">

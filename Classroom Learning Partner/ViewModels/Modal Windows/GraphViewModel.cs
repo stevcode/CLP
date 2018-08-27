@@ -10,7 +10,11 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class PlotPoint : ModelBase
     {
-        public PlotPoint(QueryResult queryResult)
+        private double BUFFER = 20.0;
+        private double WINDOW_HEIGHT = 800.0;
+        private double WINDOW_WIDTH = 980.0;
+
+        public PlotPoint(QueryResult queryResult, double xMin, double xMax, double yMin, double yMax)
         {
             QueryResults.Add(queryResult);
 
@@ -18,18 +22,30 @@ namespace Classroom_Learning_Partner.ViewModels
             AnalysisDistance = queryResult.Page.AnalysisDistance;
 
             IsPartOfCurrentCluster = false;
+
+            var xDiff = xMax - xMin + (BUFFER * 2);
+            var xScale = WINDOW_WIDTH / xDiff;
+            X = StudentActionDistance * xScale;
+
+            var yDiff = yMax - yMin + (BUFFER * 2);
+            var yScale = WINDOW_HEIGHT / yDiff;
+            Y = WINDOW_HEIGHT - (AnalysisDistance * yScale);
         }
 
         public List<QueryResult> QueryResults { get; set; } = new List<QueryResult>();
         public int NumberOfPages => QueryResults.Count;
 
         public double StudentActionDistance { get; set; }
-        public double X => (StudentActionDistance + 10) * 5;
+
+        //public double X => (StudentActionDistance + BUFFER) * 5;
+        public double X { get; set; }
 
         public double AnalysisDistance { get; set; }
-        public double Y => 300 - ((AnalysisDistance + 10) * 5);
-        
-        public bool IsPartOfCurrentCluster
+
+        //public double Y => 300 - ((AnalysisDistance + BUFFER) * 5);
+        public double Y { get; set; }
+
+    public bool IsPartOfCurrentCluster
         {
             get => GetValue<bool>(IsPartOfCurrentClusterProperty);
             set => SetValue(IsPartOfCurrentClusterProperty, value);
@@ -42,7 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public GraphViewModel(List<QueryResult> queryResults)
+        public GraphViewModel(List<QueryResult> queryResults, double xMin, double xMax, double yMin, double yMax)
         {
             var clusterNames = new List<string>();
             foreach (var queryResult in queryResults)
@@ -54,7 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if (existingPoint == null)
                 {
-                    PlotPoints.Add(new PlotPoint(queryResult));
+                    PlotPoints.Add(new PlotPoint(queryResult, xMin, xMax, yMin, yMax));
                 }
                 else
                 {

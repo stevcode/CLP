@@ -266,7 +266,7 @@ namespace Classroom_Learning_Partner.Services
 
             #region Scatter Plot Pages
 
-            var graphViewModel = new GraphViewModel(queryResults);
+            var graphViewModel = new GraphViewModel(queryResults, xMin, xMax, yMin, yMax);
             var graphView = new GraphView(graphViewModel)
                             {
                                 Owner = Application.Current.MainWindow,
