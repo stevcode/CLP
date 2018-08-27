@@ -24,12 +24,12 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
-        <DockPanel Grid.Column="0" 
-                    Width="300"
-                    Height="800">
-            
-            <TextBlock DockPanel.Dock="Top" 
+
+        <DockPanel Grid.Column="0"
+                   Width="300"
+                   Height="800">
+
+            <TextBlock DockPanel.Dock="Top"
                        Text="CLUSTERS"
                        FontWeight="Bold"
                        HorizontalAlignment="Center"
@@ -49,7 +49,7 @@
                         <Button Content="{Binding}"
                                 Command="{Binding DataContext.ToggleClusterCommand, ElementName=ClusterList}"
                                 CommandParameter="{Binding}"
-                                Margin="20 5"/>
+                                Margin="20 5" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -60,7 +60,7 @@
                            Margin="20"
                            Height="Auto" />
             </ScrollViewer>
-            
+
         </DockPanel>
 
         <Viewbox Height="700"
@@ -69,23 +69,22 @@
                  VerticalAlignment="Center"
                  ClipToBounds="False"
                  Grid.Column="1">
-            <ItemsControl 
-                      x:Name="ScatterPlot"
-                      ItemsSource="{Binding PlotPoints}"
-                      ItemContainerStyle="{StaticResource PlotPointContainerStyle}"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center">
-
+            <ItemsControl
+                x:Name="ScatterPlot"
+                ItemsSource="{Binding PlotPoints}"
+                ItemContainerStyle="{StaticResource PlotPointContainerStyle}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
 
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Background="Transparent"
-                            ClipToBounds="False"
-                            x:Name="chartCanvas"
-                            MouseMove="ChartCanvas_OnMouseMove"
-                            Width="980"
-                            Height="800" />
+                                ClipToBounds="False"
+                                x:Name="chartCanvas"
+                                MouseMove="ChartCanvas_OnMouseMove"
+                                Width="980"
+                                Height="800" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
@@ -93,25 +92,25 @@
                     <DataTemplate>
 
                         <Viewbox Width="35"
-                             Height="35">
+                                 Height="35">
                             <Grid Height="20"
-                          Width="20"
-                          Background="Transparent">
+                                  Width="20"
+                                  Background="Transparent">
 
                                 <TextBlock Text="{Binding NumberOfPages}"
-                                       HorizontalAlignment="Center"
-                                       TextAlignment="Center"
-                                       VerticalAlignment="Center">
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Foreground"
-                                            Value="Black" />
+                                                    Value="Black" />
 
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsPartOfCurrentCluster}"
-                                                     Value="True">
+                                                             Value="True">
                                                     <Setter Property="Foreground"
-                                                    Value="Red" />
+                                                            Value="Red" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -122,34 +121,36 @@
                                     <Ellipse.Style>
                                         <Style TargetType="Ellipse">
                                             <Setter Property="Stroke"
-                                            Value="Black" />
+                                                    Value="Black" />
 
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsPartOfCurrentCluster}"
-                                                     Value="True">
+                                                             Value="True">
                                                     <Setter Property="Stroke"
-                                                    Value="Red" />
+                                                            Value="Red" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Ellipse.Style>
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseUp">
-                                            <catel:EventToCommand Command="{Binding DataContext.SetFormattedValueCommand, ElementName=ScatterPlot}"
-                                                          PassEventArgsToCommand="False"
-                                                          CommandParameter="{Binding}" />
+                                            <catel:EventToCommand
+                                                Command="{Binding DataContext.SetFormattedValueCommand, ElementName=ScatterPlot}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Ellipse>
 
                             </Grid>
                         </Viewbox>
+                    
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
 
             </ItemsControl>
         </Viewbox>
 
-        
+
     </Grid>
 </catel:DataWindow>

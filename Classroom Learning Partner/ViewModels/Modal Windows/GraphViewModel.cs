@@ -10,11 +10,13 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class PlotPoint : ModelBase
     {
-        private double BUFFER = 20.0;
-        private double WINDOW_HEIGHT = 800.0;
-        private double WINDOW_WIDTH = 980.0;
+        public const double GRAPH_LENGTH = 700.0;
+        public static double XMin = 0.0;
+        public static double XMax = 0.0;
+        public static double YMin = 0.0;
+        public static double YMax = 0.0;
 
-        public PlotPoint(QueryResult queryResult, double xMin, double xMax, double yMin, double yMax)
+        public PlotPoint(QueryResult queryResult)
         {
             QueryResults.Add(queryResult);
 
@@ -23,13 +25,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             IsPartOfCurrentCluster = false;
 
-            var xDiff = xMax - xMin;
-            var xScale = WINDOW_WIDTH / xDiff;
-            X = (xMax - StudentActionDistance) * xScale;
+            var xDiff = XMax - XMin;
+            var xScale = GRAPH_LENGTH / xDiff;
+            X = (XMax - StudentActionDistance) * xScale;
 
-            var yDiff = yMax - yMin;
-            var yScale = WINDOW_HEIGHT / yDiff;
-            Y = WINDOW_HEIGHT - ((yMax - AnalysisDistance) * yScale);
+            var yDiff = YMax - YMin;
+            var yScale = GRAPH_LENGTH / yDiff;
+            Y = GRAPH_LENGTH - ((YMax - AnalysisDistance) * yScale);
         }
 
         public List<QueryResult> QueryResults { get; set; } = new List<QueryResult>();
@@ -60,6 +62,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public GraphViewModel(List<QueryResult> queryResults, double xMin, double xMax, double yMin, double yMax)
         {
+            PlotPoint.XMin = xMin;
+            PlotPoint.XMax = xMax;
+            PlotPoint.YMin = yMin;
+            PlotPoint.YMax = yMax;
+
             var clusterNames = new List<string>();
             foreach (var queryResult in queryResults)
             {
@@ -70,7 +77,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if (existingPoint == null)
                 {
-                    PlotPoints.Add(new PlotPoint(queryResult, xMin, xMax, yMin, yMax));
+                    PlotPoints.Add(new PlotPoint(queryResult));
                 }
                 else
                 {
