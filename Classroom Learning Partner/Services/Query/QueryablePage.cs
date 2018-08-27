@@ -250,7 +250,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 PopulateWeightsInSettingsFile_V4_MANHATTAN_3(filePath);
 
-                File.AppendAllText(filePath, "CLUSTERING_EPSILON;0.33\n");
+                File.AppendAllText(filePath, "CLUSTERING_EPSILON;1.5\n");
 
                 File.AppendAllText(filePath, "V4_MANHATTAN_3");
             }
@@ -378,7 +378,24 @@ namespace Classroom_Learning_Partner.Services
 
         public static double GetClusteringEpsilon()
         {
-            return GetLabelWeight("CLUSTERING_EPSILON");
+            const string FILE_EXTENSION = "txt";
+            var fileName = $"CLP Constraint Cluster Settings.{FILE_EXTENSION}";
+            var filePath = Path.Combine(DataService.DesktopFolderPath, fileName);
+
+            var epsilonLine = File.ReadLines(filePath).FirstOrDefault(l => l.Contains("CLUSTERING_EPSILON"));
+            if (epsilonLine is null)
+            {
+                return 1.5;
+            }
+
+            var weightParts = epsilonLine.Trim().Split(";");
+            var weight = weightParts[1].ToDouble();
+            if (weight is null)
+            {
+                return 1.5;
+            }
+
+            return (double)weight;
         }
 
         #endregion // Distance New
