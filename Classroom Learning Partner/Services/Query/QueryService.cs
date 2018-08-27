@@ -158,14 +158,14 @@ namespace Classroom_Learning_Partner.Services
             optics.BuildReachability();
             var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
-            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
-            var plotView = new OPTICSReachabilityPlotView()
-                           {
-                               Owner = Application.Current.MainWindow,
-                               WindowStartupLocation = WindowStartupLocation.Manual,
-                               Reachability = normalizedReachabilityPlot
-                           };
-            plotView.Show();
+            //var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            //var plotView = new OPTICSReachabilityPlotView()
+            //               {
+            //                   Owner = Application.Current.MainWindow,
+            //                   WindowStartupLocation = WindowStartupLocation.Manual,
+            //                   Reachability = normalizedReachabilityPlot
+            //               };
+            //plotView.Show();
 
             #region Calculate Ranges
 
@@ -189,18 +189,6 @@ namespace Classroom_Learning_Partner.Services
             CLogger.AppendToLog($"***Current Range***\n" + $"Student Action: {xMin} - {xMax}\n" + $"AnalysisDistance: {yMin} - {yMax}\n" + $"Problem Structure: {zMin} - {zMax}");
 
             #endregion // Calculate Ranges
-
-            #region Scatter Plot Pages
-
-            var graphViewModel = new GraphViewModel(QueryablePages);
-            var graphView = new GraphView(graphViewModel)
-                            {
-                                Owner = Application.Current.MainWindow,
-                                WindowStartupLocation = WindowStartupLocation.Manual
-                            };
-            graphView.Show();
-
-            #endregion // Scatter Plot Pages
 
             var clusteringEpsilon = QueryablePage.GetClusteringEpsilon();
 
@@ -275,6 +263,18 @@ namespace Classroom_Learning_Partner.Services
             }
 
             FindDominantSharedCodes(queryResults);
+
+            #region Scatter Plot Pages
+
+            var graphViewModel = new GraphViewModel(queryResults);
+            var graphView = new GraphView(graphViewModel)
+                            {
+                                Owner = Application.Current.MainWindow,
+                                WindowStartupLocation = WindowStartupLocation.Manual
+                            };
+            graphView.Show();
+
+            #endregion // Scatter Plot Pages
             
             return queryResults;
         }

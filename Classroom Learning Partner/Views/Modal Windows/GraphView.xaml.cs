@@ -11,8 +11,8 @@ namespace Classroom_Learning_Partner.Views
             : base(viewModel)
         {
             InitializeComponent();
-            Top = SystemParameters.FullPrimaryScreenHeight / 2 - (ActualHeight / 2);
-            Left = SystemParameters.FullPrimaryScreenWidth / 2 - (ActualWidth / 2);
+            Top = 0;
+            Left = 0;
         }
 
         private void ChartCanvas_OnMouseMove(object sender, MouseEventArgs e)

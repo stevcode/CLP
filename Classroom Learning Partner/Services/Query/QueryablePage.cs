@@ -458,13 +458,13 @@ namespace Classroom_Learning_Partner.Services
             }
 
             StudentActionDistance = studentActions.Select(t => t.Item2).Sum();
-            var studentActionsFormat = $"Student Actions Distance ({StudentActionDistance}):{string.Join("", studentActions.Select(t => $"\n\t- {t.Item1}: {t.Item2}"))}";
+            var studentActionsFormat = $"Student Actions Distance ({StudentActionDistance}):{string.Join("", studentActions.Select(t => $"\n  - {t.Item1}: {t.Item2}"))}";
 
             AnalysisDistance = analysis.Select(t => t.Item2).Sum();
-            var analysisFormat = $"Analysis Distance ({AnalysisDistance}):{string.Join("", analysis.Select(t => $"\n\t- {t.Item1}: {t.Item2}"))}";
+            var analysisFormat = $"Analysis Distance ({AnalysisDistance}):{string.Join("", analysis.Select(t => $"\n  - {t.Item1}: {t.Item2}"))}";
 
             ProblemStructureDistance = problemStructure.Select(t => t.Item2).Sum();
-            var problemStructureFormat = $"Problem Structure Distance ({ProblemStructureDistance}):{string.Join("", problemStructure.Select(t => $"\n\t- {t.Item1}: {t.Item2}"))}";
+            var problemStructureFormat = $"Problem Structure Distance ({ProblemStructureDistance}):{string.Join("", problemStructure.Select(t => $"\n  - {t.Item1}: {t.Item2}"))}";
 
             FormattedDistance = $"{studentActionsFormat}\n\n{analysisFormat}\n\n{problemStructureFormat}";
 
