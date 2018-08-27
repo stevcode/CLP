@@ -33,7 +33,7 @@ namespace CLP.Entities
         public const string ANALYSIS_LABEL_ARRAY_EQUATION = "ARRAY EQUATION";
 
         public const string ANALYSIS_LABEL_SKIP_CONSOLIDATION = "SKIP CONSOLIDATION";
-        public const string ANALYSIS_LABEL_INCORRECTNESS_REASONS = "INCORRECTNESS REASONS";
+        public const string ANALYSIS_LABEL_WRONG_GROUPS = "WRONG GROUPS";
 
         #endregion // Analysis Labels
 
@@ -65,7 +65,7 @@ namespace CLP.Entities
         public const string ANALYSIS_SHORT_NAME_ARRAY_EQUATION = "ARR_EQN";
 
         public const string ANALYSIS_SHORT_NAME_SKIP_CONSOLIDATION = "SKIPPED";
-        public const string ANALYSIS_SHORT_NAME_INCORRECTNESS_REASONS = "INC_REASONS";
+        public const string ANALYSIS_SHORT_NAME_INCORRECTNESS_REASONS = "WRONG_GROUPS";
 
         #endregion // Analysis Short Names
 
@@ -121,8 +121,8 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_ANY_ARITH = "ANY_ARITH";
 
-        public const string CONSTRAINT_FINAL_INCORRECT_REASONS = "FINAL_INC";
-        public const string CONSTRAINT_ALL_INCORRECT_REASONS = "ALL_INC";
+        public const string CONSTRAINT_FINAL_HAS_WRONG_GROUPS = "FINAL_INC";
+        public const string CONSTRAINT_DELETED_HAS_WRONG_GROUPS = "ALL_INC";
 
         #endregion // Analysis Constraint Labels
 
@@ -294,7 +294,7 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_ARRAY_EQUATION;
                 case ANALYSIS_LABEL_SKIP_CONSOLIDATION:
                     return ANALYSIS_SHORT_NAME_SKIP_CONSOLIDATION;
-                case ANALYSIS_LABEL_INCORRECTNESS_REASONS:
+                case ANALYSIS_LABEL_WRONG_GROUPS:
                     return ANALYSIS_SHORT_NAME_INCORRECTNESS_REASONS;
             }
 
@@ -346,7 +346,7 @@ namespace CLP.Entities
                 case ANALYSIS_SHORT_NAME_SKIP_CONSOLIDATION:
                     return ANALYSIS_LABEL_SKIP_CONSOLIDATION;
                 case ANALYSIS_SHORT_NAME_INCORRECTNESS_REASONS:
-                    return ANALYSIS_LABEL_INCORRECTNESS_REASONS;
+                    return ANALYSIS_LABEL_WRONG_GROUPS;
             }
 
             return "No matching Label";
@@ -377,7 +377,7 @@ namespace CLP.Entities
                            ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES,
                            ANALYSIS_LABEL_ARRAY_EQUATION,
                            ANALYSIS_LABEL_SKIP_CONSOLIDATION,
-                           ANALYSIS_LABEL_INCORRECTNESS_REASONS
+                           ANALYSIS_LABEL_WRONG_GROUPS
                        };
 
             return list;
@@ -467,10 +467,10 @@ namespace CLP.Entities
                 case CONSTRAINT_ANY_ARITH:
                     return "Arith Status";
 
-                case CONSTRAINT_FINAL_INCORRECT_REASONS:
-                    return "Final Incorrect Reason?";
-                case CONSTRAINT_ALL_INCORRECT_REASONS:
-                    return "All Incorrect Reason?";
+                case CONSTRAINT_FINAL_HAS_WRONG_GROUPS:
+                    return "Final Wrong Groups";
+                case CONSTRAINT_DELETED_HAS_WRONG_GROUPS:
+                    return "Deleted Wrong Groups";
             }
 
             return "No matching Alias";

@@ -175,7 +175,7 @@ namespace Classroom_Learning_Partner.Services
             var xMin = double.MaxValue;
             var yMin = double.MaxValue;
             var zMin = double.MaxValue;
-            foreach (var queryablePage in QueryablePages)
+            foreach (var queryablePage in queryablePages)
             {
                 xMax = Math.Max(xMax, queryablePage.StudentActionDistance);
                 yMax = Math.Max(yMax, queryablePage.AnalysisDistance);

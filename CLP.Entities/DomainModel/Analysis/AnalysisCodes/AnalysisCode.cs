@@ -195,9 +195,9 @@ namespace CLP.Entities
             skipConsolidation.AddConstraint(Codings.CONSTRAINT_ANY_ARITH);
             conditions.Add(skipConsolidation);
 
-            var incorrectReasons = new AnalysisCode(Codings.ANALYSIS_LABEL_INCORRECTNESS_REASONS);
-            incorrectReasons.AddConstraint(Codings.CONSTRAINT_ALL_INCORRECT_REASONS);
-            incorrectReasons.AddConstraint(Codings.CONSTRAINT_FINAL_INCORRECT_REASONS);
+            var incorrectReasons = new AnalysisCode(Codings.ANALYSIS_LABEL_WRONG_GROUPS);
+            incorrectReasons.AddConstraint(Codings.CONSTRAINT_DELETED_HAS_WRONG_GROUPS);
+            incorrectReasons.AddConstraint(Codings.CONSTRAINT_FINAL_HAS_WRONG_GROUPS);
             conditions.Add(incorrectReasons);
 
             return conditions;

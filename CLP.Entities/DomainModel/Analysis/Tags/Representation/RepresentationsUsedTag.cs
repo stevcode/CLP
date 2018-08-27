@@ -325,7 +325,7 @@ namespace CLP.Entities
             AnalysisCode.AddMultipleApproaches(tag);
             AnalysisCode.AddNLJE(tag);
             AnalysisCode.AddRepresentationsUsedSummary(tag);
-            AnalysisCode.AddIncorrectnessSummary(tag);
+            AnalysisCode.AddWrongGroups(tag);
 
             page.AddTag(tag);
             return tag;

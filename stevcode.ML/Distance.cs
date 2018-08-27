@@ -13,7 +13,7 @@ namespace stevcode.ML
         /// <param name="b"></param>
         /// <param name="isFastDistance">Doesn't return the square root of the total, instead just returns a value that is proportionally far away.</param>
         /// <returns></returns>
-        public static double EuclideanDistance(List<double> a, List<double> b, bool isFastDistance = true)
+        public static double EuclideanDistance(List<double> a, List<double> b, bool isFastDistance = false)
         {
             var total = a.Select((t, i) => t - b[i]).Sum(difference => difference * difference);
 

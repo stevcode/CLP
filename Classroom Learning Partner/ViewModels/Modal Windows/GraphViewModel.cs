@@ -23,13 +23,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             IsPartOfCurrentCluster = false;
 
-            var xDiff = xMax - xMin + (BUFFER * 2);
+            var xDiff = xMax - xMin;
             var xScale = WINDOW_WIDTH / xDiff;
-            X = StudentActionDistance * xScale;
+            X = (xMax - StudentActionDistance) * xScale;
 
-            var yDiff = yMax - yMin + (BUFFER * 2);
+            var yDiff = yMax - yMin;
             var yScale = WINDOW_HEIGHT / yDiff;
-            Y = WINDOW_HEIGHT - (AnalysisDistance * yScale);
+            Y = WINDOW_HEIGHT - ((yMax - AnalysisDistance) * yScale);
         }
 
         public List<QueryResult> QueryResults { get; set; } = new List<QueryResult>();

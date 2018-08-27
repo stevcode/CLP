@@ -12,6 +12,7 @@ namespace CLP.Entities
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CODED_ID, Codings.NOT_APPLICABLE);
             analysisCode.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS, Codings.NOT_APPLICABLE);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, Codings.NOT_APPLICABLE);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
 
             tag.QueryCodes.Add(analysisCode);
         }
@@ -23,6 +24,7 @@ namespace CLP.Entities
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CODED_ID, Codings.NOT_APPLICABLE);
             analysisCode.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS, Codings.NOT_APPLICABLE);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, Codings.NOT_APPLICABLE);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
 
             tag.QueryCodes.Add(analysisCode);
         }
@@ -115,24 +117,28 @@ namespace CLP.Entities
             tag.QueryCodes.Add(analysisCode);
         }
 
-        public static void AddIncorrectnessSummary(RepresentationsUsedTag tag)
+        public static void AddWrongGroups(RepresentationsUsedTag tag)
         {
+            var repsUsedCodes = tag.QueryCodes.Where(c => c.AnalysisCodeLabel == Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED).ToList();
+
             var incorrectnessReasons = new List<string>
                                        {
-                                           Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS,
-                                           Codings.PARTIAL_REASON_GAPS,
-                                           Codings.PARTIAL_REASON_OVERLAPS,
-                                           Codings.PARTIAL_REASON_SWAPPED
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS
                                        };
+            var isDeleted = repsUsedCodes.Any(
+                c => c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_HISTORY_STATUS).ConstraintValue == Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED &&
+                     incorrectnessReasons.Contains(c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON).ConstraintValue));
+            var isFinal = repsUsedCodes.Any(
+                c => c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_HISTORY_STATUS).ConstraintValue == Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL &&
+                     incorrectnessReasons.Contains(c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON).ConstraintValue));
+            
 
-            var isFinalInc = tag.RepresentationsUsed.Any(r => !incorrectnessReasons.Contains(r.CorrectnessReason) && r.IsFinalRepresentation);
-            var isAnyInc = tag.RepresentationsUsed.Any(r => !incorrectnessReasons.Contains(r.CorrectnessReason));
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_WRONG_GROUPS);
 
-            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_INCORRECTNESS_REASONS);
-
-
-            analysisCode.AddConstraint(Codings.CONSTRAINT_FINAL_INCORRECT_REASONS, isFinalInc ? Codings.CONSTRAINT_VALUE_YES : Codings.CONSTRAINT_VALUE_NO);
-            analysisCode.AddConstraint(Codings.CONSTRAINT_ALL_INCORRECT_REASONS, isAnyInc ? Codings.CONSTRAINT_VALUE_YES :  Codings.CONSTRAINT_VALUE_NO);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_DELETED_HAS_WRONG_GROUPS, isDeleted ? Codings.CONSTRAINT_VALUE_YES : Codings.CONSTRAINT_VALUE_NO);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_FINAL_HAS_WRONG_GROUPS, isFinal ? Codings.CONSTRAINT_VALUE_YES :  Codings.CONSTRAINT_VALUE_NO);
 
             tag.QueryCodes.Add(analysisCode);
         }

@@ -77,6 +77,23 @@ namespace Classroom_Learning_Partner.Services
                                 };
                         distance = stevcode.ML.Distance.ManhattanDistance(a, b);
                         break;
+                    case "V4_EUCLIDEAN_3":
+                        CalculatePosition();
+                        otherPage.CalculatePosition();
+                        var C = new List<double>
+                                {
+                                    StudentActionDistance,
+                                    AnalysisDistance,
+                                    ProblemStructureDistance
+                                };
+                        var D = new List<double>
+                                {
+                                    otherPage.StudentActionDistance,
+                                    otherPage.AnalysisDistance,
+                                    otherPage.ProblemStructureDistance
+                                };
+                        distance = stevcode.ML.Distance.EuclideanDistance(C, D);
+                        break;
             }
 
             return distance;
@@ -448,6 +465,7 @@ namespace Classroom_Learning_Partner.Services
                         case Codings.ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS:
                         case Codings.ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
                         case Codings.ANALYSIS_LABEL_OVERALL_CORRECTNESS:
+                        case Codings.ANALYSIS_LABEL_WRONG_GROUPS:
                             studentActions.Add(new Tuple<string, double>($"{code.AnalysisCodeShortName}-{constraintFriendlyName}-{constraint.ConstraintValue}", constraintWeight));
                             break;
                         default:

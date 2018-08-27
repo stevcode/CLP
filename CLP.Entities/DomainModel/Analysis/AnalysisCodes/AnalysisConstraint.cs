@@ -246,12 +246,12 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH);
                     break;
 
-                case Codings.CONSTRAINT_ALL_INCORRECT_REASONS:
+                case Codings.CONSTRAINT_DELETED_HAS_WRONG_GROUPS:
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
                     break;
 
-                case Codings.CONSTRAINT_FINAL_INCORRECT_REASONS:
+                case Codings.CONSTRAINT_FINAL_HAS_WRONG_GROUPS:
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
                     break;
