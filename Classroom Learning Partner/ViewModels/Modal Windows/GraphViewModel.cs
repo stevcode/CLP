@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Catel.Data;
@@ -25,13 +26,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
             IsPartOfCurrentCluster = false;
 
-            var xDiff = XMax - XMin;
-            var xScale = GRAPH_LENGTH / xDiff;
-            X = (XMax - StudentActionDistance) * xScale;
+            var max = Math.Max(XMax, YMax);
+            var min = Math.Min(XMin, YMin);
+            var diff = max - min;
+            var scale = GRAPH_LENGTH / diff;
 
-            var yDiff = YMax - YMin;
-            var yScale = GRAPH_LENGTH / yDiff;
-            Y = GRAPH_LENGTH - ((YMax - AnalysisDistance) * yScale);
+            X = (max - StudentActionDistance) * scale;
+            Y = GRAPH_LENGTH - ((max - AnalysisDistance) * scale);
+
+            //var xDiff = XMax - XMin;
+            //var xScale = GRAPH_LENGTH / xDiff;
+            //X = (XMax - StudentActionDistance) * xScale;
+
+            //var yDiff = YMax - YMin;
+            //var yScale = GRAPH_LENGTH / yDiff;
+            //Y = GRAPH_LENGTH - ((YMax - AnalysisDistance) * yScale);
         }
 
         public List<QueryResult> QueryResults { get; set; } = new List<QueryResult>();
