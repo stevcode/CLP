@@ -191,6 +191,15 @@ namespace CLP.Entities
             var nlje = new AnalysisCode(Codings.ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES);
             conditions.Add(nlje);
 
+            var skipConsolidation = new AnalysisCode(Codings.ANALYSIS_LABEL_SKIP_CONSOLIDATION);
+            skipConsolidation.AddConstraint(Codings.CONSTRAINT_ANY_ARITH);
+            conditions.Add(skipConsolidation);
+
+            var incorrectReasons = new AnalysisCode(Codings.ANALYSIS_LABEL_INCORRECTNESS_REASONS);
+            incorrectReasons.AddConstraint(Codings.CONSTRAINT_ALL_INCORRECT_REASONS);
+            incorrectReasons.AddConstraint(Codings.CONSTRAINT_FINAL_INCORRECT_REASONS);
+            conditions.Add(incorrectReasons);
+
             return conditions;
         }
 

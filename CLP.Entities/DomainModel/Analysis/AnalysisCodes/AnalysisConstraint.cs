@@ -240,6 +240,21 @@ namespace CLP.Entities
                 case Codings.CONSTRAINT_REPRESENTATION_COUNT:
                     possibleConstraintValues.AddRange(Enumerable.Range(0, 31).Select(n => n.ToString()));
                     break;
+
+                case Codings.CONSTRAINT_ANY_ARITH:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH);
+                    break;
+
+                case Codings.CONSTRAINT_ALL_INCORRECT_REASONS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
+                    break;
+
+                case Codings.CONSTRAINT_FINAL_INCORRECT_REASONS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
+                    break;
             }
 
             return possibleConstraintValues;

@@ -32,6 +32,9 @@ namespace CLP.Entities
 
         public const string ANALYSIS_LABEL_ARRAY_EQUATION = "ARRAY EQUATION";
 
+        public const string ANALYSIS_LABEL_SKIP_CONSOLIDATION = "SKIP CONSOLIDATION";
+        public const string ANALYSIS_LABEL_INCORRECTNESS_REASONS = "INCORRECTNESS REASONS";
+
         #endregion // Analysis Labels
 
         #region Analysis Short Names
@@ -60,6 +63,9 @@ namespace CLP.Entities
         public const string ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES = "NLJE";
 
         public const string ANALYSIS_SHORT_NAME_ARRAY_EQUATION = "ARR_EQN";
+
+        public const string ANALYSIS_SHORT_NAME_SKIP_CONSOLIDATION = "SKIPPED";
+        public const string ANALYSIS_SHORT_NAME_INCORRECTNESS_REASONS = "INC_REASONS";
 
         #endregion // Analysis Short Names
 
@@ -112,6 +118,11 @@ namespace CLP.Entities
         public const string CONSTRAINT_OVERALL_CORRECTNESS = "OVERALL_CORRECTNESS";
 
         public const string CONSTRAINT_INTERPRETATION = "INTERPRETATION";
+
+        public const string CONSTRAINT_ANY_ARITH = "ANY_ARITH";
+
+        public const string CONSTRAINT_FINAL_INCORRECT_REASONS = "FINAL_INC";
+        public const string CONSTRAINT_ALL_INCORRECT_REASONS = "ALL_INC";
 
         #endregion // Analysis Constraint Labels
 
@@ -281,6 +292,10 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_NUMBER_LINE_JUMP_ERASURES;
                 case ANALYSIS_LABEL_ARRAY_EQUATION:
                     return ANALYSIS_SHORT_NAME_ARRAY_EQUATION;
+                case ANALYSIS_LABEL_SKIP_CONSOLIDATION:
+                    return ANALYSIS_SHORT_NAME_SKIP_CONSOLIDATION;
+                case ANALYSIS_LABEL_INCORRECTNESS_REASONS:
+                    return ANALYSIS_SHORT_NAME_INCORRECTNESS_REASONS;
             }
 
             return "No matching Short Name";
@@ -328,6 +343,10 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES;
                 case ANALYSIS_SHORT_NAME_ARRAY_EQUATION:
                     return ANALYSIS_LABEL_ARRAY_EQUATION;
+                case ANALYSIS_SHORT_NAME_SKIP_CONSOLIDATION:
+                    return ANALYSIS_LABEL_SKIP_CONSOLIDATION;
+                case ANALYSIS_SHORT_NAME_INCORRECTNESS_REASONS:
+                    return ANALYSIS_LABEL_INCORRECTNESS_REASONS;
             }
 
             return "No matching Label";
@@ -356,7 +375,9 @@ namespace CLP.Entities
                            ANALYSIS_LABEL_WORD_PROBLEM,
                            ANALYSIS_LABEL_PAGE_DEFINITION,
                            ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES,
-                           ANALYSIS_LABEL_ARRAY_EQUATION
+                           ANALYSIS_LABEL_ARRAY_EQUATION,
+                           ANALYSIS_LABEL_SKIP_CONSOLIDATION,
+                           ANALYSIS_LABEL_INCORRECTNESS_REASONS
                        };
 
             return list;
@@ -442,6 +463,14 @@ namespace CLP.Entities
 
                 case CONSTRAINT_OVERALL_CORRECTNESS:
                     return "Correctness";
+
+                case CONSTRAINT_ANY_ARITH:
+                    return "Arith Status";
+
+                case CONSTRAINT_FINAL_INCORRECT_REASONS:
+                    return "Final Incorrect Reason?";
+                case CONSTRAINT_ALL_INCORRECT_REASONS:
+                    return "All Incorrect Reason?";
             }
 
             return "No matching Alias";

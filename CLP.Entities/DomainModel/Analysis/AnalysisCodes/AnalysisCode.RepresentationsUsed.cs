@@ -115,6 +115,28 @@ namespace CLP.Entities
             tag.QueryCodes.Add(analysisCode);
         }
 
+        public static void AddIncorrectnessSummary(RepresentationsUsedTag tag)
+        {
+            var incorrectnessReasons = new List<string>
+                                       {
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN_GROUPS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS
+                                       };
+
+            var isFinalInc = tag.RepresentationsUsed.Any(r => incorrectnessReasons.Contains(r.CorrectnessReason) && r.IsFinalRepresentation);
+            var isAnyInc = tag.RepresentationsUsed.Any(r => incorrectnessReasons.Contains(r.CorrectnessReason));
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_INCORRECTNESS_REASONS);
+
+
+            analysisCode.AddConstraint(Codings.CONSTRAINT_FINAL_INCORRECT_REASONS, isFinalInc ? Codings.CONSTRAINT_VALUE_YES : Codings.CONSTRAINT_VALUE_NO);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_ALL_INCORRECT_REASONS, isAnyInc ? Codings.CONSTRAINT_VALUE_YES :  Codings.CONSTRAINT_VALUE_NO);
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
         public static void AddMultipleRepresentations2Step(RepresentationsUsedTag tag)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP);
@@ -273,14 +295,18 @@ namespace CLP.Entities
 
         public static void AddArraySkipStrategies(IAnalysis tag, UsedRepresentation usedRepresentation)
         {
+            var isSkip = false;
+            var isArith = false;
             foreach (var additionalInfo in usedRepresentation.AdditionalInformation.Where(i => i.Contains("skip")))
             {
+                isSkip = true;
                 var location = additionalInfo.Contains("bottom") ? Codings.CONSTRAINT_VALUE_LOCATION_BOTTOM : Codings.CONSTRAINT_VALUE_LOCATION_RIGHT;
 
                 var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP);
 
                 if (additionalInfo.Contains("+arith"))
                 {
+                    isArith = true;
                     analysisCode.AddConstraint(Codings.CONSTRAINT_ARITH_STATUS, Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH);
                 }
                 else
@@ -328,6 +354,13 @@ namespace CLP.Entities
                     }
                 }
 
+                tag.QueryCodes.Add(analysisCode);
+            }
+
+            if (isSkip)
+            {
+                var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_SKIP_CONSOLIDATION);
+                analysisCode.AddConstraint(Codings.CONSTRAINT_ANY_ARITH, isArith ? Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH : Codings.CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH);
                 tag.QueryCodes.Add(analysisCode);
             }
         }
