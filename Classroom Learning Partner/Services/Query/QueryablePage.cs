@@ -267,6 +267,10 @@ namespace Classroom_Learning_Partner.Services
             {
                 PopulateWeightsInSettingsFile_V4_MANHATTAN_3(filePath);
 
+                File.AppendAllText(filePath, "PROBLEM_STRUCTURE_WEIGHT;0.5\n");
+                File.AppendAllText(filePath, "ANALYSIS_WEIGHT;1.0\n");
+                File.AppendAllText(filePath, "STUDENT_ACTION;1.0\n");
+
                 File.AppendAllText(filePath, "CLUSTERING_EPSILON;1.7\n");
 
                 File.AppendAllText(filePath, "V4_MANHATTAN_3");
