@@ -95,9 +95,6 @@ namespace CLP.Entities
 
         public static void AddRepresentationsUsedSummary(RepresentationsUsedTag tag)
         {
-            var typeCount = tag.RepresentationsUsed.Select(r => r.CodedObject).Distinct().Count();
-            var repCount = tag.RepresentationsUsed.Count;
-
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY);
             if (tag.RepresentationsUsed.All(r => r.Correctness == Correctness.Correct))
             {
@@ -111,8 +108,33 @@ namespace CLP.Entities
             {
                 analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
             }
-            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_TYPE_COUNT, typeCount.ToString());
-            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_COUNT, repCount.ToString());
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_COUNT, tag.RepresentationsUsed.Count.ToString());
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_DELETED_COUNT, tag.RepresentationsUsed.Count(r => !r.IsFinalRepresentation).ToString());
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_FINAL_COUNT, tag.RepresentationsUsed.Count(r => r.IsFinalRepresentation).ToString());
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
+        public static void AddRepresentationsDeletedSummary(RepresentationsUsedTag tag)
+        {
+            if (tag.RepresentationsUsed.All(r => r.IsFinalRepresentation))
+            {
+                return;
+            }
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_DELETED_SUMMARY);
+            if (tag.RepresentationsUsed.Where(r => !r.IsFinalRepresentation).All(r => r.Correctness == Correctness.Correct))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
+            }
+            else if (tag.RepresentationsUsed.Where(r => !r.IsFinalRepresentation).All(r => r.Correctness == Correctness.Incorrect))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE);
+            }
+            else
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
+            }
 
             tag.QueryCodes.Add(analysisCode);
         }
@@ -301,18 +323,14 @@ namespace CLP.Entities
 
         public static void AddArraySkipStrategies(IAnalysis tag, UsedRepresentation usedRepresentation)
         {
-            var isSkip = false;
-            var isArith = false;
             foreach (var additionalInfo in usedRepresentation.AdditionalInformation.Where(i => i.Contains("skip")))
             {
-                isSkip = true;
                 var location = additionalInfo.Contains("bottom") ? Codings.CONSTRAINT_VALUE_LOCATION_BOTTOM : Codings.CONSTRAINT_VALUE_LOCATION_RIGHT;
 
                 var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_STRATEGY_ARRAY_SKIP);
 
                 if (additionalInfo.Contains("+arith"))
                 {
-                    isArith = true;
                     analysisCode.AddConstraint(Codings.CONSTRAINT_ARITH_STATUS, Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH);
                 }
                 else
@@ -362,6 +380,12 @@ namespace CLP.Entities
 
                 tag.QueryCodes.Add(analysisCode);
             }
+        }
+
+        public static void AddSkipped(RepresentationsUsedTag tag)
+        {
+            var isSkip = tag.RepresentationsUsed.Any(r => r.AdditionalInformation.Any(i => i.Contains("skip")));
+            var isArith = tag.RepresentationsUsed.Any(r => r.AdditionalInformation.Any(i => i.Contains("+arith")));
 
             if (isSkip)
             {

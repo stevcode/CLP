@@ -315,6 +315,8 @@ namespace CLP.Entities
                 }
             }
 
+            AnalysisCode.AddSkipped(tag);
+
             var isMR2STEP = IsMR2STEP(tag);
             if (isMR2STEP)
             {
@@ -325,6 +327,7 @@ namespace CLP.Entities
             AnalysisCode.AddMultipleApproaches(tag);
             AnalysisCode.AddNLJE(tag);
             AnalysisCode.AddRepresentationsUsedSummary(tag);
+            AnalysisCode.AddRepresentationsDeletedSummary(tag);
             AnalysisCode.AddWrongGroups(tag);
 
             page.AddTag(tag);

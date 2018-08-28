@@ -9,6 +9,7 @@ namespace CLP.Entities
 
         public const string ANALYSIS_LABEL_REPRESENTATIONS_USED = "REPRESENTATIONS USED";
         public const string ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY = "REPRESENTATIONS USED SUMMARY";
+        public const string ANALYSIS_LABEL_REPRESENTATIONS_DELETED_SUMMARY = "REPRESENTATIONS DELETED SUMMARY";
         public const string ANALYSIS_LABEL_REPRESENTATION_ORDER = "REPRESENTATION ORDER";
         public const string ANALYSIS_LABEL_ANSWER_BEFORE_REPRESENTATION = "ANSWER BEFORE REPRESENTATION";
         public const string ANALYSIS_LABEL_CHANGED_ANSWER_AFTER_REPRESENTATION = "CHANGED ANSWER AFTER REPRESENTATION";
@@ -41,6 +42,7 @@ namespace CLP.Entities
 
         public const string ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED = "REPS_USED";
         public const string ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED_SUMMARY = "REP_ALL";
+        public const string ANALYSIS_SHORT_NAME_REPRESENTATIONS_DELETED_SUMMARY = "REP_DEL";
         public const string ANALYSIS_SHORT_NAME_REPRESENTATION_ORDER = "REP_ORDER";
         public const string ANALYSIS_SHORT_NAME_ANSWER_BEFORE_REPRESENTATION = "ABR";
         public const string ANALYSIS_SHORT_NAME_CHANGED_ANSWER_AFTER_REPRESENTATION = "CAAR";
@@ -111,8 +113,9 @@ namespace CLP.Entities
         public const string CONSTRAINT_PROBLEM_TYPE = "PROBLEM_TYPE";
 
         public const string CONSTRAINT_COUNT = "COUNT";
-        public const string CONSTRAINT_REPRESENTATION_TYPE_COUNT = "REPRESENTATION_TYPE_COUNT";
         public const string CONSTRAINT_REPRESENTATION_COUNT = "REPRESENTATION_COUNT";
+        public const string CONSTRAINT_REPRESENTATION_DELETED_COUNT = "REPRESENTATION_DELETED_COUNT";
+        public const string CONSTRAINT_REPRESENTATION_FINAL_COUNT = "REPRESENTATION_FINAL_COUNT";
         public const string CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS = "REPRESENTATION_OVERALL_CORRECTNESS";
 
         public const string CONSTRAINT_OVERALL_CORRECTNESS = "OVERALL_CORRECTNESS";
@@ -270,6 +273,8 @@ namespace CLP.Entities
                     return ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED;
                 case ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY:
                     return ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED_SUMMARY;
+                case ANALYSIS_LABEL_REPRESENTATIONS_DELETED_SUMMARY:
+                    return ANALYSIS_SHORT_NAME_REPRESENTATIONS_DELETED_SUMMARY;
                 case ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS:
                     return ANALYSIS_SHORT_NAME_FINAL_ANSWER_CORRECTNESS;
                 case ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS:
@@ -321,6 +326,8 @@ namespace CLP.Entities
                     return ANALYSIS_LABEL_REPRESENTATIONS_USED;
                 case ANALYSIS_SHORT_NAME_REPRESENTATIONS_USED_SUMMARY:
                     return ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY;
+                case ANALYSIS_SHORT_NAME_REPRESENTATIONS_DELETED_SUMMARY:
+                    return ANALYSIS_LABEL_REPRESENTATIONS_DELETED_SUMMARY;
                 case ANALYSIS_SHORT_NAME_FINAL_ANSWER_CORRECTNESS:
                     return ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS;
                 case ANALYSIS_SHORT_NAME_FINAL_REPRESENTATION_CORRECTNESS:
@@ -364,6 +371,7 @@ namespace CLP.Entities
                            //ANALYSIS_LABEL_REPRESENTATION_AFTER_ANSWER,
                            ANALYSIS_LABEL_REPRESENTATIONS_USED,
                            ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY,
+                           ANALYSIS_LABEL_REPRESENTATIONS_DELETED_SUMMARY,
                            //ANALYSIS_LABEL_ARRAY_SKIP_COUNTING,
                            ANALYSIS_LABEL_FINAL_ANSWER_CORRECTNESS,
                            ANALYSIS_LABEL_FINAL_REPRESENTATION_CORRECTNESS,
@@ -454,10 +462,13 @@ namespace CLP.Entities
 
                 case CONSTRAINT_COUNT:
                     return "Count";
-                case CONSTRAINT_REPRESENTATION_TYPE_COUNT:
-                    return "Number of Types";
+
                 case CONSTRAINT_REPRESENTATION_COUNT:
                     return "Number of Representations";
+                case CONSTRAINT_REPRESENTATION_DELETED_COUNT:
+                    return "Number of Deleted Representations";
+                case CONSTRAINT_REPRESENTATION_FINAL_COUNT:
+                    return "Number of Final Representations";
                 case CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS:
                     return "Correctness";
 

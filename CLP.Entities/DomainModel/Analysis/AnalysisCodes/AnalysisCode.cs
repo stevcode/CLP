@@ -20,15 +20,6 @@ namespace CLP.Entities
 
         #endregion // Constructors
 
-        #region Properties
-
-        //public string Hack
-        //{
-        //    set => RaisePropertyChanged(nameof(LongFormattedValue));
-        //}
-
-        #endregion // Properties
-
         #region IAnalysisCode Implementation
 
         public string AnalysisCodeLabel
@@ -118,9 +109,14 @@ namespace CLP.Entities
 
             var repsUsedSummary = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY);
             repsUsedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS);
-            repsUsedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_TYPE_COUNT);
             repsUsedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_COUNT);
+            repsUsedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_DELETED_COUNT);
+            repsUsedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_FINAL_COUNT);
             conditions.Add(repsUsedSummary);
+
+            var repsDeletedSummary = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_DELETED_SUMMARY);
+            repsDeletedSummary.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS);
+            conditions.Add(repsDeletedSummary);
 
             var repOrder = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATION_ORDER);
             repOrder.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_FIRST);
