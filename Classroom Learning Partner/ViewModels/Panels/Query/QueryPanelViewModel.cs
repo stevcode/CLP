@@ -515,8 +515,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 File.AppendAllText(filePath2, $"Cluster Name: {clusterName}\n\n");
                 foreach (var queryResult in queryGroup.OrderBy(p => p.PageNumber))
                 {
-                    File.AppendAllText(filePath2, $"{queryResult.StudentName}, Page {queryResult.PageNumber}");
-                    File.AppendAllText(filePath2, $"{queryResult.Page.FormattedDistance}\n\n");
+                    File.AppendAllText(filePath2, $"{queryResult.StudentName}, Page {queryResult.PageNumber}\n{queryResult.Page.FormattedDistance}\n\n");
                 }
             }
         }
