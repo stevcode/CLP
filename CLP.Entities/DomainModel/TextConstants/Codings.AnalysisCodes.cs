@@ -111,6 +111,7 @@ namespace CLP.Entities
 
         public const string CONSTRAINT_IS_WORD_PROBLEM = "IS_WORD_PROBLEM";
         public const string CONSTRAINT_PROBLEM_TYPE = "PROBLEM_TYPE";
+        public const string CONSTRAINT_PROBLEM_STEP_COUNT = "PROBLEM_STEP_COUNT";
 
         public const string CONSTRAINT_COUNT = "COUNT";
         public const string CONSTRAINT_REPRESENTATION_COUNT = "REPRESENTATION_COUNT";
@@ -191,6 +192,8 @@ namespace CLP.Entities
         public const string CONSTRAINT_VALUE_PROBLEM_TYPE_EQUIVALENCE = "EQUIVALENCE";
         public const string CONSTRAINT_VALUE_PROBLEM_TYPE_OTHER = "OTHER";
         public const string CONSTRAINT_VALUE_PROBLEM_TYPE_NONE = "NONE";
+
+        public const string CONSTRAINT_VALUE_PROBLEM_STEP_COUNT_UNKNOWN = "UNKNOWN";
 
         #endregion // Analysis Constraint Values
 
@@ -462,6 +465,9 @@ namespace CLP.Entities
 
                 case CONSTRAINT_COUNT:
                     return "Count";
+
+                case CONSTRAINT_PROBLEM_STEP_COUNT:
+                    return "Number Of Steps";
 
                 case CONSTRAINT_REPRESENTATION_COUNT:
                     return "Number of Representations";

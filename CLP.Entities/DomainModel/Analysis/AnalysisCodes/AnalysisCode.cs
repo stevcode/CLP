@@ -182,6 +182,7 @@ namespace CLP.Entities
 
             var pageDef = new AnalysisCode(Codings.ANALYSIS_LABEL_PAGE_DEFINITION);
             pageDef.AddConstraint(Codings.CONSTRAINT_PROBLEM_TYPE);
+            pageDef.AddConstraint(Codings.CONSTRAINT_PROBLEM_STEP_COUNT);
             conditions.Add(pageDef);
 
             var nlje = new AnalysisCode(Codings.ANALYSIS_LABEL_NUMBER_LINE_JUMP_ERASURES);
