@@ -8,6 +8,8 @@
         public const string CORRECTNESS_CODED_ILLEGIBLE = "ILL";
         public const string CORRECTNESS_CODED_UNANSWERED = "UNANSWERED";
         public const string CORRECTNESS_CODED_UNKNOWN = "UNKNOWN";
+        public const string CORRECTNESS_CODED_NOT_COR = "NOT_COR";
+        public const string CORRECTNESS_CODED_PAR_OR_INC = "PAR_OR_INC";
 
         public const string ANSWER_UNDEFINED = "UNDEFINED";
 
@@ -19,6 +21,8 @@
         public const string PARTIAL_REASON_UNKNOWN = "UNKNOWN";
         public const string PARTIAL_REASON_SWAPPED = "SWAPPED";
         public const string PARTIAL_REASON_GAPS_AND_OVERLAPS = "GAPS AND OVERLAPS";
+        public const string PARTIAL_REASON_GAPS = "GAPS";
+        public const string PARTIAL_REASON_OVERLAPS = "OVERLAPS";
 
         #region Conversion Methods
 

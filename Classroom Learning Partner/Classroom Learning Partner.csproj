@@ -280,6 +280,7 @@
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassRosterViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\GraphViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\SemanticEventEditorViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\Tags\MetaDataTagsViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\NumberLineCreationViewModel.cs" />
@@ -358,6 +359,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\ClassRosterView.xaml.cs">
       <DependentUpon>ClassRosterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\GraphView.xaml.cs">
+      <DependentUpon>GraphView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\SemanticEventEditorView.xaml.cs">
       <DependentUpon>SemanticEventEditorView.xaml</DependentUpon>
@@ -646,6 +650,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\ClassRosterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\GraphView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1056,6 +1064,10 @@
     <ProjectReference Include="..\ServiceModelEx\ServiceModelEx.csproj">
       <Project>{0858c710-af53-4049-b98e-cfe3638d1228}</Project>
       <Name>ServiceModelEx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\stevcode.ML\stevcode.ML.csproj">
+      <Project>{e2f290ce-9430-4ef6-abc8-4dd0aff45d12}</Project>
+      <Name>stevcode.ML</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

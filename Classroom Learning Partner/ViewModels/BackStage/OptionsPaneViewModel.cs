@@ -293,6 +293,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach (var page in notebook.Pages)
                 {
+                    FixBINSPage11(page);
+
                     var indexOfPass3Start =
                         page.History.SemanticEvents.IndexOf(page.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
                     var interpretedInkSemanticEvents = page.History.SemanticEvents.Skip(indexOfPass3Start + 1).ToList();
@@ -301,6 +303,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     foreach (var submission in page.Submissions)
                     {
+                        FixBINSPage11(submission);
                         var indexOfPass3StartForSubmission = submission.History.SemanticEvents.IndexOf(submission.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
                         var interpretedInkSemanticEventsForSubmission = submission.History.SemanticEvents.Skip(indexOfPass3StartForSubmission + 1).ToList();
                         HistoryAnalysis.GenerateTags(submission, interpretedInkSemanticEventsForSubmission);
@@ -310,6 +313,32 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             MessageBox.Show("Tags Regenerated.");
+        }
+
+        public static void FixBINSPage11(CLPPage page)
+        {
+            if (page.OwnerID != "eO9HFRoY-0aLtcL2iA5-tQ" ||
+                page.PageNumber != 11)
+            {
+                return;
+            }
+
+            if (!(page.Tags.FirstOrDefault(t => t is RepresentationsUsedTag) is RepresentationsUsedTag representationsUsedTag))
+            {
+                return;
+            }
+
+            var firstBin = representationsUsedTag.RepresentationsUsed.FirstOrDefault(u => u.CodedID == "5");
+            if (firstBin != null)
+            {
+                firstBin.Correctness = Correctness.Incorrect;
+            }
+
+            var secondBin = representationsUsedTag.RepresentationsUsed.FirstOrDefault(u => u.CodedID == "4");
+            if (secondBin != null)
+            {
+                secondBin.Correctness = Correctness.Incorrect;
+            }
         }
 
         public Command ForceWordProblemTagsCommand { get; private set; }

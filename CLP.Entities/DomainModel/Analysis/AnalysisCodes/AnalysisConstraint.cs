@@ -72,7 +72,7 @@ namespace CLP.Entities
                    constraintLabel == Codings.CONSTRAINT_ANSWER_OBJECT;
         }
 
-        private List<string> GeneratePossibleConstraintValues(string constraintLabel)
+        public static List<string> GeneratePossibleConstraintValues(string constraintLabel)
         {
             var possibleConstraintValues = new List<string>
                                            {
@@ -80,6 +80,8 @@ namespace CLP.Entities
                                            };
 
             var codedCorrectnessValues = Enum<Correctness>.GetValues().Select(Codings.CorrectnessToCodedCorrectness).ToList();
+            codedCorrectnessValues.Add(Codings.CORRECTNESS_CODED_NOT_COR);
+            codedCorrectnessValues.Add(Codings.CORRECTNESS_CODED_PAR_OR_INC);
             // TODO: Expand
             switch (constraintLabel)
             {
@@ -114,6 +116,7 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN_GROUPS);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
                     break;
                 case Codings.CONSTRAINT_REPRESENTATION_FIRST:
@@ -213,15 +216,50 @@ namespace CLP.Entities
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
                     break;
                 case Codings.CONSTRAINT_PROBLEM_TYPE:
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_MULTIPLICATION);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_DIVISION);
-                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_EQUIVALENCE);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_MULTIPLICATION);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_OTHER);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_EQUIVALENCE);
                     possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_TYPE_NONE);
+                    break;
+                case Codings.CONSTRAINT_PROBLEM_STEP_COUNT:
+                    possibleConstraintValues.AddRange(Enumerable.Range(1, 2).Select(n => n.ToString()));
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_PROBLEM_STEP_COUNT_UNKNOWN);
                     break;
 
                 case Codings.CONSTRAINT_OVERALL_CORRECTNESS:
                     possibleConstraintValues.AddRange(codedCorrectnessValues.ToList());
+                    break;
+
+                case Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE);
+                    break;
+
+                case Codings.CONSTRAINT_REPRESENTATION_COUNT:
+                    possibleConstraintValues.AddRange(Enumerable.Range(0, 31).Select(n => n.ToString()));
+                    break;
+                case Codings.CONSTRAINT_REPRESENTATION_DELETED_COUNT:
+                    possibleConstraintValues.AddRange(Enumerable.Range(0, 31).Select(n => n.ToString()));
+                    break;
+                case Codings.CONSTRAINT_REPRESENTATION_FINAL_COUNT:
+                    possibleConstraintValues.AddRange(Enumerable.Range(0, 31).Select(n => n.ToString()));
+                    break;
+
+                case Codings.CONSTRAINT_ANY_ARITH:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH);
+                    break;
+
+                case Codings.CONSTRAINT_DELETED_HAS_WRONG_GROUPS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
+                    break;
+
+                case Codings.CONSTRAINT_FINAL_HAS_WRONG_GROUPS:
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_NO);
+                    possibleConstraintValues.Add(Codings.CONSTRAINT_VALUE_YES);
                     break;
             }
 

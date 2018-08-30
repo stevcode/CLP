@@ -368,6 +368,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnGenerateSemanticEventsCommandExecute()
         {
+            OptionsPaneViewModel.FixBINSPage11(CurrentPage);
             HistoryAnalysis.GenerateSemanticEvents(CurrentPage);
         }
 
@@ -899,6 +900,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRegenerateTagsCommandExecute()
         {
+            OptionsPaneViewModel.FixBINSPage11(CurrentPage);
             var indexOfPass3Start =
                 CurrentPage.History.SemanticEvents.IndexOf(CurrentPage.History.SemanticEvents.First(e => e.CodedObjectID == "3" && e.EventInformation == "Ink Interpretation"));
             var interpretedInkSemanticEvents = CurrentPage.History.SemanticEvents.Skip(indexOfPass3Start + 1).ToList();

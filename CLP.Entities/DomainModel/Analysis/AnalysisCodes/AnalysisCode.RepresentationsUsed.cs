@@ -12,6 +12,7 @@ namespace CLP.Entities
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CODED_ID, Codings.NOT_APPLICABLE);
             analysisCode.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS, Codings.NOT_APPLICABLE);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, Codings.NOT_APPLICABLE);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
 
             tag.QueryCodes.Add(analysisCode);
         }
@@ -23,11 +24,12 @@ namespace CLP.Entities
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CODED_ID, Codings.NOT_APPLICABLE);
             analysisCode.AddConstraint(Codings.CONSTRAINT_HISTORY_STATUS, Codings.NOT_APPLICABLE);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS, Codings.NOT_APPLICABLE);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.NOT_APPLICABLE);
 
             tag.QueryCodes.Add(analysisCode);
         }
 
-        public static void AddRepresentationUsed(IAnalysis tag, UsedRepresentation usedRepresentation)
+        public static void AddRepresentationUsed(RepresentationsUsedTag tag, UsedRepresentation usedRepresentation)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED);
             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_NAME_LAX, usedRepresentation.CodedObject);
@@ -44,7 +46,9 @@ namespace CLP.Entities
             }
             else
             {
-                if (usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS)
+                if (usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS ||
+                    usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_GAPS ||
+                    usedRepresentation.CorrectnessReason == Codings.PARTIAL_REASON_OVERLAPS)
                 {
                     analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_GAPS_OR_OVERLAPS);
                 }
@@ -67,8 +71,17 @@ namespace CLP.Entities
                         case Codings.OBJECT_STAMP:
                         case Codings.OBJECT_STAMPED_OBJECT:
                         case Codings.OBJECT_BINS:
-                            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
-                                                       Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
+                            if (tag.ParentPage.OwnerID == "eO9HFRoY-0aLtcL2iA5-tQ" &&
+                                tag.ParentPage.PageNumber == 11)
+                            {
+                                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
+                                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN_GROUPS);
+                            }
+                            else
+                            {
+                                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON,
+                                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS);
+                            }
                             break;
                         default:
                             analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON, Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_UNKNOWN);
@@ -76,6 +89,78 @@ namespace CLP.Entities
                     }
                 }
             }
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
+        public static void AddRepresentationsUsedSummary(RepresentationsUsedTag tag)
+        {
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED_SUMMARY);
+            if (tag.RepresentationsUsed.All(r => r.Correctness == Correctness.Correct))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
+            }
+            else if (tag.RepresentationsUsed.All(r => r.Correctness == Correctness.Incorrect))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE);
+            }
+            else
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
+            }
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_COUNT, tag.RepresentationsUsed.Count.ToString());
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_DELETED_COUNT, tag.RepresentationsUsed.Count(r => !r.IsFinalRepresentation).ToString());
+            analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_FINAL_COUNT, tag.RepresentationsUsed.Count(r => r.IsFinalRepresentation).ToString());
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
+        public static void AddRepresentationsDeletedSummary(RepresentationsUsedTag tag)
+        {
+            if (tag.RepresentationsUsed.All(r => r.IsFinalRepresentation))
+            {
+                return;
+            }
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_REPRESENTATIONS_DELETED_SUMMARY);
+            if (tag.RepresentationsUsed.Where(r => !r.IsFinalRepresentation).All(r => r.Correctness == Correctness.Correct))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_ALL);
+            }
+            else if (tag.RepresentationsUsed.Where(r => !r.IsFinalRepresentation).All(r => r.Correctness == Correctness.Incorrect))
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_NONE);
+            }
+            else
+            {
+                analysisCode.AddConstraint(Codings.CONSTRAINT_REPRESENTATION_OVERALL_CORRECTNESS, Codings.CONSTRAINT_VALUE_MULTIPLE_REPRESENTATION_CORRECTNESS_SOME);
+            }
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
+        public static void AddWrongGroups(RepresentationsUsedTag tag)
+        {
+            var repsUsedCodes = tag.QueryCodes.Where(c => c.AnalysisCodeLabel == Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED).ToList();
+
+            var incorrectnessReasons = new List<string>
+                                       {
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS
+                                       };
+            var isDeleted = repsUsedCodes.Any(
+                c => c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_HISTORY_STATUS).ConstraintValue == Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED &&
+                     incorrectnessReasons.Contains(c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON).ConstraintValue));
+            var isFinal = repsUsedCodes.Any(
+                c => c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_HISTORY_STATUS).ConstraintValue == Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL &&
+                     incorrectnessReasons.Contains(c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON).ConstraintValue));
+            
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_WRONG_GROUPS);
+
+            analysisCode.AddConstraint(Codings.CONSTRAINT_DELETED_HAS_WRONG_GROUPS, isDeleted ? Codings.CONSTRAINT_VALUE_YES : Codings.CONSTRAINT_VALUE_NO);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_FINAL_HAS_WRONG_GROUPS, isFinal ? Codings.CONSTRAINT_VALUE_YES :  Codings.CONSTRAINT_VALUE_NO);
 
             tag.QueryCodes.Add(analysisCode);
         }
@@ -293,6 +378,19 @@ namespace CLP.Entities
                     }
                 }
 
+                tag.QueryCodes.Add(analysisCode);
+            }
+        }
+
+        public static void AddSkipped(RepresentationsUsedTag tag)
+        {
+            var isSkip = tag.RepresentationsUsed.Any(r => r.AdditionalInformation.Any(i => i.Contains("skip")));
+            var isArith = tag.RepresentationsUsed.Any(r => r.AdditionalInformation.Any(i => i.Contains("+arith")));
+
+            if (isSkip)
+            {
+                var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_SKIP_CONSOLIDATION);
+                analysisCode.AddConstraint(Codings.CONSTRAINT_ANY_ARITH, isArith ? Codings.CONSTRAINT_VALUE_ARITH_STATUS_PLUS_ARITH : Codings.CONSTRAINT_VALUE_ARITH_STATUS_NO_ARITH);
                 tag.QueryCodes.Add(analysisCode);
             }
         }

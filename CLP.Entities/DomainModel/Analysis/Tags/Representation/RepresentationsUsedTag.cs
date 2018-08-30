@@ -315,6 +315,8 @@ namespace CLP.Entities
                 }
             }
 
+            AnalysisCode.AddSkipped(tag);
+
             var isMR2STEP = IsMR2STEP(tag);
             if (isMR2STEP)
             {
@@ -324,6 +326,9 @@ namespace CLP.Entities
             AnalysisCode.AddMultipleRepresentations1Step(tag);
             AnalysisCode.AddMultipleApproaches(tag);
             AnalysisCode.AddNLJE(tag);
+            AnalysisCode.AddRepresentationsUsedSummary(tag);
+            AnalysisCode.AddRepresentationsDeletedSummary(tag);
+            AnalysisCode.AddWrongGroups(tag);
 
             page.AddTag(tag);
             return tag;
@@ -619,7 +624,7 @@ namespace CLP.Entities
                                                      CodedID = "5",
                                                      IsInteractedWith = true,
                                                      IsUsed = true,
-                                                     Correctness = Correctness.PartiallyCorrect,
+                                                     Correctness = Correctness.Incorrect,
                                                      MatchedRelationSide = Codings.MATCHED_RELATION_NONE
                                                  };
                         tag.RepresentationsUsed.Add(usedRepresentation);
@@ -631,7 +636,7 @@ namespace CLP.Entities
                                                       CodedID = "4",
                                                       IsInteractedWith = true,
                                                       IsUsed = true,
-                                                      Correctness = Correctness.PartiallyCorrect,
+                                                      Correctness = Correctness.Incorrect,
                                                       MatchedRelationSide = Codings.MATCHED_RELATION_NONE
                                                   };
                         tag.RepresentationsUsed.Add(usedRepresentation2);
@@ -1503,7 +1508,6 @@ namespace CLP.Entities
 
                 var hasGaps = gaps > 0;
                 var hasOverlaps = overlaps > 0;
-                var hasGapsAndOverlaps = hasGaps && hasOverlaps;
 
                 if (hasGaps)
                 {
@@ -1526,7 +1530,7 @@ namespace CLP.Entities
 
                 var jumpSizes = jumps;
                 var representationRelation = FinalRepresentationCorrectnessTag.GenerateNumberLineRelation(jumpSizes);
-                SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation, hasGapsAndOverlaps);
+                SetCorrectnessAndSide(usedRepresentation, representationRelation, leftRelation, rightRelation, alternativeRelation, hasGaps, hasOverlaps);
 
                 if (!usedRepresentation.IsUsed)
                 {
@@ -1849,7 +1853,8 @@ namespace CLP.Entities
                                                  SimplifiedRelation leftRelation,
                                                  SimplifiedRelation rightRelation,
                                                  SimplifiedRelation alternativeRelation,
-                                                 bool isOverlapsAndGaps = false)
+                                                 bool hasGaps = false,
+                                                 bool hasOverlaps = false)
         {
             var matchedRelationSide = Codings.MATCHED_RELATION_NONE;
             var representationCorrectness = Correctness.Unknown;
@@ -1974,10 +1979,22 @@ namespace CLP.Entities
             // HACK: BUG: This is at the request of Lily for the stats. All other things considered, this is a situation where a student just had a little
             // trouble getting the jumps exactly correct on a Number Line, but they still got the jump size and number of jumps correct and ended at the right
             // spot. It should be COR, but Lily wanted it set to PAR.
-            if (isOverlapsAndGaps && representationCorrectness == Correctness.Correct)
+            if (hasGaps && hasOverlaps && representationCorrectness == Correctness.Correct)
             {
                 representationCorrectness = Correctness.PartiallyCorrect;
                 usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS;
+            }
+            else if (hasGaps && hasOverlaps && representationCorrectness == Correctness.PartiallyCorrect)
+            {
+                usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_GAPS_AND_OVERLAPS;
+            }
+            else if (hasGaps)
+            {
+                usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_GAPS;
+            }
+            else if (hasOverlaps)
+            {
+                usedRepresentation.CorrectnessReason = Codings.PARTIAL_REASON_OVERLAPS;
             }
 
             usedRepresentation.Correctness = representationCorrectness;

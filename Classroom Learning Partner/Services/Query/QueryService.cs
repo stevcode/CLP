@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Xml.Linq;
+using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using CLP.MachineAnalysis;
@@ -147,19 +148,47 @@ namespace Classroom_Learning_Partner.Services
             const int MAX_EPSILON = 1000;
             const int MINIMUM_PAGES_IN_CLUSTER = 1;
 
+            foreach (var queryablePage in queryablePages)
+            {
+                queryablePage.IsPositionCached = false;
+            }
+
             double DistanceEquation(QueryablePage p1, QueryablePage p2) => Math.Sqrt(p1.Distance(p2));
             var optics = new OPTICS<QueryablePage>(MAX_EPSILON, MINIMUM_PAGES_IN_CLUSTER, queryablePages, DistanceEquation);
             optics.BuildReachability();
             var reachabilityDistances = optics.ReachabilityDistances().ToList();
 
-            var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
-            var plotView = new OPTICSReachabilityPlotView()
-                           {
-                               Owner = Application.Current.MainWindow,
-                               WindowStartupLocation = WindowStartupLocation.Manual,
-                               Reachability = normalizedReachabilityPlot
-                           };
-            plotView.Show();
+            //var normalizedReachabilityPlot = reachabilityDistances.Select(i => new Point(0, i.ReachabilityDistance)).Skip(1).ToList();
+            //var plotView = new OPTICSReachabilityPlotView()
+            //               {
+            //                   Owner = Application.Current.MainWindow,
+            //                   WindowStartupLocation = WindowStartupLocation.Manual,
+            //                   Reachability = normalizedReachabilityPlot
+            //               };
+            //plotView.Show();
+
+            #region Calculate Ranges
+
+            var xMax = 0.0;
+            var yMax = 0.0;
+            var zMax = 0.0;
+            var xMin = double.MaxValue;
+            var yMin = double.MaxValue;
+            var zMin = double.MaxValue;
+            foreach (var queryablePage in queryablePages)
+            {
+                xMax = Math.Max(xMax, queryablePage.StudentActionDistance);
+                yMax = Math.Max(yMax, queryablePage.AnalysisDistance);
+                zMax = Math.Max(zMax, queryablePage.ProblemStructureDistance);
+
+                xMin = Math.Min(xMin, queryablePage.StudentActionDistance);
+                yMin = Math.Min(yMin, queryablePage.AnalysisDistance);
+                zMin = Math.Min(zMin, queryablePage.ProblemStructureDistance);
+            }
+
+            CLogger.AppendToLog($"***Current Range***\n" + $"Student Action: {xMin} - {xMax}\n" + $"AnalysisDistance: {yMin} - {yMax}\n" + $"Problem Structure: {zMin} - {zMax}");
+
+            #endregion // Calculate Ranges
 
             var clusteringEpsilon = QueryablePage.GetClusteringEpsilon();
 
@@ -234,6 +263,18 @@ namespace Classroom_Learning_Partner.Services
             }
 
             FindDominantSharedCodes(queryResults);
+
+            #region Scatter Plot Pages
+
+            var graphViewModel = new GraphViewModel(queryResults, xMin, xMax, yMin, yMax);
+            var graphView = new GraphView(graphViewModel)
+                            {
+                                Owner = Application.Current.MainWindow,
+                                WindowStartupLocation = WindowStartupLocation.Manual
+                            };
+            graphView.Show();
+
+            #endregion // Scatter Plot Pages
             
             return queryResults;
         }
@@ -249,36 +290,10 @@ namespace Classroom_Learning_Partner.Services
                 var sizes = new Dictionary<int, List<AnalysisCodeContainer>>();
 
                 var queryResults = group.ToList();
-                for (var i = 0; i < queryResults.Count - 1; i++)
+                var analysisLabels = queryResults.SelectMany(qr => qr.AnalysisCodes.Select(c => c.Code.AnalysisCodeLabel)).Distinct().ToList();
+                foreach (var analysisLabel in analysisLabels)
                 {
-                    var result1 = queryResults[i];
-                    for (var j = i + 1; j < queryResults.Count; j++)
-                    {
-                        var result2 = queryResults[j];
-
-                        foreach (var analysisCodeContainer1 in result1.AnalysisCodes)
-                        {
-                            foreach (var analysisCodeContainer2 in result2.AnalysisCodes)
-                            {
-                                var size = CompareAnalysisCodes(analysisCodeContainer1.Code, analysisCodeContainer2.Code);
-                                if (!sizes.ContainsKey(size))
-                                {
-                                    sizes.Add(size, new List<AnalysisCodeContainer>());
-                                }
-
-                                if (!sizes[size].Contains(analysisCodeContainer1))
-                                {
-                                    sizes[size].Add(analysisCodeContainer1);
-                                }
-
-                                if (!sizes[size].Contains(analysisCodeContainer2))
-                                {
-                                    sizes[size].Add(analysisCodeContainer2);
-                                }
-                            }
-                        }
-
-                    }
+                    
                 }
 
                 if (sizes.Keys.Count == 0)
@@ -410,6 +425,23 @@ namespace Classroom_Learning_Partner.Services
                     if (queryConstraint.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_NONE &&
                         (analysisConstraint.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_INK_ONLY || 
                          analysisConstraint.ConstraintValue == Codings.CONSTRAINT_VALUE_REPRESENTATION_NAME_BLANK_PAGE))
+                    {
+                        continue;
+                    }
+
+                    if (queryConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_NOT_COR &&
+                        (analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_PARTIAL ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_INCORRECT ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_ILLEGIBLE ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_UNANSWERED ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_UNKNOWN))
+                    {
+                        continue;
+                    }
+
+                    if (queryConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_PAR_OR_INC &&
+                        (analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_PARTIAL ||
+                         analysisConstraint.ConstraintValue == Codings.CORRECTNESS_CODED_INCORRECT))
                     {
                         continue;
                     }
