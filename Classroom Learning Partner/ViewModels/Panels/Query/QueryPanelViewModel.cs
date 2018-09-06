@@ -533,6 +533,8 @@ namespace Classroom_Learning_Partner.ViewModels
             _dataService.SetCurrentPage(page);
         }
 
+        // Random comment for test commit.
+
         #endregion // Commands
 
         #region Sorts
