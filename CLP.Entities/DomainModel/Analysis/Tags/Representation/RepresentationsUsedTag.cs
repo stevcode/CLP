@@ -1158,7 +1158,7 @@ namespace CLP.Entities
             return skipArithCount;
         }
 
-        private static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, int skipPlusArithCount)
+        public static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, int skipPlusArithCount)
         {
             if (array == null)
             {
@@ -1189,7 +1189,7 @@ namespace CLP.Entities
             return skipCodedValue;
         }
 
-        private static string BottomSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, bool isSkipPlusArith)
+        public static string BottomSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, bool isSkipPlusArith)
         {
             if (array == null)
             {
@@ -1212,7 +1212,7 @@ namespace CLP.Entities
             return skipCodedValue;
         }
 
-        private static string GetFormattedSkips(ISemanticEvent skipCountingEvent)
+        public static string GetFormattedSkips(ISemanticEvent skipCountingEvent)
         {
             var eventInfoParts = skipCountingEvent?.EventInformation.Split(", ");
             if (eventInfoParts?.Length != 2)
@@ -1230,7 +1230,7 @@ namespace CLP.Entities
             return string.IsNullOrWhiteSpace(formattedSkips) ? null : formattedSkips;
         }
 
-        private static List<int> GetNumericSkipsFromFormattedSkips(string formattedSkips)
+        public static List<int> GetNumericSkipsFromFormattedSkips(string formattedSkips)
         {
             var skipStrings = formattedSkips.Split(' ').ToList().Select(s => s.Replace("\"", string.Empty)).ToList();
 

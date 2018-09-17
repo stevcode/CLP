@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Ink;
 using Catel;
 using Catel.Collections;
-using Catel.Runtime.Serialization.Binary;
 
 namespace CLP.Entities
 {
@@ -1065,33 +1063,48 @@ namespace CLP.Entities
             var collapsedSkipPlusArithEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in collapsedAnsEraseEvents)
             {
-                //if (semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP ||
-                //    semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP_ERASE)
-                //{
-                //    buffer.Add(semanticEvent);
-                //    continue;
-                //}
+                if (semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP ||
+                    semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP_ERASE)
+                {
+                    if (buffer.Any())
+                    {
+                        var isDifferentArray = buffer.First().ReferencePageObjectID != semanticEvent.ReferencePageObjectID;
+                        var isDifferentSkipLocation = (buffer.First().EventInformation.Contains("bottom") &&
+                                                      !semanticEvent.EventInformation.Contains("bottom")) ||
+                                                      (!buffer.First().EventInformation.Contains("bottom") &&
+                                                       semanticEvent.EventInformation.Contains("bottom"));
+                        if (isDifferentArray || 
+                            isDifferentSkipLocation)
+                        {
+                            HandleCollapsedSkipPlusArith(buffer, collapsedSkipPlusArithEvents, page);
+                            buffer.Clear();
+                        }
+                    }
 
-                //if (semanticEvent.CodedObject == Codings.OBJECT_ARITH &&
-                //    buffer.Any())
-                //{
-                //    buffer.Add(semanticEvent);
-                //    continue;
-                //}
+                    buffer.Add(semanticEvent);
+                    continue;
+                }
 
-                //if (buffer.Any())
-                //{
-                //    var arithCount = buffer.Count(e => e.CodedObject == Codings.OBJECT_ARITH);
-                //    var eventType = $"{Codings.EVENT_ARRAY_SKIP_PLUS_ARITH} ({arithCount})";
+                if (semanticEvent.CodedObject == Codings.OBJECT_ARITH &&
+                    buffer.Any())
+                {
+                    buffer.Add(semanticEvent);
+                    continue;
+                }
 
-                //}
+                if (buffer.Any())
+                {
+                    HandleCollapsedSkipPlusArith(buffer, collapsedSkipPlusArithEvents, page);
+                    buffer.Clear();
+                }
 
                 collapsedSkipPlusArithEvents.Add(semanticEvent);
             }
 
             if (buffer.Any())
             {
-                
+                HandleCollapsedSkipPlusArith(buffer, collapsedSkipPlusArithEvents, page);
+                buffer.Clear();
             }
 
             #endregion // Collapse Interwoven Skips and ARITHs
@@ -1202,6 +1215,170 @@ namespace CLP.Entities
             #endregion // Remove Moves
 
             return withoutMoveEvents;
+        }
+
+        private static void HandleCollapsedSkipPlusArith(List<ISemanticEvent> buffer, List<ISemanticEvent> collapsedSkipPlusArithEvents, CLPPage page)
+        {
+            var laskSkipEvent = buffer.Last(e => e.CodedObject == Codings.OBJECT_ARRAY);
+            var lastSkipEventBufferIndex = buffer.IndexOf(laskSkipEvent);
+            var collapsedEvents = new List<ISemanticEvent>();
+            var leftoverEvents = new List<ISemanticEvent>();
+            for (var i = 0; i < buffer.Count; i++)
+            {
+                if (i <= lastSkipEventBufferIndex)
+                {
+                    collapsedEvents.Add(buffer[i]);
+                }
+                else
+                {
+                    leftoverEvents.Add(buffer[i]);
+                }
+            }
+
+            var firstSkipEvent = buffer.First();
+            var array = page.GetPageObjectByIDOnPageOrInHistory(firstSkipEvent.ReferencePageObjectID) as CLPArray;
+
+            var isBottomSkip = firstSkipEvent.EventInformation.Contains("bottom");
+            if (isBottomSkip)
+            {
+                var mostRecentBottomSkipEvent = collapsedEvents.Last();
+
+                var formattedSkips = RepresentationsUsedTag.GetFormattedSkips(mostRecentBottomSkipEvent);
+                var historyIndex = mostRecentBottomSkipEvent.LastHistoryAction.HistoryActionIndex;
+                var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips, historyIndex) &&
+                                       ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips, historyIndex);
+                var correctnessText = isWrongDimension ? ", wrong dimension" : string.Empty;
+                var eventInformation = $"{formattedSkips}, bottom{correctnessText}";
+                var collapsedEvent = new SemanticEvent(page, buffer)
+                                     {
+                                         CodedObject = Codings.OBJECT_ARITH,
+                                         CodedObjectID = firstSkipEvent.CodedObjectID,
+                                         EventType = Codings.EVENT_ARRAY_SKIP_PLUS_ARITH,
+                                         EventInformation = eventInformation,
+                                         ReferencePageObjectID = firstSkipEvent.ReferencePageObjectID
+                                     };
+
+                collapsedSkipPlusArithEvents.Add(collapsedEvent);
+            }
+            else
+            {
+                var skipEvents = collapsedEvents.Where(e => e.CodedObject == Codings.OBJECT_ARRAY).ToList();
+
+                var skipEventGroupings = new List<List<ISemanticEvent>>();
+                var currentSkipGrouping = new List<ISemanticEvent>();
+                foreach (var skipCountingEvent in skipEvents)
+                {
+                    var formattedSkips = RepresentationsUsedTag.GetFormattedSkips(skipCountingEvent);
+                    var skips = RepresentationsUsedTag.GetNumericSkipsFromFormattedSkips(formattedSkips);
+                    if (skips.Count == 1 &&
+                        skips.All(s => s == -1))
+                    {
+                        if (currentSkipGrouping.Any())
+                        {
+                            skipEventGroupings.Add(currentSkipGrouping.ToList());
+                            currentSkipGrouping = new List<ISemanticEvent>();
+                        }
+                        continue;
+                    }
+                    currentSkipGrouping.Add(skipCountingEvent);
+                }
+
+                if (currentSkipGrouping.Any())
+                {
+                    skipEventGroupings.Add(currentSkipGrouping.ToList());
+                }
+
+                var lastHistoryActionIndex = collapsedEvents.Last().LastHistoryAction.HistoryActionIndex;
+                var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(lastHistoryActionIndex).X;
+                var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(lastHistoryActionIndex).Y;
+
+                foreach (var skipEventGrouping in skipEventGroupings)
+                {
+                    var counts = new List<dynamic>();
+                    foreach (var skipCountingEvent in skipEventGrouping)
+                    {
+                        var formattedSkips = RepresentationsUsedTag.GetFormattedSkips(skipCountingEvent);
+                        if (formattedSkips == null)
+                        {
+                            continue;
+                        }
+
+                        var skips = RepresentationsUsedTag.GetNumericSkipsFromFormattedSkips(formattedSkips);
+
+                        var correctDimensionMatches = 0;
+                        var wrongDimensionMatches = 0;
+                        var totalNumbers = 0;
+                        for (var i = 0; i < skips.Count; i++)
+                        {
+                            var currentValue = skips[i];
+                            if (currentValue == -1)
+                            {
+                                continue;
+                            }
+
+                            var expectedValue = (i + 1) * columns;
+                            if (currentValue == expectedValue)
+                            {
+                                correctDimensionMatches++;
+                            }
+
+                            var wrongDimensionExpectedValue = (i + 1) * rows;
+                            if (currentValue == wrongDimensionExpectedValue &&
+                                rows != columns)
+                            {
+                                wrongDimensionMatches++;
+                            }
+
+                            totalNumbers++;
+                        }
+
+                        var count = new
+                                    {
+                                        CorrectDimensionMatches = correctDimensionMatches,
+                                        WrongDimensionMatches = wrongDimensionMatches,
+                                        TotalNumbers = totalNumbers,
+                                        SemanticEvent = skipCountingEvent
+                                    };
+                        counts.Add(count);
+                    }
+
+                    var bestChoice = counts.Where(c => c.CorrectDimensionMatches != 0).OrderByDescending(c => c.CorrectDimensionMatches).FirstOrDefault() ??
+                                     counts.Where(c => c.WrongDimensionMatches != 0).OrderByDescending(c => c.WrongDimensionMatches).FirstOrDefault() ??
+                                     counts.OrderByDescending(c => c.TotalNumbers).FirstOrDefault();
+
+                    if (bestChoice == null)
+                    {
+                        continue;
+                    }
+
+                    var bestSideSkipEvent = (ISemanticEvent) bestChoice.SemanticEvent;
+                    var bestFormattedSkips = RepresentationsUsedTag.GetFormattedSkips(bestSideSkipEvent);
+                    var unformattedSkips = bestFormattedSkips.TrimAll().Split("\"\"", StringSplitOptions.None).Select(s => s.Replace("\"", string.Empty)).ToList();
+                    var isSkipCounting = ArraySemanticEvents.IsSkipCounting(unformattedSkips);
+                    if (!isSkipCounting)
+                    {
+                        continue;
+                    }
+
+                    var bestColumns = (int)array.GetColumnsAndRowsAtHistoryIndex(bestSideSkipEvent.LastHistoryAction.HistoryActionIndex).X;
+                    var bestRows = (int)array.GetColumnsAndRowsAtHistoryIndex(bestSideSkipEvent.LastHistoryAction.HistoryActionIndex).Y;
+                    var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, bestRows, bestColumns);
+
+                    var eventInformation = $"{bestFormattedSkips}\n\t{heuristicsResults}";
+                    var collapsedEvent = new SemanticEvent(page, buffer)
+                                         {
+                                             CodedObject = Codings.OBJECT_ARITH,
+                                             CodedObjectID = firstSkipEvent.CodedObjectID,
+                                             EventType = Codings.EVENT_ARRAY_SKIP_PLUS_ARITH,
+                                             EventInformation = eventInformation,
+                                             ReferencePageObjectID = firstSkipEvent.ReferencePageObjectID
+                                         };
+
+                    collapsedSkipPlusArithEvents.Add(collapsedEvent);
+                }
+            }
+
+            collapsedSkipPlusArithEvents.AddRange(leftoverEvents);
         }
 
         #endregion // Fourth Pass: Consolidation
