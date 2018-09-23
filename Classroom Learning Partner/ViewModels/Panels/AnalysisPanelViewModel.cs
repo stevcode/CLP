@@ -55,6 +55,11 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedTags.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
             SortedTags.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
 
+            SortedSemanticEvents.Source = CurrentPage.History.SemanticEvents;
+            SortedSemanticEvents.GroupDescriptions.Add(new PropertyGroupDescription("SemanticPassNumber"));
+            SortedSemanticEvents.SortDescriptions.Add(new SortDescription("SemanticPassNumber", ListSortDirection.Ascending));
+            SortedSemanticEvents.SortDescriptions.Add(new SortDescription("SemanticEventIndex", ListSortDirection.Ascending));
+
             InitializedAsync += AnalysisPanelViewModel_InitializedAsync;
 
             PageOrientations.Add("Default - Landscape");
@@ -113,6 +118,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             viewModel.SortedTags.Source = viewModel.CurrentPage.Tags;
+            viewModel.SortedSemanticEvents.Source = viewModel.CurrentPage.History.SemanticEvents;
             viewModel.RaisePropertyChanged(nameof(StandardDeviationZScore));
             viewModel.RaisePropertyChanged(nameof(AnimationStandardDeviationZScore));
             viewModel.RaisePropertyChanged(nameof(FormattedMinMaxAverageHistoryLength));
@@ -231,6 +237,16 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags", typeof(CollectionViewSource), () => new CollectionViewSource());
+
+        /// <summary></summary>
+        public CollectionViewSource SortedSemanticEvents
+        {
+            get => GetValue<CollectionViewSource>(SortedSemanticEventsProperty);
+            set => SetValue(SortedSemanticEventsProperty, value);
+        }
+
+        public static readonly PropertyData SortedSemanticEventsProperty =
+            RegisterProperty(nameof(SortedSemanticEvents), typeof(CollectionViewSource), () => new CollectionViewSource());
 
         public string FormattedMinMaxAverageHistoryLength
         {

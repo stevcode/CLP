@@ -6,8 +6,9 @@ namespace CLP.Entities
     {
         // ID
         string ID { get; set; }
-        int SemanticPassNumber { get; set; }
         int SemanticEventIndex { get; set; }
+        int SemanticPassNumber { get; set; }
+        string SemanticPassName { get; set; }
         string CachedCodedValue { get; set; }
 
         // Coded Portion
@@ -26,7 +27,6 @@ namespace CLP.Entities
 
         // Backing
         List<string> HistoryActionIDs { get; set; }
-        List<ISemanticEvent> SemanticEvents { get; set; }
         CLPPage ParentPage { get; set; }
 
         // Calculated
@@ -36,5 +36,6 @@ namespace CLP.Entities
         string CodedValue { get; }
 
         bool ContainsHistoryActionID(string historyActionID);
+        ISemanticEvent CreateCopy(bool isPureCopy = false);
     }
 }
