@@ -1222,6 +1222,7 @@ namespace CLP.Entities
             var laskSkipEvent = buffer.Last(e => e.CodedObject == Codings.OBJECT_ARRAY);
             var lastSkipEventBufferIndex = buffer.IndexOf(laskSkipEvent);
             var collapsedEvents = new List<ISemanticEvent>();
+            var isSkipPlusArith = collapsedEvents.Any(e => e.CodedObject == Codings.OBJECT_ARITH);
             var leftoverEvents = new List<ISemanticEvent>();
             for (var i = 0; i < buffer.Count; i++)
             {
@@ -1253,7 +1254,7 @@ namespace CLP.Entities
                                      {
                                          CodedObject = Codings.OBJECT_ARITH,
                                          CodedObjectID = firstSkipEvent.CodedObjectID,
-                                         EventType = Codings.EVENT_ARRAY_SKIP_PLUS_ARITH,
+                                         EventType = isSkipPlusArith ? Codings.EVENT_ARRAY_SKIP_PLUS_ARITH : Codings.EVENT_ARRAY_SKIP,
                                          EventInformation = eventInformation,
                                          ReferencePageObjectID = firstSkipEvent.ReferencePageObjectID
                                      };
@@ -1369,7 +1370,7 @@ namespace CLP.Entities
                                          {
                                              CodedObject = Codings.OBJECT_ARITH,
                                              CodedObjectID = firstSkipEvent.CodedObjectID,
-                                             EventType = Codings.EVENT_ARRAY_SKIP_PLUS_ARITH,
+                                             EventType = isSkipPlusArith ? Codings.EVENT_ARRAY_SKIP_PLUS_ARITH : Codings.EVENT_ARRAY_SKIP,
                                              EventInformation = eventInformation,
                                              ReferencePageObjectID = firstSkipEvent.ReferencePageObjectID
                                          };
