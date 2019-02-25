@@ -1195,7 +1195,7 @@ namespace CLP.Entities
         {
             IPageObject mostOverlappedPageObject = null;
 
-            foreach (var pageObject in pageObjects)
+            foreach (var pageObject in pageObjects.Where(x => true).Reverse())
             {
                 var percentOfStrokeOverlap = PercentageOfStrokeOverPageObjectAtHistoryIndex(page, pageObject, stroke, historyIndex);
                 if (percentOfStrokeOverlap < 20.0) // Stroke not overlapping if only 20 percent of the stroke is on top of a pageObject.
@@ -1252,7 +1252,7 @@ namespace CLP.Entities
         {
             IPageObject closestPageObject = null;
 
-            foreach (var pageObject in pageObjects)
+            foreach (var pageObject in pageObjects.Where(x => true).Reverse())
             {
                 if (closestPageObject == null)
                 {
@@ -1276,7 +1276,7 @@ namespace CLP.Entities
         {
             IPageObject closestPageObject = null;
 
-            foreach (var pageObject in pageObjects)
+            foreach (var pageObject in pageObjects.Where(x => true).Reverse())
             {
                 if (closestPageObject == null)
                 {

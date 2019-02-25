@@ -913,7 +913,7 @@ namespace CLP.Entities
                     continue;
                 }
 
-                if (buffer.Any())
+                if (buffer.Any())       // Add any INK ignores to the next semanticEvent
                 {
                     var historyActionIDs = buffer.SelectMany(e => e.HistoryActionIDs).ToList();
                     semanticEvent.HistoryActionIDs.AddRange(historyActionIDs);
@@ -928,7 +928,7 @@ namespace CLP.Entities
                 mostRecentSemanticEvent != null)
             {
                 var historyActionIDs = buffer.SelectMany(e => e.HistoryActionIDs).ToList();
-                mostRecentSemanticEvent.HistoryActionIDs.AddRange(historyActionIDs);
+                mostRecentSemanticEvent.HistoryActionIDs.AddRange(historyActionIDs);        // Any INK ignores at the end of the pass are combines with the last non-INK ignore event
                 buffer.Clear();
             }
 
@@ -943,10 +943,11 @@ namespace CLP.Entities
             var collapsedAnsAddEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in collapsedInkIgnoreEvents)
             {
-                if (semanticEvent.EventType == Codings.EVENT_FILL_IN_ADD ||
-                    semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ADD ||
-                    semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL ||
-                    semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL)
+                if ((semanticEvent.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE || semanticEvent.CodedObject == Codings.OBJECT_FILL_IN) &&
+                    (semanticEvent.EventType == Codings.EVENT_FILL_IN_ADD ||
+                     semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ADD ||
+                     semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ADD_ADDITIONAL ||
+                     semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ADD_PARTIAL))
                 {
                     buffer.Add(semanticEvent);
                     continue;
@@ -958,7 +959,7 @@ namespace CLP.Entities
 
                     var collapsedEvent = new SemanticEvent(page, buffer)
                                          {
-                                             CodedObject = lastEventInBuffer.CodedObject,
+                                             CodedObject = lastEventInBuffer.CodedObject,   // HACK: This only works because no page has both MC and FILL_IN
                                              EventType = lastEventInBuffer.CodedObject == Codings.OBJECT_FILL_IN
                                                              ? Codings.EVENT_FILL_IN_ADD
                                                              : Codings.EVENT_MULTIPLE_CHOICE_ADD,
@@ -980,7 +981,7 @@ namespace CLP.Entities
 
                 var collapsedEvent = new SemanticEvent(page, buffer)
                                      {
-                                         CodedObject = lastEventInBuffer.CodedObject,
+                                         CodedObject = lastEventInBuffer.CodedObject,       // HACK: This only works because no page has both MC and FILL_IN
                                          EventType = lastEventInBuffer.CodedObject == Codings.OBJECT_FILL_IN
                                                          ? Codings.EVENT_FILL_IN_ADD
                                                          : Codings.EVENT_MULTIPLE_CHOICE_ADD,
@@ -1002,10 +1003,11 @@ namespace CLP.Entities
             var collapsedAnsEraseEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in collapsedAnsAddEvents)
             {
-                if (semanticEvent.EventType == Codings.EVENT_FILL_IN_ERASE ||
-                    semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE ||
-                    semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL ||
-                    semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE)
+                if ((semanticEvent.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE || semanticEvent.CodedObject == Codings.OBJECT_FILL_IN) &&
+                    (semanticEvent.EventType == Codings.EVENT_FILL_IN_ERASE ||
+                     semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE ||
+                     semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_PARTIAL ||
+                     semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ERASE_INCOMPLETE))
                 {
                     buffer.Add(semanticEvent);
                     continue;
@@ -1017,7 +1019,7 @@ namespace CLP.Entities
 
                     var collapsedEvent = new SemanticEvent(page, buffer)
                                          {
-                                             CodedObject = lastEventInBuffer.CodedObject,
+                                             CodedObject = lastEventInBuffer.CodedObject,       // HACK: This only works because no page has both MC and FILL_IN
                                              EventType = lastEventInBuffer.CodedObject == Codings.OBJECT_FILL_IN
                                                              ? Codings.EVENT_FILL_IN_ERASE
                                                              : Codings.EVENT_MULTIPLE_CHOICE_ERASE,
@@ -1039,7 +1041,7 @@ namespace CLP.Entities
 
                 var collapsedEvent = new SemanticEvent(page, buffer)
                                      {
-                                         CodedObject = lastEventInBuffer.CodedObject,
+                                         CodedObject = lastEventInBuffer.CodedObject,           // HACK: This only works because no page has both MC and FILL_IN
                                          EventType = lastEventInBuffer.CodedObject == Codings.OBJECT_FILL_IN
                                                          ? Codings.EVENT_FILL_IN_ERASE
                                                          : Codings.EVENT_MULTIPLE_CHOICE_ERASE,
@@ -1063,8 +1065,9 @@ namespace CLP.Entities
             var collapsedSkipPlusArithEvents = new List<ISemanticEvent>();
             foreach (var semanticEvent in collapsedAnsEraseEvents)
             {
-                if (semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP ||
-                    semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP_ERASE)
+                if (semanticEvent.CodedObject == Codings.OBJECT_ARRAY &&
+                    (semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP ||
+                     semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP_ERASE))
                 {
                     if (buffer.Any())
                     {
@@ -1222,7 +1225,7 @@ namespace CLP.Entities
             var laskSkipEvent = buffer.Last(e => e.CodedObject == Codings.OBJECT_ARRAY);
             var lastSkipEventBufferIndex = buffer.IndexOf(laskSkipEvent);
             var collapsedEvents = new List<ISemanticEvent>();
-            var isSkipPlusArith = collapsedEvents.Any(e => e.CodedObject == Codings.OBJECT_ARITH);
+            var isSkipPlusArith = buffer.Any(e => e.CodedObject == Codings.OBJECT_ARITH);
             var leftoverEvents = new List<ISemanticEvent>();
             for (var i = 0; i < buffer.Count; i++)
             {
@@ -1252,7 +1255,7 @@ namespace CLP.Entities
                 var eventInformation = $"{formattedSkips}, bottom{correctnessText}";
                 var collapsedEvent = new SemanticEvent(page, buffer)
                                      {
-                                         CodedObject = Codings.OBJECT_ARITH,
+                                         CodedObject = Codings.OBJECT_ARRAY,
                                          CodedObjectID = firstSkipEvent.CodedObjectID,
                                          EventType = isSkipPlusArith ? Codings.EVENT_ARRAY_SKIP_PLUS_ARITH : Codings.EVENT_ARRAY_SKIP,
                                          EventInformation = eventInformation,
@@ -1368,7 +1371,7 @@ namespace CLP.Entities
                     var eventInformation = $"{bestFormattedSkips}\n\t{heuristicsResults}";
                     var collapsedEvent = new SemanticEvent(page, buffer)
                                          {
-                                             CodedObject = Codings.OBJECT_ARITH,
+                                             CodedObject = Codings.OBJECT_ARRAY,
                                              CodedObjectID = firstSkipEvent.CodedObjectID,
                                              EventType = isSkipPlusArith ? Codings.EVENT_ARRAY_SKIP_PLUS_ARITH : Codings.EVENT_ARRAY_SKIP,
                                              EventInformation = eventInformation,
