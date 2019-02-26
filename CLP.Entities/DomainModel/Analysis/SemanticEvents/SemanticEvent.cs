@@ -247,15 +247,6 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public bool IsCurrentSemanticEvent
-        {
-            get
-            {
-                return ParentPage?.History?.CurrentHistoryAction != null &&
-                       ParentPage.History.SemanticEvents.Any(e => e.ContainsHistoryActionID(ParentPage.History.CurrentHistoryAction.ID));
-            }
-        }
-
         public IHistoryAction FirstHistoryAction => HistoryActions.First();
 
         public IHistoryAction LastHistoryAction => HistoryActions.Last();

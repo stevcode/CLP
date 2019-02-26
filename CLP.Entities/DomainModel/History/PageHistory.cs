@@ -183,6 +183,14 @@ namespace CLP.Entities
             }
         }
 
+        public List<ISemanticEvent> CurrentSemanticEventInAllPasses
+        {
+            get
+            {
+                return CurrentHistoryAction == null ? new List<ISemanticEvent>() : SemanticEvents.Where(e => e.ContainsHistoryActionID(CurrentHistoryAction.ID)).ToList();
+            }
+        }
+
         public int CurrentAnimationDelay => RedoActions.Any() ? RedoActions.First().AnimationDelay : 0;
 
         public bool IsAnimation
@@ -411,6 +419,7 @@ namespace CLP.Entities
                 RaisePropertyChanged(nameof(CurrentHistoryIndex));
                 RaisePropertyChanged(nameof(CurrentHistoryAction));
                 RaisePropertyChanged(nameof(CurrentSemanticEvent));
+                RaisePropertyChanged(nameof(CurrentSemanticEventInAllPasses));
                 RaisePropertyChanged(nameof(HistoryLength));
                 RaisePropertyChanged(nameof(AnimationLength));
                 RaisePropertyChanged(nameof(PlaybackLength));

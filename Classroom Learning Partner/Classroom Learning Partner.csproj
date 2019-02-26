@@ -203,6 +203,7 @@
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Conversion\ConversionService.AnnLarge.cs" />
+    <Compile Include="Converters\Multi Converters\ListContainsItemToVisibilityMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
     <Compile Include="Converters\Single Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\Multi Converters\MultiplyAllMultiConverter.cs" />

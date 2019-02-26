@@ -102,7 +102,7 @@ namespace CLP.Entities
         {
             get
             {
-                var formattedValue = $"Index #{HistoryActionIndex}, {FormattedReport}";
+                var formattedValue = $"#{HistoryActionIndex}, {FormattedReport}";
                 if (!formattedValue.Equals(CachedFormattedValue))
                 {
                     CachedFormattedValue = formattedValue;

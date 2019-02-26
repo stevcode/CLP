@@ -579,7 +579,7 @@
                         <ControlTemplate x:Key="SemanticEventsTemplate">
                             <ListBox DataContext="{Binding}"
                                      ItemsSource="{Binding SortedSemanticEvents.View, IsAsync=True}"
-                                     SelectionMode="Multiple"
+                                     SelectionMode="Single"
                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                      ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
 
@@ -646,16 +646,42 @@
 
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
-                                        <Setter Property="IsHitTestVisible"
-                                                Value="False" />
-                                        <Setter Property="IsSelected" Value="{Binding IsCurrentSemanticEvent, Mode=OneWay}" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                    <ContentPresenter />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
                                     </Style>
                                 </ListBox.ItemContainerStyle>
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock FontWeight="Bold"
-                                                   Text="{Binding CodedValue, Mode=OneWay}" />
+                                        <StackPanel Margin="0 1 0 0"
+                                                    Orientation="Horizontal">
+
+                                            <TextBlock FontWeight="Bold"
+                                                       Margin="5 0 2 0"
+                                                       HorizontalAlignment="Left">
+                                                <Run Text="-->" />
+                                                <TextBlock.Visibility>
+                                                    <MultiBinding Converter="{converters:ListContainsItemToVisibilityMultiConverter}">
+                                                        <Binding Path="ParentPage.History.CurrentSemanticEventInAllPasses" />
+                                                        <Binding Path="." />
+                                                        <MultiBinding.ConverterParameter>
+                                                            Hidden
+                                                        </MultiBinding.ConverterParameter>
+                                                    </MultiBinding>
+                                                </TextBlock.Visibility>
+                                            </TextBlock>
+
+                                            <TextBlock FontWeight="Bold"
+                                                       Margin="0"
+                                                       HorizontalAlignment="Left"
+                                                       Text="{Binding CodedValue, Mode=OneWay}" />
+
+                                        </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
 
@@ -677,15 +703,37 @@
 
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
-                                        <Setter Property="IsHitTestVisible"
-                                                Value="False" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                    <ContentPresenter />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
                                     </Style>
                                 </ListBox.ItemContainerStyle>
 
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock FontWeight="Bold"
-                                                   Text="{Binding CachedFormattedValue, Mode=OneWay}" />
+                                        <StackPanel Margin="0 1 0 0"
+                                                    Orientation="Horizontal">
+
+                                            <TextBlock FontWeight="Bold"
+                                                       Margin="5 0 2 0"
+                                                       HorizontalAlignment="Left"
+                                                       Visibility="{Binding IsSelected, 
+                                                                    RelativeSource={RelativeSource Mode=FindAncestor, 
+                                                                    AncestorType={x:Type ListBoxItem}}, 
+                                                                    Converter={catel:BooleanToHidingVisibilityConverter}}">
+                                                <Run Text="-->" />
+                                            </TextBlock>
+
+                                            <TextBlock FontWeight="Bold"
+                                                       Margin="0"
+                                                       HorizontalAlignment="Left"
+                                                       Text="{Binding FormattedValue, Mode=OneWay}" />
+
+                                        </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
 
