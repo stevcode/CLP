@@ -292,6 +292,8 @@ namespace CLP.Entities
             }
         }
 
+        public string FormattedPass => $"Pass {SemanticPassNumber}, {SemanticPassName}";
+
         #endregion //Calculated Properties
 
         #endregion //Properties

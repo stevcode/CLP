@@ -56,7 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedTags.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
 
             SortedSemanticEvents.Source = CurrentPage.History.SemanticEvents;
-            SortedSemanticEvents.GroupDescriptions.Add(new PropertyGroupDescription("SemanticPassNumber"));
+            SortedSemanticEvents.GroupDescriptions.Add(new PropertyGroupDescription("FormattedPass"));
             SortedSemanticEvents.SortDescriptions.Add(new SortDescription("SemanticPassNumber", ListSortDirection.Ascending));
             SortedSemanticEvents.SortDescriptions.Add(new SortDescription("SemanticEventIndex", ListSortDirection.Ascending));
 

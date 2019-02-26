@@ -620,10 +620,7 @@
                                                                     <TextBlock Margin="5 0"
                                                                                FontWeight="Bold"
                                                                                HorizontalAlignment="Left">
-                                                                        <Run Text="Pass " />
-                                                                        <Run Text="{Binding SemanticPassNumber, Mode=OneWay}" />
-                                                                        <Run Text=", " />
-                                                                        <Run Text="{Binding SemanticPassName, Mode=OneWay}" />
+                                                                        <Run Text="{Binding Name, Mode=OneWay}" />
                                                                     </TextBlock>
                                                                 </ToggleButton>
 

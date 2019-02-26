@@ -34,6 +34,7 @@ namespace CLP.Entities
         IHistoryAction LastHistoryAction { get; }
         List<IHistoryAction> HistoryActions { get; }
         string CodedValue { get; }
+        string FormattedPass { get; }
 
         bool ContainsHistoryActionID(string historyActionID);
         ISemanticEvent CreateCopy(bool isPureCopy = false);
