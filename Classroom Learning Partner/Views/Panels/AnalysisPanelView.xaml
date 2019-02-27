@@ -721,10 +721,11 @@
                                             <TextBlock FontWeight="Bold"
                                                        Margin="5 0 2 0"
                                                        HorizontalAlignment="Left"
-                                                       Visibility="{Binding IsSelected, 
+                                                       Visibility="Hidden">
+                                                       <!--Visibility="{Binding IsSelected, 
                                                                     RelativeSource={RelativeSource Mode=FindAncestor, 
                                                                     AncestorType={x:Type ListBoxItem}}, 
-                                                                    Converter={catel:BooleanToHidingVisibilityConverter}}">
+                                                                    Converter={catel:BooleanToHidingVisibilityConverter}}"-->
                                                 <Run Text="-->" />
                                             </TextBlock>
 

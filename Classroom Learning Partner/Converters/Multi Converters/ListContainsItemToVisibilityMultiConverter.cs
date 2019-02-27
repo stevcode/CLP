@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner.Converters
             }
             var item = values[1];
             var isItemInList = list.Contains(item);
-            return isItemInList ? Visibility.Visible : doesNotContainVisibility;
+            return isItemInList ? Visibility.Hidden : doesNotContainVisibility;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
