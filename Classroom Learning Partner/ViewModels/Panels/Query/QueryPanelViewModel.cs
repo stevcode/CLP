@@ -428,7 +428,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             const string FILE_EXTENSION = "txt";
-            var fileName = $"Query Report - {DateTime.Now:yy.MM.dd-h.mm.ss}.{FILE_EXTENSION}";
+            var queryIdentifierName = codeToQuery.LongFormattedValue.Replace(':', '-').Substring(0, 25);
+            var fileName = $"Query Report - {DateTime.Now:yy.MM.dd-h.mm.ss} - {queryIdentifierName}.{FILE_EXTENSION}";
             var filePath = Path.Combine(folderPath, fileName);
             if (File.Exists(filePath))
             {
@@ -532,8 +533,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _dataService.SetCurrentPage(page);
         }
-
-        // Random comment for test commit.
 
         #endregion // Commands
 
