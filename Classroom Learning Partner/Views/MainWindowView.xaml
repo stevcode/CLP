@@ -12,7 +12,6 @@
                   Icon="pack://application:,,,/Resources/Images/Icons/CLPPaperClipLogoCircled.ico"
                   Height="800"
                   Width="1280"
-                  Title="Classroom Learning Partner"
                   WindowStyle="None"
                   ShowInTaskbar="True"
                   ResizeMode="CanResize"
@@ -88,7 +87,7 @@
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <TextBlock Text="Classroom Learning Partner"
+                <TextBlock Text="{Binding TitleText}"
                            TextAlignment="Center"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"

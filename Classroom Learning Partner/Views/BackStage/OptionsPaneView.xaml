@@ -91,6 +91,15 @@
                     FontWeight="Bold"
                     Visibility="{Binding ResearcherVisibility}" />
 
+            <Button Content="Toggle Version Visibility"
+                    Command="{Binding ToggleVersionVisibilityCommand}"
+                    Height="50"
+                    Width="400"
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold"
+                    Visibility="{Binding ResearcherVisibility}" />
+
             <!--<Button Content="Delete Pages"
                     Command="{Binding DeletePagesCommand}"
                     Height="50"

@@ -58,6 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ToggleSubmissionModeCommand = new Command(OnToggleSubmissionModeCommandExecute);
             FindIllsCommand = new Command(OnFindIllsCommandExecute);
             DeletePagesCommand = new Command(OnDeletePagesCommandExecute);
+            ToggleVersionVisibilityCommand = new Command(OnToggleVersionVisibilityCommandExecute);
         }
 
         public Command DeletePagesCommand { get; private set; }
@@ -422,6 +423,23 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             MessageBox.Show("Tags Added.");
+        }
+
+        public Command ToggleVersionVisibilityCommand { get; private set; }
+
+        private void OnToggleVersionVisibilityCommandExecute()
+        {
+            var versionText = string.Empty;
+
+            if (App.MainWindowViewModel.TitleText.Trim() == "Classroom Learning Partner")
+            {
+                var productVersion = Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
+                versionText = productVersion?.InformationalVersion;
+
+                App.MainWindowViewModel.TitleText = $"Classroom Learning Partner {versionText}";
+            }
+
+            App.MainWindowViewModel.TitleText = $"Classroom Learning Partner {versionText}";
         }
 
         #endregion //Commands

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -34,6 +35,15 @@ namespace Classroom_Learning_Partner.ViewModels
             _roleService = roleService;
 
             CurrentProgramMode = _roleService.Role;
+
+            var versionText = string.Empty;
+            if (_roleService.Role == ProgramRoles.Researcher)
+            {
+                var productVersion = Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
+                versionText = productVersion?.InformationalVersion;
+            }
+
+            TitleText = $"Classroom Learning Partner {versionText}";
 
             MajorRibbon = this.CreateViewModel<MajorRibbonViewModel>(null);
             BackStage = this.CreateViewModel<BackStageViewModel>(null);
@@ -78,6 +88,15 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion // Events
 
         #region Bindings
+
+        /// <summary>Text of the main window's title bar.</summary>
+        public string TitleText
+        {
+            get => GetValue<string>(TitleTextProperty);
+            set => SetValue(TitleTextProperty, value);
+        }
+
+        public static readonly PropertyData TitleTextProperty = RegisterProperty(nameof(TitleText), typeof(string), false);
 
         /// <summary>Visibility of the top drag bar when program is not minimized.</summary>
         public bool IsDragBarVisible
