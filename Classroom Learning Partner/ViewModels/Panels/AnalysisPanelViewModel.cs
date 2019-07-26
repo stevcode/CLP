@@ -419,7 +419,27 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             File.AppendAllText(filePath, "\n*****STEPS*****\n\n");
-            foreach (var semanticEvent in CurrentPage.History.SemanticEvents)
+
+            File.AppendAllText(filePath, "**Pass 1: Initialization\n");
+            foreach (var semanticEvent in CurrentPage.History.SemanticEvents.Where(e => e.SemanticPassNumber == 1))
+            {
+                File.AppendAllText(filePath, $"{semanticEvent.CodedValue}\n");
+            }
+
+            File.AppendAllText(filePath, "\n**Pass 2: Ink Clustering\n");
+            foreach (var semanticEvent in CurrentPage.History.SemanticEvents.Where(e => e.SemanticPassNumber == 2))
+            {
+                File.AppendAllText(filePath, $"{semanticEvent.CodedValue}\n");
+            }
+
+            File.AppendAllText(filePath, "\n**Pass 3: Ink Interpretationg\n");
+            foreach (var semanticEvent in CurrentPage.History.SemanticEvents.Where(e => e.SemanticPassNumber == 3))
+            {
+                File.AppendAllText(filePath, $"{semanticEvent.CodedValue}\n");
+            }
+
+            File.AppendAllText(filePath, "\n**Pass 4: Refinement\n");
+            foreach (var semanticEvent in CurrentPage.History.SemanticEvents.Where(e => e.SemanticPassNumber == 4))
             {
                 File.AppendAllText(filePath, $"{semanticEvent.CodedValue}\n");
             }
