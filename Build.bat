@@ -4,7 +4,7 @@ setlocal
 cd /d "%~dp0"
 
 rem MSBuild path
-set msbuildexe="%programfiles(x86)%\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\MSBuild.exe"
+set msbuildexe="%programfiles(x86)%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe"
 
 rem Directory paths
 set localDirectory=%~dp0
