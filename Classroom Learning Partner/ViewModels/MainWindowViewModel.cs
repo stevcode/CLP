@@ -41,6 +41,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var productVersion = Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyInformationalVersionAttribute)) as AssemblyInformationalVersionAttribute;
                 versionText = productVersion?.InformationalVersion;
+
+                StartingWindowState = WindowState.Normal;
+                IsDragBarVisible = true;
             }
 
             TitleText = $"Classroom Learning Partner {versionText}";
@@ -97,6 +100,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData TitleTextProperty = RegisterProperty(nameof(TitleText), typeof(string), false);
+
+        /// <summary>Determines if CLP starts maximized or normal.</summary>
+        public WindowState StartingWindowState
+        {
+            get => GetValue<WindowState>(StartingWindowStateProperty);
+            set => SetValue(StartingWindowStateProperty, value);
+        }
+
+        public static readonly PropertyData StartingWindowStateProperty = RegisterProperty(nameof(StartingWindowState), typeof(WindowState), WindowState.Maximized);
 
         /// <summary>Visibility of the top drag bar when program is not minimized.</summary>
         public bool IsDragBarVisible
