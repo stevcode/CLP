@@ -1430,6 +1430,8 @@ namespace CLP.Entities
                 foreach (var skipEventGrouping in skipEventGroupings)
                 {
                     var counts = new List<dynamic>();
+                    ISemanticEvent previousSkipCountingEvent = null;
+                    var skipsBeforeAriths = new List<int>();
                     foreach (var skipCountingEvent in skipEventGrouping)
                     {
                         var formattedSkips = RepresentationsUsedTag.GetFormattedSkips(skipCountingEvent);
@@ -1475,6 +1477,39 @@ namespace CLP.Entities
                                         SemanticEvent = skipCountingEvent
                                     };
                         counts.Add(count);
+
+                        if (previousSkipCountingEvent != null)
+                        {
+                            var previousIndex = collapsedEvents.IndexOf(previousSkipCountingEvent);
+                            var currentIndex = collapsedEvents.IndexOf(skipCountingEvent);
+                            if (previousIndex != -1 &&
+                                currentIndex != -1)
+                            {
+                                var isArithAfterPreviousSkip = false;
+                                for (var i = previousIndex; i < currentIndex; i++)
+                                {
+                                    var semanticEvent = collapsedEvents[i];
+                                    if (semanticEvent.CodedObject == Codings.OBJECT_ARITH)
+                                    {
+                                        isArithAfterPreviousSkip = true;
+                                        break;
+                                    }
+                                }
+
+                                if (isArithAfterPreviousSkip)
+                                {
+                                    var previousFormattedSkips = RepresentationsUsedTag.GetFormattedSkips(previousSkipCountingEvent);
+                                    var previousSkips = RepresentationsUsedTag.GetNumericSkipsFromFormattedSkips(previousFormattedSkips).Where(s => s != -1).ToList();
+                                    if (previousSkips.Any())
+                                    {
+                                        var previousMaxSkip = previousSkips.Last();
+                                        skipsBeforeAriths.Add(previousMaxSkip);
+                                    }
+                                }
+                            }
+                        }
+
+                        previousSkipCountingEvent = skipCountingEvent;
                     }
 
                     var bestChoice = counts.Where(c => c.CorrectDimensionMatches != 0).OrderByDescending(c => c.CorrectDimensionMatches).FirstOrDefault() ??
@@ -1499,7 +1534,17 @@ namespace CLP.Entities
                     var bestRows = (int)array.GetColumnsAndRowsAtHistoryIndex(bestSideSkipEvent.LastHistoryAction.HistoryActionIndex).Y;
                     var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, bestRows, bestColumns);
 
-                    var eventInformation = $"{bestFormattedSkips}\n\t{heuristicsResults}";
+                    skipsBeforeAriths = skipsBeforeAriths.Distinct().ToList();
+
+                    var arithLocations = string.Empty;
+                    if (skipsBeforeAriths.Any())
+                    {
+                        var arithCounts = skipsBeforeAriths.Count();
+                        var arithTerm = arithCounts == 1 ? "arith" : "ariths";
+                        arithLocations = $"\n\t{arithCounts} {arithTerm}: after {string.Join(", ", skipsBeforeAriths)}";
+                    }
+
+                    var eventInformation = $"{bestFormattedSkips}\n\t{heuristicsResults}{arithLocations}";
                     var collapsedEvent = new SemanticEvent(page, buffer)
                                          {
                                              CodedObject = Codings.OBJECT_ARRAY,
