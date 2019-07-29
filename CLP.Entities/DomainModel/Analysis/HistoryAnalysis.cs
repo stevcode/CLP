@@ -1056,6 +1056,67 @@ namespace CLP.Entities
 
             #endregion // Erases
 
+            #region Squash Add/Erase/Add
+
+            buffer.Clear();
+
+            var collapsedSquashedEvents = new List<ISemanticEvent>();
+            foreach (var semanticEvent in collapsedAnsEraseEvents)
+            {
+                if (semanticEvent.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE &&
+                    semanticEvent.EventType == Codings.EVENT_MULTIPLE_CHOICE_ADD &&
+                    !buffer.Any())
+                {
+                    buffer.Add(semanticEvent);
+                    continue;
+                }
+
+                if (buffer.Any())
+                {
+                    var lastEventInBuffer = buffer.Last();
+
+                    if (semanticEvent.CodedObject == Codings.OBJECT_MULTIPLE_CHOICE &&
+                        lastEventInBuffer.EventInformation == semanticEvent.EventInformation)
+                    {
+                        buffer.Add(semanticEvent);
+                        continue;
+                    }
+
+                    var squashedEvent = new SemanticEvent(page, buffer)
+                                        {
+                                            CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
+                                            EventType = Codings.EVENT_MULTIPLE_CHOICE_ADD,
+                                            CodedObjectID = lastEventInBuffer.CodedObjectID,
+                                            EventInformation = lastEventInBuffer.EventInformation,
+                                            ReferencePageObjectID = lastEventInBuffer.ReferencePageObjectID
+                                        };
+
+                    collapsedSquashedEvents.Add(squashedEvent);
+                    buffer.Clear();
+                }
+
+                collapsedSquashedEvents.Add(semanticEvent);
+            }
+
+            if (buffer.Any())
+            {
+                var lastEventInBuffer = buffer.Last();
+
+                var squashedEvent = new SemanticEvent(page, buffer)
+                                    {
+                                        CodedObject = Codings.OBJECT_MULTIPLE_CHOICE,
+                                        EventType = Codings.EVENT_MULTIPLE_CHOICE_ADD,
+                                        CodedObjectID = lastEventInBuffer.CodedObjectID,
+                                        EventInformation = lastEventInBuffer.EventInformation,
+                                        ReferencePageObjectID = lastEventInBuffer.ReferencePageObjectID
+                                    };
+
+                collapsedSquashedEvents.Add(squashedEvent);
+                buffer.Clear();
+            }
+
+            #endregion // Squash Add/Erase/Add
+
             #endregion // Collapse Sequential ANS MC/FI
 
             #region Collapse Interwoven Skips and ARITHs
@@ -1063,7 +1124,7 @@ namespace CLP.Entities
             buffer.Clear();
 
             var collapsedSkipPlusArithEvents = new List<ISemanticEvent>();
-            foreach (var semanticEvent in collapsedAnsEraseEvents)
+            foreach (var semanticEvent in collapsedSquashedEvents)
             {
                 if (semanticEvent.CodedObject == Codings.OBJECT_ARRAY &&
                     (semanticEvent.EventType == Codings.EVENT_ARRAY_SKIP ||
