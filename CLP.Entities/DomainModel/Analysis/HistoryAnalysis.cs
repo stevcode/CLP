@@ -1137,8 +1137,16 @@ namespace CLP.Entities
                                                       !semanticEvent.EventInformation.Contains("bottom")) ||
                                                       (!buffer.First().EventInformation.Contains("bottom") &&
                                                        semanticEvent.EventInformation.Contains("bottom"));
+                        var isCurrentEraseEventACompleteErase = false;
+                        if (!isDifferentArray &&
+                            !isDifferentSkipLocation)
+                        {
+                            isCurrentEraseEventACompleteErase = IsACompleteSkipEraseEvent(page, semanticEvent);
+                        }
+
                         if (isDifferentArray || 
-                            isDifferentSkipLocation)
+                            isDifferentSkipLocation ||
+                            isCurrentEraseEventACompleteErase)
                         {
                             HandleCollapsedSkipPlusArith(buffer, collapsedSkipPlusArithEvents, page);
                             buffer.Clear();
@@ -1279,6 +1287,47 @@ namespace CLP.Entities
             #endregion // Remove Moves
 
             return withoutMoveEvents;
+        }
+
+        private static bool IsACompleteSkipEraseEvent(CLPPage page, ISemanticEvent currentEvent)
+        {
+            if (currentEvent.EventType != Codings.EVENT_ARRAY_SKIP_ERASE ||
+                currentEvent.EventInformation.Contains("bottom"))
+            {
+                return false;
+            }
+
+            var eventInfoParts = currentEvent?.EventInformation.Split(", ");
+            if (eventInfoParts?.Length != 2)
+            {
+                return false;
+            }
+
+            var formattedInterpretationParts = eventInfoParts[0].Split("; ");
+            if (formattedInterpretationParts.Length != 2)
+            {
+                return false;
+            }
+
+            var formattedSkipsOnPage = formattedInterpretationParts[1];
+            if (!string.IsNullOrWhiteSpace(formattedSkipsOnPage))
+            {
+                return false;
+            }
+
+            var array = page.GetPageObjectByIDOnPageOrInHistory(currentEvent.ReferencePageObjectID) as CLPArray;
+            if (array is null)
+            {
+                return false;
+            }
+
+            var formattedSkipsErased = formattedInterpretationParts[0];
+            var skipsErased = RepresentationsUsedTag.GetNumericSkipsFromFormattedSkips(formattedSkipsErased);
+
+            var historyIndex = currentEvent.LastHistoryAction.HistoryActionIndex;
+            var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(historyIndex).Y;
+
+            return skipsErased.Count() == rows;
         }
 
         private static void HandleCollapsedSkipPlusArith(List<ISemanticEvent> buffer, List<ISemanticEvent> collapsedSkipPlusArithEvents, CLPPage page)
