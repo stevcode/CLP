@@ -1307,13 +1307,33 @@ namespace CLP.Entities
             if (isBottomSkip)
             {
                 var mostRecentBottomSkipEvent = collapsedEvents.Last();
+                var historyIndex = mostRecentBottomSkipEvent.LastHistoryAction.HistoryActionIndex;
 
                 var formattedSkips = RepresentationsUsedTag.GetFormattedSkips(mostRecentBottomSkipEvent);
-                var historyIndex = mostRecentBottomSkipEvent.LastHistoryAction.HistoryActionIndex;
+                var isExactMatch = ArraySemanticEvents.IsBottomSkipCountingExact(array, formattedSkips, historyIndex);
+
                 var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips, historyIndex) &&
                                        ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips, historyIndex);
                 var correctnessText = isWrongDimension ? ", wrong dimension" : string.Empty;
-                var eventInformation = $"{formattedSkips}, bottom{correctnessText}";
+
+                var eventInformation = string.Empty;
+                if (isExactMatch)
+                {
+                    var expectedValues = ArraySemanticEvents.GetExpectedBottomSkipCountingValues(array, formattedSkips, historyIndex);
+                    formattedSkips = $"\"{string.Join("\" \"", expectedValues)}\"";
+                    var unformattedSkips = expectedValues.Select(n => n.ToString()).ToList();
+
+                    var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(historyIndex).X;
+                    var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(historyIndex).Y;
+                    var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, columns, rows);
+
+                    eventInformation = $"{formattedSkips}, bottom{correctnessText}\n\t{heuristicsResults}";
+                }
+                else
+                {
+                    eventInformation = $"{formattedSkips}, bottom{correctnessText}";
+                }
+
                 var collapsedEvent = new SemanticEvent(page, buffer)
                                      {
                                          CodedObject = Codings.OBJECT_ARRAY,

@@ -2169,6 +2169,53 @@ namespace CLP.Entities
             return editDistance <= 4;
         }
 
+        public static bool IsBottomSkipCountingExact(CLPArray array, string interpretation, int historyIndex)
+        {
+            if (string.IsNullOrEmpty(interpretation))
+            {
+                return false;
+            }
+
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            if (arrayColumnsAndRows.X == 1)
+            {
+                return false;
+            }
+
+            var expectedValue = string.Empty;
+            for (var i = 1; i <= array.Columns; i++)
+            {
+                expectedValue += i * array.Rows;
+            }
+
+            var editDistance = EditDistance.Compute(expectedValue, interpretation);
+
+            return editDistance == 0;
+        }
+
+        public static List<int> GetExpectedBottomSkipCountingValues(CLPArray array, string interpretation, int historyIndex)
+        {
+            if (string.IsNullOrEmpty(interpretation))
+            {
+                return null;
+            }
+
+            var arrayColumnsAndRows = array.GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            if (arrayColumnsAndRows.X == 1)
+            {
+                return null;
+            }
+
+            var expectedValues = new List<int>();
+            for (var i = 1; i <= array.Columns; i++)
+            {
+                var expectedValue = i * array.Rows;
+                expectedValues.Add(expectedValue);
+            }
+
+            return expectedValues;
+        }
+
         public static bool IsBottomSkipCountingByWrongDimension(CLPArray array, string interpretation, int historyIndex)
         {
             if (string.IsNullOrEmpty(interpretation))
