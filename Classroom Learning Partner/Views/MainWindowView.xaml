@@ -17,7 +17,7 @@
                   ResizeMode="CanResize"
                   SizeToContent="Manual"
                   WindowStartupLocation="CenterScreen"
-                  WindowState="Maximized"
+                  WindowState="{Binding StartingWindowState}"
                   MinWidth="300"
                   MinHeight="300">
     
