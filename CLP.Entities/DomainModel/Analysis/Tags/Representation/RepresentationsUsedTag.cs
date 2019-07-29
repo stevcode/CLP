@@ -1203,12 +1203,30 @@ namespace CLP.Entities
             }
 
             var historyIndex = skipCountingEvent.LastHistoryAction.HistoryActionIndex;
+            var isExactMatch = ArraySemanticEvents.IsBottomSkipCountingExact(array, formattedSkips, historyIndex);
             var isWrongDimension = !ArraySemanticEvents.IsBottomSkipCountingByCorrectDimension(array, formattedSkips, historyIndex) &&
                                    ArraySemanticEvents.IsBottomSkipCountingByWrongDimension(array, formattedSkips, historyIndex);
             var correctnessText = isWrongDimension ? "wrong dimension" : "correct";
-
             var plusArithText = isSkipPlusArith ? "+arith" : string.Empty;
-            var skipCodedValue = $"bottom skip{plusArithText} [{formattedSkips}], {correctnessText}";
+
+            var skipCodedValue = string.Empty;
+            if (isExactMatch)
+            {
+                var expectedValues = ArraySemanticEvents.GetExpectedBottomSkipCountingValues(array, formattedSkips, historyIndex);
+                formattedSkips = $"\"{string.Join("\" \"", expectedValues)}\"";
+                var unformattedSkips = expectedValues.Select(n => n.ToString()).ToList();
+
+                var columns = (int)array.GetColumnsAndRowsAtHistoryIndex(historyIndex).X;
+                var rows = (int)array.GetColumnsAndRowsAtHistoryIndex(historyIndex).Y;
+                var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, columns, rows);
+
+                skipCodedValue = $"bottom skip{plusArithText} [{formattedSkips}], {correctnessText}\n\t{heuristicsResults}";
+            }
+            else
+            {
+                skipCodedValue = $"bottom skip{plusArithText} [{formattedSkips}], {correctnessText}";
+            }
+
             return skipCodedValue;
         }
 
