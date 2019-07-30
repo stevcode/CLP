@@ -1004,6 +1004,8 @@ namespace CLP.Entities
                 foreach (var skipEventGrouping in skipEventGroupings)
                 {
                     var counts = new List<dynamic>();
+                    ISemanticEvent previousSkipCountingEvent = null;
+                    var skipsBeforeAriths = new List<int>();
                     foreach (var skipCountingEvent in skipEventGrouping)
                     {
                         var formattedSkips = GetFormattedSkips(skipCountingEvent);
@@ -1049,6 +1051,39 @@ namespace CLP.Entities
                                         SemanticEvent = skipCountingEvent
                                     };
                         counts.Add(count);
+
+                        if (previousSkipCountingEvent != null)
+                        {
+                            var previousIndex = semanticEvents.IndexOf(previousSkipCountingEvent);
+                            var currentIndex = semanticEvents.IndexOf(skipCountingEvent);
+                            if (previousIndex != -1 &&
+                                currentIndex != -1)
+                            {
+                                var isArithAfterPreviousSkip = false;
+                                for (var i = previousIndex; i < currentIndex; i++)
+                                {
+                                    var semanticEvent = semanticEvents[i];
+                                    if (semanticEvent.CodedObject == Codings.OBJECT_ARITH)
+                                    {
+                                        isArithAfterPreviousSkip = true;
+                                        break;
+                                    }
+                                }
+
+                                if (isArithAfterPreviousSkip)
+                                {
+                                    var previousFormattedSkips = GetFormattedSkips(previousSkipCountingEvent);
+                                    var previousSkips = GetNumericSkipsFromFormattedSkips(previousFormattedSkips).Where(s => s != -1).ToList();
+                                    if (previousSkips.Any())
+                                    {
+                                        var previousMaxSkip = previousSkips.Last();
+                                        skipsBeforeAriths.Add(previousMaxSkip);
+                                    }
+                                }
+                            }
+                        }
+
+                        previousSkipCountingEvent = skipCountingEvent;
                     }
 
                     var bestChoice = counts.Where(c => c.CorrectDimensionMatches != 0).OrderByDescending(c => c.CorrectDimensionMatches).FirstOrDefault() ??
@@ -1065,7 +1100,7 @@ namespace CLP.Entities
                     var skipPlusArithCount = SkipPlusArithCount(arrayID, semanticEvents, firstSkipEventIndex, lastSkipEventIndex);
 
                     var bestSideSkipEvent = bestChoice.SemanticEvent as ISemanticEvent;
-                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent, skipPlusArithCount);
+                    var sideSkipCodedValue = SideSkipCountingCorrectness(array, bestSideSkipEvent, skipPlusArithCount, skipsBeforeAriths);
                     if (!string.IsNullOrWhiteSpace(sideSkipCodedValue))
                     {
                         usedRepresentation.AdditionalInformation.Add(sideSkipCodedValue);
@@ -1158,7 +1193,7 @@ namespace CLP.Entities
             return skipArithCount;
         }
 
-        public static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, int skipPlusArithCount)
+        public static string SideSkipCountingCorrectness(CLPArray array, ISemanticEvent skipCountingEvent, int skipPlusArithCount, List<int> skipsBeforeAriths)
         {
             if (array == null)
             {
@@ -1183,9 +1218,19 @@ namespace CLP.Entities
             
             var heuristicsResults = ArraySemanticEvents.Heuristics(unformattedSkips, rows, columns);
 
+            skipsBeforeAriths = skipsBeforeAriths.Distinct().ToList();
+
+            var arithLocations = string.Empty;
+            if (skipsBeforeAriths.Any())
+            {
+                var arithCounts = skipsBeforeAriths.Count();
+                var arithTerm = arithCounts == 1 ? "arith" : "ariths";
+                arithLocations = $"\n\t{arithCounts} {arithTerm}: after {string.Join(", ", skipsBeforeAriths)}";
+            }
+
             var isSkipPlusArith = skipPlusArithCount > 0;
             var plusArithText = isSkipPlusArith ? $"+arith ({skipPlusArithCount})" : string.Empty;
-            var skipCodedValue = $"skip{plusArithText} [{formattedSkips}]\n\t{heuristicsResults}";
+            var skipCodedValue = $"skip{plusArithText} [{formattedSkips}]\n\t{heuristicsResults}{arithLocations}";
             return skipCodedValue;
         }
 
