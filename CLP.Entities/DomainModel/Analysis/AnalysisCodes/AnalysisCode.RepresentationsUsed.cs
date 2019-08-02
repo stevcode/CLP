@@ -165,6 +165,32 @@ namespace CLP.Entities
             tag.QueryCodes.Add(analysisCode);
         }
 
+        public static void AddSkipWrongGroups(CLPPage page, RepresentationsUsedTag tag)
+        {
+            var repsUsedCodes = tag.QueryCodes.Where(c => c.AnalysisCodeLabel == Codings.ANALYSIS_LABEL_REPRESENTATIONS_USED).ToList();
+
+            var incorrectnessReasons = new List<string>
+                                       {
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_DIMENSIONS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_JUMPS,
+                                           Codings.CONSTRAINT_VALUE_REPRESENTATION_CORRECTNESS_REASON_INCORRECT_GROUPS
+                                       };
+            var isDeleted = repsUsedCodes.Any(
+                c => c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_HISTORY_STATUS).ConstraintValue == Codings.CONSTRAINT_VALUE_HISTORY_STATUS_DELETED &&
+                     incorrectnessReasons.Contains(c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON).ConstraintValue));
+            var isFinal = repsUsedCodes.Any(
+                c => c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_HISTORY_STATUS).ConstraintValue == Codings.CONSTRAINT_VALUE_HISTORY_STATUS_FINAL &&
+                     incorrectnessReasons.Contains(c.Constraints.First(t => t.ConstraintLabel == Codings.CONSTRAINT_REPRESENTATION_CORRECTNESS_REASON).ConstraintValue));
+
+
+            var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_WRONG_GROUPS);
+
+            analysisCode.AddConstraint(Codings.CONSTRAINT_DELETED_HAS_WRONG_GROUPS, isDeleted ? Codings.CONSTRAINT_VALUE_YES : Codings.CONSTRAINT_VALUE_NO);
+            analysisCode.AddConstraint(Codings.CONSTRAINT_FINAL_HAS_WRONG_GROUPS, isFinal ? Codings.CONSTRAINT_VALUE_YES : Codings.CONSTRAINT_VALUE_NO);
+
+            tag.QueryCodes.Add(analysisCode);
+        }
+
         public static void AddMultipleRepresentations2Step(RepresentationsUsedTag tag)
         {
             var analysisCode = new AnalysisCode(Codings.ANALYSIS_LABEL_MULTIPLE_REPRESENTATIONS_2_STEP);

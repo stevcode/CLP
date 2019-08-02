@@ -408,6 +408,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             File.AppendAllText(filePath, "*****TAGS*****\n\n");
+            var codes = new List<IAnalysisCode>();
             foreach (var tagGroup in CurrentPage.Tags.GroupBy(t => t.Category).OrderBy(g => g.Key))
             {
                 File.AppendAllText(filePath, $">>>>Category: {tagGroup.Key.ToDescription()}<<<<\n\n");
@@ -415,7 +416,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     File.AppendAllText(filePath, $"---{tag.FormattedName} Tag---\n");
                     File.AppendAllText(filePath, $"{tag.FormattedValue}\n\n");
+                    if (tag is IAnalysis analysisTag)
+                    {
+                        var tagCodes = analysisTag.QueryCodes.ToList();
+                        codes.AddRange(tagCodes);
+                    }
                 }
+            }
+
+            File.AppendAllText(filePath, $"\n*****ANALYSIS CODES (Count = {codes.Count()})*****\n\n");
+            foreach (var code in codes)
+            {
+                File.AppendAllText(filePath, $"{code.FormattedValue}\n");
             }
 
             File.AppendAllText(filePath, "\n*****STEPS*****\n\n");
@@ -438,7 +450,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 File.AppendAllText(filePath, $"{semanticEvent.CodedValue}\n");
             }
 
-            File.AppendAllText(filePath, "\n**Pass 4: Refinement\n");
+            var semanticEventCount = CurrentPage.History.SemanticEvents.Where(e => e.SemanticPassNumber == 4).Count();
+            File.AppendAllText(filePath, $"\n**Pass 4: Refinement (Count = {semanticEventCount})\n");
             foreach (var semanticEvent in CurrentPage.History.SemanticEvents.Where(e => e.SemanticPassNumber == 4))
             {
                 File.AppendAllText(filePath, $"{semanticEvent.CodedValue}\n");
