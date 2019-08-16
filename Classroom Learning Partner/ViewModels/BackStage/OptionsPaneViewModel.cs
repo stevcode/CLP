@@ -59,6 +59,7 @@ namespace Classroom_Learning_Partner.ViewModels
             FindIllsCommand = new Command(OnFindIllsCommandExecute);
             DeletePagesCommand = new Command(OnDeletePagesCommandExecute);
             ToggleVersionVisibilityCommand = new Command(OnToggleVersionVisibilityCommandExecute);
+            TSVCommand = new Command(OnTSVCommandExecute);
         }
 
         public Command DeletePagesCommand { get; private set; }
@@ -440,6 +441,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             App.MainWindowViewModel.TitleText = $"Classroom Learning Partner {versionText}";
+        }
+
+        public Command TSVCommand { get; private set; }
+
+        private void OnTSVCommandExecute()
+        {
+            StatisticExporter.GenerateStatistics(_dataService.LoadedNotebooks.Where(n => n.Owner.IsStudent).ToList());
         }
 
         #endregion //Commands

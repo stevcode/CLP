@@ -245,6 +245,8 @@
     <Compile Include="Services\Analysis\AnalysisEntry.cs" />
     <Compile Include="Services\Analysis\AnalysisService.cs" />
     <Compile Include="Services\Analysis\AnalysisTracker.cs" />
+    <Compile Include="Services\Analysis\StatisticExporter.cs" />
+    <Compile Include="Services\Analysis\StatisticsHumanTagData.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\Enums\ProgramRoles.cs" />
     <Compile Include="Services\Interfaces\IDataService.cs" />
