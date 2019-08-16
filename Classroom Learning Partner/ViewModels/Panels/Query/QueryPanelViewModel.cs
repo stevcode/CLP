@@ -428,7 +428,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             const string FILE_EXTENSION = "txt";
-            var queryIdentifierName = codeToQuery.LongFormattedValue.Replace(':', '-').Substring(0, 25);
+            var queryIdentifierName = codeToQuery.LongFormattedValue.Replace(':', '-');
+            if (queryIdentifierName.Length < 25)
+            {
+                queryIdentifierName = queryIdentifierName.Substring(0, 22);
+            }
+
             var fileName = $"Query Report - {DateTime.Now:yy.MM.dd-h.mm.ss} - {queryIdentifierName}.{FILE_EXTENSION}";
             var filePath = Path.Combine(folderPath, fileName);
             if (File.Exists(filePath))
