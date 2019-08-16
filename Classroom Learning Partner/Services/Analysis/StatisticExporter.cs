@@ -271,10 +271,10 @@ namespace Classroom_Learning_Partner.Services
 
             #region Actual Tags
 
-            var clpTags = string.Join("; ", clpComparable.Select(c => c.FormattedValue));
+            var clpTags = "\"" + string.Join(Environment.NewLine, clpComparable.Select(c => c.FormattedValue)).Replace('"', '\'') + "\"";
             rowCells.Add(clpTags);
 
-            var humanTags = string.Join("; ", humanComparable.Select(c => c.FormattedValue));
+            var humanTags = "\"" + string.Join(Environment.NewLine, humanComparable.Select(c => c.FormattedValue)).Replace('"', '\'') + "\"";
             rowCells.Add(humanTags);
 
             #endregion
