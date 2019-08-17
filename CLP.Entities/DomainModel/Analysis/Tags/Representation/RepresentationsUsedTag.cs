@@ -282,7 +282,17 @@ namespace CLP.Entities
 
             GenerateArraysUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
             GenerateNumberLinesUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
-            GenerateStampsUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+
+            if (page.PageNumber == 13 &&
+                page.OwnerID == "d7tlNq2ryUqW53USnrea-A")
+            {
+                CustomStampsUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+            }
+            else
+            {
+                GenerateStampsUsedInformation(page, tag, semanticEvents, leftRelation, rightRelation, alternativeRelation);
+            }
+
             GenerateBinsUsedInformation(page, tag);
 
             if (!tag.RepresentationsUsed.Any())
@@ -1640,6 +1650,162 @@ namespace CLP.Entities
 
                 tag.RepresentationsUsed.Add(usedRepresentation);
             }
+        }
+
+        private static void CustomStampsUsedInformation(CLPPage page, RepresentationsUsedTag tag,
+                                                         List<ISemanticEvent> semanticEvents,
+                                                         SimplifiedRelation leftRelation,
+                                                         SimplifiedRelation rightRelation,
+                                                         SimplifiedRelation alternativeRelation)
+        {
+            var stampObjectIDsOnPage = new List<string>();
+            var stampObjectIDsOnPageSinceLastClear = new List<string>();
+            var stampObjectIDsRemovedSinceLastAdd = new List<string>();
+            var stampObjectIDsRemovedButPartOfCurrentRepresentation = new List<string>();
+
+            var endPoints = new Dictionary<int, List<string>>();
+            var endPointCompanions = new Dictionary<int, List<string>>();
+            var endPointCount = 0;
+
+            #region Find Pattern Points
+
+            foreach (var semanticEvent in semanticEvents.Where(e => e.CodedObject == Codings.OBJECT_STAMPED_OBJECT))
+            {
+                var stampedObjectID = semanticEvent.ReferencePageObjectID;
+
+                if (semanticEvent.EventType == Codings.EVENT_OBJECT_ADD)
+                {
+                    stampObjectIDsOnPage.Add(stampedObjectID);
+                    stampObjectIDsOnPageSinceLastClear.Add(stampedObjectID);
+                    foreach (var removedStampObjectID in stampObjectIDsRemovedSinceLastAdd)
+                    {
+                        stampObjectIDsOnPageSinceLastClear.Remove(removedStampObjectID);
+                    }
+                    stampObjectIDsRemovedButPartOfCurrentRepresentation.AddRange(stampObjectIDsRemovedSinceLastAdd);
+                    stampObjectIDsRemovedSinceLastAdd.Clear();
+                }
+                else if (semanticEvent.EventType == Codings.EVENT_OBJECT_DELETE)
+                {
+                    stampObjectIDsOnPage.Remove(stampedObjectID);
+                    stampObjectIDsRemovedSinceLastAdd.Add(stampedObjectID);
+
+                    if (stampObjectIDsOnPage.Any())
+                    {
+                        continue;
+                    }
+
+                    endPointCount++;
+                    endPoints.Add(endPointCount, stampObjectIDsOnPageSinceLastClear.ToList());
+                    endPointCompanions.Add(endPointCount, stampObjectIDsRemovedButPartOfCurrentRepresentation.ToList());
+                    stampObjectIDsRemovedButPartOfCurrentRepresentation.Clear();
+                    stampObjectIDsOnPageSinceLastClear.Clear();
+                    stampObjectIDsRemovedSinceLastAdd.Clear();
+                }
+            }
+
+            var stampedObjectsRemovedSinceLastAdd = stampObjectIDsRemovedSinceLastAdd
+                .Select(page.GetPageObjectByIDOnPageOrInHistory)
+                .Where(so => so != null)
+                .Cast<StampedObject>()
+                .ToList();
+            var parentStampIDsOfStampedObjectsRemovedSinceLastAdd = stampedObjectsRemovedSinceLastAdd.Select(so => so.ParentStampID).ToList();
+
+            var stampedObjectsRemovedButPartOfCurrentRepresentation = stampObjectIDsRemovedButPartOfCurrentRepresentation
+                .Select(page.GetPageObjectByIDOnPageOrInHistory)
+                .Where(so => so != null)
+                .Cast<StampedObject>()
+                .ToList();
+            var stampObjectsRemovedButCompanionToEndPoint = stampedObjectsRemovedButPartOfCurrentRepresentation
+                .Where(so => parentStampIDsOfStampedObjectsRemovedSinceLastAdd.Contains(so.ParentStampID))
+                .ToList();
+
+            foreach (var stampObject in stampObjectsRemovedButCompanionToEndPoint)
+            {
+                stampedObjectsRemovedButPartOfCurrentRepresentation.Remove(stampObject);
+            }
+            var stampObjectsRemovedButCompanionToStampObjectsOnpage = stampedObjectsRemovedButPartOfCurrentRepresentation.ToList();
+
+            if (stampObjectIDsRemovedSinceLastAdd.Any())
+            {
+                endPointCount++;
+                endPoints.Add(endPointCount, stampObjectIDsRemovedSinceLastAdd.ToList());
+                endPointCompanions.Add(endPointCount, stampObjectsRemovedButCompanionToEndPoint.Select(so => so.ID).ToList());
+            }
+
+            if (stampObjectIDsOnPage.Any())
+            {
+                endPoints.Add(-1, stampObjectIDsOnPage);
+                endPointCompanions.Add(-1, stampObjectsRemovedButCompanionToStampObjectsOnpage.Select(so => so.ID).ToList());
+            }
+
+            #endregion // Find Pattern Points
+
+            foreach (var endPoint in endPoints)
+            {
+                var isFinalRepresentation = endPoint.Key == -1;
+
+                var stampedObjectIDs = endPoint.Value;
+                var stampedObjects = stampedObjectIDs.Select(page.GetPageObjectByIDOnPageOrInHistory).Where(so => so != null).Cast<StampedObject>().ToList();
+                var groupedStampedObjects = stampedObjects.GroupBy(so => so.Parts);
+
+                var companionStampedObjectIDs = endPointCompanions[endPoint.Key];
+                var companionStampedObjects = companionStampedObjectIDs.Select(page.GetPageObjectByIDOnPageOrInHistory).Where(so => so != null).Cast<StampedObject>().ToList();
+
+                if (groupedStampedObjects.Count() == 1)
+                {
+                    var stampObjectsGroup = groupedStampedObjects.First().ToList();
+                    var usedRepresentation = GenerateUsedStampRepresentation(stampObjectsGroup,
+                                                                             companionStampedObjectIDs,
+                                                                             isFinalRepresentation,
+                                                                             leftRelation,
+                                                                             rightRelation,
+                                                                             alternativeRelation);
+                    tag.RepresentationsUsed.Add(usedRepresentation);
+                    continue;
+                }
+
+                if (groupedStampedObjects.Count() == 2)
+                {
+                    var firstStampObjectsGroup = groupedStampedObjects.First().ToList();
+                    var firstPartsCount = groupedStampedObjects.First().Key;
+                    var firstCompanionStampedObjectsGroupIDs = companionStampedObjects.Where(so => so.Parts == firstPartsCount).Select(so => so.ID).ToList();
+                    var firstUsedRepresentation = GenerateUsedStampRepresentation(firstStampObjectsGroup,
+                                                                                  firstCompanionStampedObjectsGroupIDs,
+                                                                                  isFinalRepresentation,
+                                                                                  leftRelation,
+                                                                                  rightRelation,
+                                                                                  alternativeRelation);
+
+                    var secondStampObjectsGroup = groupedStampedObjects.Last().ToList();
+                    var secondPartsCount = groupedStampedObjects.Last().Key;
+                    var secondCompanionStampedObjectsGroupIDs = companionStampedObjects.Where(so => so.Parts == secondPartsCount).Select(so => so.ID).ToList();
+                    var secondUsedRepresentation = GenerateUsedStampRepresentation(secondStampObjectsGroup,
+                                                                                   secondCompanionStampedObjectsGroupIDs,
+                                                                                   isFinalRepresentation,
+                                                                                   leftRelation,
+                                                                                   rightRelation,
+                                                                                   alternativeRelation);
+
+                    if (firstUsedRepresentation.MatchedRelationSide != Codings.MATCHED_RELATION_NONE ||
+                        secondUsedRepresentation.MatchedRelationSide != Codings.MATCHED_RELATION_NONE)
+                    {
+                        tag.RepresentationsUsed.Add(firstUsedRepresentation);
+                        tag.RepresentationsUsed.Add(secondUsedRepresentation);
+                        continue;
+                    }
+                }
+
+                var allStampedObjects = groupedStampedObjects.SelectMany(g => g).ToList();
+                var combinedUsedRepresentation = GenerateUsedStampRepresentation(allStampedObjects,
+                                                                                 companionStampedObjectIDs,
+                                                                                 isFinalRepresentation,
+                                                                                 leftRelation,
+                                                                                 rightRelation,
+                                                                                 alternativeRelation);
+                tag.RepresentationsUsed.Add(combinedUsedRepresentation);
+            }
+
+            tag.RepresentationsUsed = tag.RepresentationsUsed.Where(r => r != null).ToList();
         }
 
         public static void GenerateStampsUsedInformation(CLPPage page,
