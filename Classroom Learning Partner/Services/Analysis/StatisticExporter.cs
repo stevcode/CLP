@@ -23,9 +23,14 @@ namespace Classroom_Learning_Partner.Services
 
             var fileRows = new List<string>();
 
-            var allPages = notebooks.SelectMany(n => n.Pages).OrderBy(p => p.PageNumber).ThenBy(p => p.Owner.DisplayName);
+            var allPages = notebooks.Where(n => n.Owner.IsStudent).SelectMany(n => n.Pages).OrderBy(p => p.PageNumber).ThenBy(p => p.Owner.DisplayName);
             foreach (var page in allPages)
             {
+                if (page.PageNumber == 1)
+                {
+                    continue;
+                }
+
                 var pageRow = CreatePageRow(page);
                 fileRows.Add(pageRow);
             }
@@ -87,6 +92,13 @@ namespace Classroom_Learning_Partner.Services
                 "# Human ACR",
                 "# Human FMI",
                 "# Human DEC INK",
+                "# Human INK MM",
+                "# Human xPID STAMP",
+                "# Human xPIM STAMP",
+                "# Human xARITH ASM",
+                "# Human INK",
+                "# Human LABEL",
+                "# Human WS",
                 
 
                 // Direct Comparison (Grouped for readability)
@@ -205,6 +217,13 @@ namespace Classroom_Learning_Partner.Services
             var acrHumanCount = 0;
             var fmiHumanCount = 0;
             var decInkHumanCount = 0;
+            var inkMMHumanCount = 0;
+            var xPidStampHumanCount = 0;
+            var xPimStampHumanCount = 0;
+            var xArithAsmHumanCount = 0;
+            var inkHumanCount = 0;
+            var labelHumanCount = 0;
+            var wsHumanCount = 0;
             foreach (var code in humanCodes)
             {
                 if (code.Tag == "MA")
@@ -242,6 +261,41 @@ namespace Classroom_Learning_Partner.Services
                     maHumanCount++;
                     continue;
                 }
+                if (code.Tag.StartsWith("INK MM"))
+                {
+                    inkMMHumanCount++;
+                    continue;
+                }
+                if (code.Tag == "xPID STAMP")
+                {
+                    xPidStampHumanCount++;
+                    continue;
+                }
+                if (code.Tag == "xPIM STAMP")
+                {
+                    xPimStampHumanCount++;
+                    continue;
+                }
+                if (code.Tag == "xARITH ASM")
+                {
+                    xArithAsmHumanCount++;
+                    continue;
+                }
+                if (code.Tag == "INK")
+                {
+                    inkHumanCount++;
+                    continue;
+                }
+                if (code.Tag.Contains("LABEL"))
+                {
+                    labelHumanCount++;
+                    continue;
+                }
+                if (code.Tag == "WS")
+                {
+                    wsHumanCount++;
+                    continue;
+                }
 
                 humanComparable.Add(code);
             }
@@ -253,6 +307,13 @@ namespace Classroom_Learning_Partner.Services
             rowCells.Add(acrHumanCount.ToString());
             rowCells.Add(fmiHumanCount.ToString());
             rowCells.Add(decInkHumanCount.ToString());
+            rowCells.Add(inkMMHumanCount.ToString());
+            rowCells.Add(xPidStampHumanCount.ToString());
+            rowCells.Add(xPimStampHumanCount.ToString());
+            rowCells.Add(xArithAsmHumanCount.ToString());
+            rowCells.Add(inkHumanCount.ToString());
+            rowCells.Add(labelHumanCount.ToString());
+            rowCells.Add(wsHumanCount.ToString());
 
             #endregion
 
